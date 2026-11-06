@@ -1,10 +1,12 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+import { Suspense } from 'react';
+import { LoadingRows } from '@/components/admin/states';
+import { DatabasePage } from '@/features/databases/database-page';
 
-export default function Page() {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
-    <>
-      <PageHeader title="데이터베이스" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
-    </>
+    <Suspense fallback={<LoadingRows rows={8} />}>
+      <DatabasePage key={id} id={id} />
+    </Suspense>
   );
 }
