@@ -81,6 +81,11 @@ export class SessionService {
       departmentId: membership.departmentId,
       permissions,
       csrfToken: session.csrfToken,
+      mfa: {
+        enabled: user.mfaEnabled,
+        verified: !user.mfaEnabled || session.mfaVerified,
+        required: this.cfg.mfa.requiredRoles.includes(membership.role.key),
+      },
     };
   }
 

@@ -68,8 +68,13 @@ export class AuthService {
     });
     const created = await this.sessions.create({ userId: user.id, organizationId: membership.organizationId, ...meta });
     await this.audit.log({ action: 'auth.login.success', actorId: user.id, organizationId: membership.organizationId, ...meta });
-    // MFA 구조: user.mfaEnabled 가 true 인 경우 session.mfaVerified=false 로 생성 후 추가 검증 단계를 요구하도록 확장
-    return { ...created, mfaRequired: user.mfaEnabled };
+    // MFA 등록 사용자는 session.mfaVerified=false 로 시작 → /auth/mfa/verify 성공 전까지 가드가 API 를 차단
+    const role = await this.prisma.membership.findUnique({
+      where: { organizationId_userId: { organizationId: membership.organizationId, userId: user.id } },
+      select: { role: { select: { key: true } } },
+    });
+    const mfaEnrollmentRequired = !user.mfaEnabled && !!role && this.cfg.mfa.requiredRoles.includes(role.role.key);
+    return { ...created, mfaRequired: user.mfaEnabled, mfaEnrollmentRequired };
   }
 
   async changePassword(auth: AuthContext, current: string, next: string) {
@@ -104,6 +109,7 @@ export class AuthService {
       department: membership.department,
       permissions: [...auth.permissions].sort(),
       csrfToken: auth.csrfToken,
+      mfa: auth.mfa,
     };
   }
 

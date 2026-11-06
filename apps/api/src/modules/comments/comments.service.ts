@@ -66,6 +66,8 @@ export class CommentsService {
     return {
       sessionId: '', csrfToken: '', userId, organizationId, membershipId: m.id, email: m.user.email, name: m.user.name,
       roleKey: m.role.key, roleRank: m.role.rank, departmentId: m.departmentId, permissions,
+      // 멘션 대상의 열람 권한 계산용 합성 컨텍스트 (세션 아님)
+      mfa: { enabled: false, verified: true, required: false },
     };
   }
 

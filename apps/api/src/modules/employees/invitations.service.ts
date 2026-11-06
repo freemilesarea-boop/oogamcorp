@@ -3,7 +3,8 @@ import { AuditService } from '../../common/audit/audit.service';
 import type { AuthContext } from '../../common/auth/auth.types';
 import { generateToken, sha256 } from '../../common/auth/tokens';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { QueueService } from '../../common/queue/queue.service';
+import { inviteAad, QueueService } from '../../common/queue/queue.service';
+import { seal } from '../../common/crypto/secret-box';
 import { loadConfig } from '../../config/configuration';
 import { CreateInvitationDto, InvitationQueryDto } from './employees.dto';
 import { assertCanAssignRole } from './role-rules';
@@ -31,10 +32,10 @@ export class InvitationsService {
   private async enqueueEmail(invitationId: string, token: string): Promise<boolean> {
     if (!loadConfig().smtp.enabled) return false;
     try {
-      // 토큰 원문은 작업 완료 즉시 제거되도록 설정
-      await (this.queue.notifications as unknown as { add: (n: string, d: unknown, o: unknown) => Promise<unknown> }).add(
+      // Redis 에는 토큰 원문을 두지 않는다: AES-256-GCM 암호문(초대 ID 를 AAD 로 바인딩)만 저장, 완료/실패 시 즉시 제거
+      await this.queue.notifications.add(
         'invitation-email',
-        { kind: 'invitation-email', invitationId, token },
+        { kind: 'invitation-email', invitationId, sealedToken: seal(token, inviteAad(invitationId)) },
         { attempts: 3, backoff: { type: 'exponential', delay: 5000 }, removeOnComplete: true, removeOnFail: true },
       );
       return true;

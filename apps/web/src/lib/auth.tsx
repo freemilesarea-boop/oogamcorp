@@ -12,6 +12,7 @@ export interface Me {
   department: { id: string; name: string } | null;
   permissions: PermissionKey[];
   csrfToken: string;
+  mfa: { enabled: boolean; verified: boolean; required: boolean };
 }
 
 export function useMeQuery() {

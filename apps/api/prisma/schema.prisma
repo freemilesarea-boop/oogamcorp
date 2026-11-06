@@ -18,6 +18,14 @@ enum UserStatus {
   DISABLED
 }
 
+enum FileScanStatus {
+  PENDING
+  CLEAN
+  INFECTED
+  SKIPPED
+  ERROR
+}
+
 enum EmploymentStatus {
   ACTIVE
   ON_LEAVE
@@ -270,26 +278,32 @@ model Organization {
 }
 
 model User {
-  id                String     @id @default(uuid()) @db.Uuid
-  email             String     @unique
-  name              String
-  passwordHash      String?
-  status            UserStatus @default(INVITED)
-  avatarUrl         String?
-  locale            String     @default("ko")
-  mfaEnabled        Boolean    @default(false)
+  id                  String     @id @default(uuid()) @db.Uuid
+  email               String     @unique
+  name                String
+  passwordHash        String?
+  status              UserStatus @default(INVITED)
+  avatarUrl           String?
+  locale              String     @default("ko")
+  mfaEnabled          Boolean    @default(false)
   /// 향후 TOTP 비밀키(암호화 저장) — MFA 도입 시 사용
-  mfaSecretEnc      String?
-  failedLoginCount  Int        @default(0)
-  lockedUntil       DateTime?
-  lastLoginAt       DateTime?
-  passwordChangedAt DateTime?
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  deletedAt         DateTime?
+  mfaSecretEnc        String?
+  /// 등록 진행 중(미확인) TOTP 비밀키 (AES-256-GCM 암호문)
+  mfaPendingSecretEnc String?
+  mfaEnrolledAt       DateTime?
+  /// TOTP 재사용 방지: 마지막으로 사용된 시간 단계
+  mfaLastUsedStep     Int?
+  failedLoginCount    Int        @default(0)
+  lockedUntil         DateTime?
+  lastLoginAt         DateTime?
+  passwordChangedAt   DateTime?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  deletedAt           DateTime?
 
   memberships      Membership[]
   sessions         Session[]
+  mfaRecoveryCodes MfaRecoveryCode[]
   notifications    Notification[]
   taskAssignments  TaskAssignee[]
   projectMembers   ProjectMember[]
@@ -358,9 +372,9 @@ model Department {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
 
-  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  parent       Department?   @relation("DepartmentTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children     Department[]  @relation("DepartmentTree")
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  parent       Department?     @relation("DepartmentTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Department[]    @relation("DepartmentTree")
   memberships  Membership[]
   projects     Project[]
   budgets      Budget[]
@@ -392,13 +406,13 @@ model Role {
 }
 
 model Permission {
-  id          String   @id @default(uuid()) @db.Uuid
-  key         String   @unique
-  module      String
-  label       String
-  sensitive   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid()) @db.Uuid
+  key       String   @unique
+  module    String
+  label     String
+  sensitive Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   roles RolePermission[]
 
@@ -444,27 +458,43 @@ model ResourceGrant {
 }
 
 model Session {
-  id             String    @id @default(uuid()) @db.Uuid
-  userId         String    @db.Uuid
-  organizationId String    @db.Uuid
+  id                String    @id @default(uuid()) @db.Uuid
+  userId            String    @db.Uuid
+  organizationId    String    @db.Uuid
   /// 세션 토큰의 SHA-256 해시 (원문은 HttpOnly 쿠키에만 존재)
-  tokenHash      String    @unique
+  tokenHash         String    @unique
   /// CSRF 동기화 토큰 (세션 바인딩)
-  csrfToken      String
-  ip             String?
-  userAgent      String?
-  mfaVerified    Boolean   @default(false)
-  expiresAt      DateTime
-  lastSeenAt     DateTime  @default(now())
-  revokedAt      DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  csrfToken         String
+  ip                String?
+  userAgent         String?
+  mfaVerified       Boolean   @default(false)
+  /// MFA 검증 실패 횟수 (한도 초과 시 세션 폐기)
+  mfaFailedAttempts Int       @default(0)
+  expiresAt         DateTime
+  lastSeenAt        DateTime  @default(now())
+  revokedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
   @@map("sessions")
+}
+
+/// MFA 복구 코드 (SHA-256 해시만 저장, 1회용)
+model MfaRecoveryCode {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, codeHash])
+  @@map("mfa_recovery_codes")
 }
 
 model Invitation {
@@ -624,6 +654,11 @@ model File {
   mimeType       String
   size           Int
   checksum       String?
+  /// 업로드 시 매직 바이트로 판별한 실제 형식
+  detectedMime   String?
+  scanStatus     FileScanStatus @default(SKIPPED)
+  scanEngine     String?
+  scannedAt      DateTime?
   targetType     EntityType?
   targetId       String?        @db.Uuid
   uploadedById   String         @db.Uuid
@@ -782,9 +817,9 @@ model Project {
   updatedAt      DateTime      @updatedAt
   deletedAt      DateTime?
 
-  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  department   Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  budget       Budget?         @relation("ProjectBudget", fields: [budgetId], references: [id], onDelete: SetNull)
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  department   Department?         @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  budget       Budget?             @relation("ProjectBudget", fields: [budgetId], references: [id], onDelete: SetNull)
   members      ProjectMember[]
   milestones   Milestone[]
   tasks        Task[]
@@ -1036,14 +1071,14 @@ model ApprovalAction {
 // ───────────────────────────── Finance ─────────────────────────────
 /// 사업 구분 (매출/지출/예산 분류 기준). 브랜드와 별개로 내부 관리 단위
 model BusinessUnit {
-  id             String    @id @default(uuid()) @db.Uuid
-  organizationId String    @db.Uuid
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
   name           String
   code           String
   description    String?
-  isActive       Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   budgets      Budget[]

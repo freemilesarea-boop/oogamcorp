@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 import type { PermissionKey } from '@oogam/shared';
 import { loadConfig } from '../../config/configuration';
 import type { AuthedRequest } from './auth.types';
-import { IS_PUBLIC_KEY, PERMISSIONS_KEY, SKIP_CSRF_KEY } from './decorators';
+import { IS_PUBLIC_KEY, MFA_STAGE_KEY, PERMISSIONS_KEY, SKIP_CSRF_KEY } from './decorators';
 import { SessionService } from './session.service';
 import { safeEqual } from './tokens';
 
@@ -58,7 +58,19 @@ export class AuthGuard implements CanActivate {
       }
     }
 
-    // 4) 권한
+    // 4) MFA — 검증 전 세션/등록 필수 미등록 세션은 허용된 엔드포인트 외 차단 (공개 엔드포인트 포함 관리자 API 전체)
+    const stage = this.reflector.getAllAndOverride<'pending' | 'enroll'>(MFA_STAGE_KEY, targets);
+    if (req.auth.mfa.enabled && !req.auth.mfa.verified) {
+      if (stage !== 'pending' && !isPublic) {
+        throw new UnauthorizedException({ statusCode: 401, code: 'MFA_REQUIRED', message: '2단계 인증(MFA)을 완료해야 합니다.' });
+      }
+    } else if (req.auth.mfa.required && !req.auth.mfa.enabled) {
+      if (!stage && !isPublic) {
+        throw new ForbiddenException({ statusCode: 403, code: 'MFA_ENROLLMENT_REQUIRED', message: '이 계정은 2단계 인증(MFA) 등록이 필요합니다.' });
+      }
+    }
+
+    // 5) 권한
     const required = this.reflector.getAllAndOverride<PermissionKey[]>(PERMISSIONS_KEY, targets) ?? [];
     if (!isPublic && !req.auth.permissions.has('workspace.access')) {
       throw new ForbiddenException('워크스페이스 접근 권한이 없습니다.');

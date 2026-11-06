@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuditService } from '../../common/audit/audit.service';
 import type { AuthContext } from '../../common/auth/auth.types';
-import { CurrentUser, Public, SkipCsrf } from '../../common/auth/decorators';
+import { AllowMfaStage, CurrentUser, Public, SkipCsrf } from '../../common/auth/decorators';
 import { SessionService } from '../../common/auth/session.service';
 import { reqMeta } from '../../common/utils/request';
 import { loadConfig } from '../../config/configuration';
@@ -30,11 +30,12 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() dto: LoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const { token, csrfToken, mfaRequired } = await this.auth.login(dto.email, dto.password, reqMeta(req));
+    const { token, csrfToken, mfaRequired, mfaEnrollmentRequired } = await this.auth.login(dto.email, dto.password, reqMeta(req));
     this.sessions.setCookies(res, token, csrfToken);
-    return { ok: true, csrfToken, mfaRequired };
+    return { ok: true, csrfToken, mfaRequired, mfaEnrollmentRequired };
   }
 
+  @AllowMfaStage('pending')
   @Post('logout')
   @HttpCode(200)
   async logout(@CurrentUser() user: AuthContext, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -44,6 +45,7 @@ export class AuthController {
     return { ok: true };
   }
 
+  @AllowMfaStage('pending')
   @Get('me')
   me(@CurrentUser() user: AuthContext) {
     return this.auth.me(user);

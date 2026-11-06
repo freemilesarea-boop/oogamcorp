@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MalwareScanner } from '../../common/storage/malware-scanner';
 import { StorageModule } from '../../common/storage/storage.service';
 import { FilesController } from './files.controller';
 import { FilesService } from './files.service';
@@ -7,7 +8,7 @@ import { FilesService } from './files.service';
 @Module({
   imports: [StorageModule],
   controllers: [FilesController],
-  providers: [FilesService],
+  providers: [FilesService, MalwareScanner],
   exports: [FilesService],
 })
 export class FilesModule {}

@@ -85,6 +85,9 @@ export class CollabPersistence {
     if (!token) throw new Error('unauthenticated');
     const auth: AuthContext | null = await this.sessions.resolve(token);
     if (!auth) throw new Error('unauthenticated');
+    // MFA 미완료 세션 / 필수 MFA 미등록 세션은 공동 편집 연결 불가 (HTTP 가드와 동일 정책)
+    if (!auth.mfa.verified || (auth.mfa.required && !auth.mfa.enabled)) throw new Error('mfa required');
+    if (!auth.permissions.has('workspace.access')) throw new Error('forbidden');
     const page = await this.prisma.page.findFirst({ where: { id: pageId, organizationId: auth.organizationId, deletedAt: null } });
     if (!page) throw new Error('not found');
     const level = await this.entityAccess.pageLevel(auth, page);

@@ -2,10 +2,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Laptop, LogOut, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { DevStatus, ErrorState, LoadingRows } from '@/components/admin/states';
+import { ErrorState, LoadingRows } from '@/components/admin/states';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +17,7 @@ import { Avatar } from '@/components/ui/misc';
 import { apiDelete, apiGet, apiPost } from '@/lib/api';
 import { useMe } from '@/lib/auth';
 import { formatDateTime, timeAgo } from '@/lib/utils';
+import { RecoveryCodes } from '@/features/mfa/shared';
 
 export function ProfileCard() {
   const me = useMe();
@@ -140,16 +143,75 @@ export function SessionsCard() {
 
 export function MfaCard() {
   const me = useMe();
+  const qc = useQueryClient();
+  const status = useQuery({ queryKey: ['mfa'], queryFn: () => apiGet<{ enabled: boolean; enrolledAt: string | null; required: boolean; recoveryCodesRemaining: number }>('/auth/mfa') });
+  const [mode, setMode] = useState<'none' | 'disable' | 'regen'>('none');
+  const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
+  const [codes, setCodes] = useState<string[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const s = status.data;
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setBusy(true);
+    try {
+      if (mode === 'disable') {
+        await apiPost('/auth/mfa/disable', { password, code });
+        toast.success('2단계 인증을 해제했습니다. 다른 기기의 세션은 로그아웃되었습니다.');
+      } else {
+        const r = await apiPost<{ recoveryCodes: string[] }>('/auth/mfa/recovery-codes', { password, code });
+        setCodes(r.recoveryCodes);
+      }
+      setMode('none');
+      setPassword('');
+      setCode('');
+      qc.invalidateQueries({ queryKey: ['mfa'] });
+      qc.invalidateQueries({ queryKey: ['me'] });
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2"><ShieldCheck className="size-4" />2단계 인증 (MFA)</CardTitle>
-        <CardDescription>현재 상태: {me.user.mfaEnabled ? '사용 중' : '사용 안 함'}</CardDescription>
+        <CardDescription>
+          {status.isLoading ? '확인 중…' : s?.enabled ? `사용 중 · 남은 복구 코드 ${s.recoveryCodesRemaining}개` : '사용 안 함'}
+          {s?.required && ' · 역할 정책상 필수'}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <DevStatus status="SCAFFOLDED">
-          TOTP 기반 2단계 인증은 데이터 구조(users.mfa_enabled, mfa_secret_enc, sessions.mfa_verified)만 준비되어 있으며 등록·검증 화면과 API 는 아직 구현되지 않았습니다.
-        </DevStatus>
+      <CardContent className="space-y-4">
+        {status.error && <ErrorState error={status.error} />}
+        {codes && <RecoveryCodes codes={codes} />}
+        {s && !s.enabled && (
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">인증 앱(Google Authenticator, Microsoft Authenticator, 1Password 등)으로 로그인 시 6자리 코드를 추가로 확인합니다.</p>
+            <Button asChild size="sm"><Link href="/admin/mfa/setup?next=/admin/settings">2단계 인증 설정</Link></Button>
+          </div>
+        )}
+        {s?.enabled && mode === 'none' && (
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={() => setMode('regen')}>복구 코드 재발급</Button>
+            {!s.required && <Button size="sm" variant="outline" className="text-danger" onClick={() => setMode('disable')}>2단계 인증 해제</Button>}
+          </div>
+        )}
+        {mode !== 'none' && (
+          <form onSubmit={submit} className="max-w-sm space-y-3">
+            <p className="text-sm font-medium">{mode === 'disable' ? '2단계 인증 해제' : '복구 코드 재발급 (기존 코드는 무효화)'}</p>
+            <Field label="현재 비밀번호" htmlFor="mfa-pw"><Input id="mfa-pw" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
+            <Field label="인증 코드" htmlFor="mfa-cd"><Input id="mfa-cd" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} /></Field>
+            {error && <p role="alert" className="text-sm text-danger">{error}</p>}
+            <div className="flex gap-2">
+              <Button type="submit" size="sm" loading={busy} disabled={!password || code.length !== 6} variant={mode === 'disable' ? 'danger' : 'default'}>확인</Button>
+              <Button type="button" size="sm" variant="ghost" onClick={() => { setMode('none'); setError(null); }}>취소</Button>
+            </div>
+          </form>
+        )}
+        <p className="text-xs text-muted-foreground">로그인 계정: {me.user.email}. 인증 기기를 분실했고 복구 코드도 없다면 최고관리자에게 MFA 초기화를 요청하세요.</p>
       </CardContent>
     </Card>
   );

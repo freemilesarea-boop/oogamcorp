@@ -19,7 +19,7 @@ type WorkerJob =
   | { kind: 'email'; notificationId: string }
   | { kind: 'due-reminders' }
   | { kind: 'maintenance' }
-  | { kind: 'invitation-email'; invitationId: string; token: string };
+  | { kind: 'invitation-email'; invitationId: string; sealedToken: string };
 
 const cfg = loadConfig();
 const log = pino({ level: cfg.logLevel, base: { service: 'oogam-worker' }, redact: ['token', '*.token', 'data.token'] });
@@ -66,7 +66,7 @@ async function main() {
           return r;
         }
         case 'invitation-email': {
-          const r = await sendInvitationEmail(deps, data.invitationId, data.token);
+          const r = await sendInvitationEmail(deps, data.invitationId, data.sealedToken);
           log.info({ jobId: job.id, kind: data.kind, invitationId: data.invitationId, result: r, ms: Date.now() - started }, '작업 완료');
           return r;
         }

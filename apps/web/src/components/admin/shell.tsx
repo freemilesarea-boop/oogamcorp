@@ -21,8 +21,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (error instanceof ApiError && error.status === 401) router.replace(`/admin/login?next=${encodeURIComponent(pathname)}`);
   }, [error, pathname, router]);
+  // MFA 정책: 검증 전 세션 → 검증 화면, 필수 역할 미등록 → 등록 화면 (API 도 동일하게 차단)
+  const mfaGate = me && (!me.mfa.verified ? '/admin/mfa' : me.mfa.required && !me.mfa.enabled ? '/admin/mfa/setup' : null);
+  useEffect(() => {
+    if (mfaGate) router.replace(`${mfaGate}?next=${encodeURIComponent(pathname)}`);
+  }, [mfaGate, pathname, router]);
 
-  if (isLoading || !me) {
+  if (isLoading || !me || mfaGate) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground">
         {error && !(error instanceof ApiError && error.status === 401) ? <p className="text-sm">워크스페이스를 불러오지 못했습니다: {(error as Error).message}</p> : <Spinner />}
@@ -47,6 +52,13 @@ function Layout({ me, children }: { me: Me; children: React.ReactNode }) {
     setCollapsed(localStorage.getItem('oogam-sidebar') === 'collapsed');
   }, []);
   useEffect(() => setMobileOpen(false), [pathname]);
+  // 모바일 드로어: Esc 로 닫기
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onEsc = (e: KeyboardEvent) => e.key === 'Escape' && setMobileOpen(false);
+    window.addEventListener('keydown', onEsc);
+    return () => window.removeEventListener('keydown', onEsc);
+  }, [mobileOpen]);
 
   const toggle = () => {
     setCollapsed((c) => {
@@ -97,7 +109,8 @@ function Layout({ me, children }: { me: Me; children: React.ReactNode }) {
           'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-gray-50 transition-[width,transform] duration-200 dark:bg-[#0d0d0f]',
           collapsed ? 'lg:w-[60px]' : 'lg:w-[248px]',
           'w-[260px] lg:translate-x-0',
-          mobileOpen ? 'translate-x-0' : '-translate-x-full',
+          // 닫힌 모바일 드로어는 화면 밖에 있어도 Tab 포커스를 받지 않도록 숨김
+          mobileOpen ? 'translate-x-0' : '-translate-x-full max-lg:invisible',
         )}
         aria-label="워크스페이스 메뉴"
       >
@@ -132,7 +145,7 @@ function Layout({ me, children }: { me: Me; children: React.ReactNode }) {
             <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <input ref={searchRef} name="q" placeholder="검색 (⌘K)" aria-label="워크스페이스 검색" className="h-8 w-full rounded-md border border-border bg-muted/50 pl-8 pr-3 text-sm placeholder:text-muted-foreground focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring/15" />
           </form>
-          <Link href="/admin/search" className="rounded p-1.5 hover:bg-muted md:hidden" aria-label="검색"><Search className="size-5" /></Link>
+          <Link href="/admin/search" className="ml-auto rounded p-1.5 hover:bg-muted md:hidden" aria-label="검색"><Search className="size-5" /></Link>
           <NotificationsBell />
           <ThemeToggle />
           <ProfileMenu me={me} />
@@ -282,8 +295,8 @@ function ProfileMenu({ me }: { me: Me }) {
   };
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full" aria-label="내 계정 메뉴" data-testid="profile-menu">
-        <Avatar name={me.user.name} src={me.user.avatarUrl} className="size-8" />
+      <DropdownMenuTrigger className="rounded-full" aria-label={`${me.user.name} 계정 메뉴`} data-testid="profile-menu">
+        <span aria-hidden className="block"><Avatar name={me.user.name} src={me.user.avatarUrl} className="size-8" /></span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">

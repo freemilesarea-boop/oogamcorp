@@ -3,7 +3,8 @@
 **/dist
 **/dist-*
 **/.test-storage
-**/storage
+apps/api/storage
+storage
 .git
 .env
 .env.*
@@ -11,3 +12,7 @@
 backups
 playwright-report
 test-results
+**/.test-storage
+**/.e2e-storage
+**/.next-*
+**/*.tsbuildinfo

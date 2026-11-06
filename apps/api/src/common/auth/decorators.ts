@@ -5,6 +5,14 @@ import type { AuthContext, AuthedRequest } from './auth.types';
 export const IS_PUBLIC_KEY = 'oogam:isPublic';
 export const PERMISSIONS_KEY = 'oogam:permissions';
 export const SKIP_CSRF_KEY = 'oogam:skipCsrf';
+export const MFA_STAGE_KEY = 'oogam:mfaStage';
+
+/**
+ * MFA 미완료 세션에서도 허용되는 엔드포인트.
+ * - 'pending': MFA 검증 전 세션 및 등록 필수 미등록 세션 모두 허용 (me, logout, mfa/verify)
+ * - 'enroll' : MFA 등록이 필수인데 아직 등록하지 않은 세션에서만 추가 허용 (등록 API)
+ */
+export const AllowMfaStage = (stage: 'pending' | 'enroll') => SetMetadata(MFA_STAGE_KEY, stage);
 
 /** 인증 없이 접근 가능한 엔드포인트 (공개 홈페이지 API, 로그인 등) */
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);

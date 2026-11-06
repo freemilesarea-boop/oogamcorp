@@ -1,3 +1,6 @@
+import { open } from '../common/crypto/secret-box';
+import { inviteAad } from '../common/queue/queue.service';
+import { createHash } from 'node:crypto';
 import type { PrismaClient } from '@prisma/client';
 import type { Logger } from 'pino';
 import type { AppConfig } from '../config/configuration';
@@ -53,10 +56,19 @@ export async function sendNotificationEmail(
 export async function sendInvitationEmail(
   deps: { prisma: PrismaClient; cfg: AppConfig; mailer: Mailer | null; log: Logger },
   invitationId: string,
-  token: string,
+  sealedToken: string,
 ): Promise<'sent' | 'skipped'> {
   const inv = await deps.prisma.invitation.findUnique({ where: { id: invitationId }, include: { organization: { select: { name: true } } } });
   if (!inv || inv.acceptedAt || inv.revokedAt || inv.expiresAt < new Date()) return 'skipped';
+  let token: string;
+  try {
+    token = open(sealedToken, inviteAad(invitationId));
+  } catch {
+    deps.log.warn({ invitationId }, '초대 토큰 복호화 실패 — 건너뜀');
+    return 'skipped';
+  }
+  // 재발송 등으로 교체된 이전 토큰은 발송하지 않는다
+  if (createHash('sha256').update(token).digest('hex') !== inv.tokenHash) return 'skipped';
   if (!deps.cfg.smtp.enabled || !deps.mailer) {
     deps.log.info({ invitationId }, 'SMTP 비활성 — 초대 메일 건너뜀');
     return 'skipped';

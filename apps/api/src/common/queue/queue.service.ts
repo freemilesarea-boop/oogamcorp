@@ -10,7 +10,13 @@ export const QUEUE_NAMES = {
 
 export type NotificationJob =
   | { kind: 'email'; notificationId: string }
-  | { kind: 'due-reminders' };
+  | { kind: 'due-reminders' }
+  | { kind: 'maintenance' }
+  /** 초대 메일: 토큰은 secret-box 로 봉인된 암호문만 큐에 저장 (원문 금지) */
+  | { kind: 'invitation-email'; invitationId: string; sealedToken: string };
+
+/** 초대 토큰 암호화 AAD — 다른 초대 작업으로 암호문을 옮겨 쓰는 것을 방지 */
+export const inviteAad = (invitationId: string) => `invite:${invitationId}`;
 
 /** BullMQ 생산자. Redis 장애 시 큐잉 실패를 로그로만 남기고 요청은 계속 처리한다 */
 @Injectable()

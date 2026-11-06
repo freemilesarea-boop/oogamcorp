@@ -12,6 +12,11 @@ export function configureApp(app: INestApplication): void {
   express.disable('x-powered-by');
 
   app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'same-site' } }));
+  // API 응답(JSON/파일)은 문서로 렌더링될 이유가 없으므로 가장 엄격한 CSP (Swagger UI 경로 제외)
+  app.use((req: { path: string }, res: { setHeader: (k: string, v: string) => void }, next: () => void) => {
+    if (!req.path.startsWith('/api/docs')) res.setHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'");
+    next();
+  });
   app.use(cookieParser());
   // 문서 본문(Tiptap JSON) 자동 저장을 위해 JSON 본문 한도를 2MB 로 설정
   (app as unknown as { useBodyParser: (t: string, o: object) => void }).useBodyParser('json', { limit: '2mb' });

@@ -25,6 +25,16 @@ export interface AppConfig {
   };
   smtp: { enabled: boolean; host?: string; port: number; user?: string; pass?: string; from?: string };
   ipHashSalt: string;
+  /** 비밀값 암호화 키 (32바이트, base64/hex). MFA 비밀키·큐 페이로드 암호화에 사용 */
+  encryptionKey: string;
+  mfa: { requiredRoles: string[]; issuer: string; maxAttempts: number };
+  upload: {
+    /** off: 검사 안 함(개발) / clamav: 검사하되 엔진 장애 시 정책 적용 / required: 엔진 장애 시 업로드 거부 */
+    malwareScan: 'off' | 'clamav' | 'required';
+    clamavHost: string;
+    clamavPort: number;
+    clamavTimeoutMs: number;
+  };
   swaggerEnabled: boolean;
   logLevel: string;
 }
@@ -88,6 +98,20 @@ export function loadConfig(): AppConfig {
       from: process.env.SMTP_FROM,
     },
     ipHashSalt: required('IP_HASH_SALT', 'dev-only-ip-salt'),
+    encryptionKey: required('APP_ENCRYPTION_KEY', 'ZGV2LW9ubHktZW5jcnlwdGlvbi1rZXktMzJieXRlcyE='),
+    mfa: {
+      // 운영 기본: OWNER, EXECUTIVE 는 MFA 등록 필수. 개발/테스트는 명시 설정 시에만 강제
+      requiredRoles: (process.env.MFA_REQUIRED_ROLES ?? (isProd ? 'OWNER,EXECUTIVE' : ''))
+        .split(',').map((s) => s.trim()).filter(Boolean),
+      issuer: process.env.MFA_ISSUER ?? 'OOGAM',
+      maxAttempts: Number(process.env.MFA_MAX_ATTEMPTS ?? 5),
+    },
+    upload: {
+      malwareScan: ((process.env.MALWARE_SCAN_MODE as 'off' | 'clamav' | 'required') ?? (isProd ? 'required' : 'off')),
+      clamavHost: process.env.CLAMAV_HOST ?? 'localhost',
+      clamavPort: Number(process.env.CLAMAV_PORT ?? 3310),
+      clamavTimeoutMs: Number(process.env.CLAMAV_TIMEOUT_MS ?? 15000),
+    },
     swaggerEnabled: bool(process.env.SWAGGER_ENABLED, !isProd),
     logLevel: process.env.LOG_LEVEL ?? (isProd ? 'info' : 'debug'),
   };

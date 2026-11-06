@@ -113,7 +113,7 @@ describe('Files, settings, audit logs, notifications, announcements, dashboard',
       expect((await upload(alice, Buffer.from('<svg/>'), 'x.svg', 'image/svg+xml')).status).toBe(415);
       expect((await upload(alice, Buffer.from('MZ'), 'run.exe', 'application/octet-stream')).status).toBe(415);
       expect((await upload(alice, Buffer.from('hello'), 'note.exe', 'text/plain')).status).toBe(415);
-      expect((await upload(alice, Buffer.from('not a png'), 'fake.png', 'image/png')).status).toBe(415);
+      expect((await upload(alice, Buffer.from('not a png'), 'fake.png', 'image/png')).status).toBe(400); // 내용-형식 불일치
       const none = await alice.agent.post('/api/v1/files').set('X-CSRF-Token', alice.csrf).field('x', 'y');
       expect(none.status).toBe(400);
     });

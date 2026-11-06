@@ -46,12 +46,17 @@ export async function api<T = unknown>(path: string, init: RequestInit & { query
     credentials: 'same-origin',
     body: json !== undefined ? JSON.stringify(json) : rest.body,
   });
-  if (res.status === 401 && typeof window !== 'undefined' && !path.startsWith('/auth/login')) {
-    const next = encodeURIComponent(window.location.pathname + window.location.search);
-    if (!window.location.pathname.startsWith('/admin/login')) window.location.href = `/admin/login?next=${next}`;
-  }
   const text = await res.text();
   const body = text ? safeJson(text) : undefined;
+  if (typeof window !== 'undefined' && (res.status === 401 || res.status === 403) && !path.startsWith('/auth/login') && !path.startsWith('/auth/mfa')) {
+    const code = (body as { code?: string } | undefined)?.code;
+    const here = window.location.pathname;
+    const next = encodeURIComponent(here + window.location.search);
+    // MFA 미완료/미등록 세션은 해당 단계로, 세션 만료는 로그인으로
+    if (code === 'MFA_REQUIRED' && !here.startsWith('/admin/mfa')) window.location.href = `/admin/mfa?next=${next}`;
+    else if (code === 'MFA_ENROLLMENT_REQUIRED' && !here.startsWith('/admin/mfa')) window.location.href = `/admin/mfa/setup?next=${next}`;
+    else if (res.status === 401 && !code && !here.startsWith('/admin/login')) window.location.href = `/admin/login?next=${next}`;
+  }
   if (!res.ok) {
     const msg = (body as { message?: string | string[] } | undefined)?.message;
     throw new ApiError(res.status, Array.isArray(msg) ? msg.join('\n') : msg ?? `요청 실패 (${res.status})`, body);

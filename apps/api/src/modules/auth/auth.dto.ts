@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export const PASSWORD_RULE = /^(?=.*[A-Za-z])(?=.*\d).{10,128}$/;
 export const PASSWORD_MESSAGE = '비밀번호는 10자 이상이며 영문과 숫자를 모두 포함해야 합니다.';
@@ -28,4 +28,30 @@ export class AcceptInvitationDto {
 
   @IsString() @Matches(PASSWORD_RULE, { message: PASSWORD_MESSAGE })
   password: string;
+}
+
+export class MfaPasswordDto {
+  @IsString() @MinLength(1) @MaxLength(128)
+  password: string;
+}
+
+export class MfaCodeDto {
+  @Matches(/^\d{6}$/, { message: '6자리 인증 코드를 입력하세요.' })
+  code: string;
+}
+
+export class MfaVerifyDto {
+  @IsOptional() @Matches(/^\d{6}$/, { message: '6자리 인증 코드를 입력하세요.' })
+  code?: string;
+
+  @IsOptional() @IsString() @MaxLength(40)
+  recoveryCode?: string;
+}
+
+export class MfaSensitiveDto {
+  @IsString() @MinLength(1) @MaxLength(128)
+  password: string;
+
+  @Matches(/^\d{6}$/, { message: '6자리 인증 코드를 입력하세요.' })
+  code: string;
 }

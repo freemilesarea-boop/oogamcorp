@@ -1,23 +1,14 @@
 import {
   Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, Res, UploadedFile, UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { memoryStorage } from 'multer';
 import type { AuthContext } from '../../common/auth/auth.types';
 import { CurrentUser, RequirePermissions } from '../../common/auth/decorators';
-import { loadConfig } from '../../config/configuration';
 import { INLINE_TYPES, contentDisposition } from './file-policy';
 import { FileQueryDto, UploadFileDto } from './files.dto';
 import { FilesService } from './files.service';
-
-const uploadOptions = {
-  storage: memoryStorage(),
-  limits: { fileSize: loadConfig().storage.maxUploadMb * 1024 * 1024, files: 1, fields: 10, fieldSize: 1024 },
-  // 한글 파일명을 UTF-8 로 해석
-  defParamCharset: 'utf8',
-};
+import { SingleFileUploadInterceptor } from './upload.interceptor';
 
 @ApiTags('Files')
 @RequirePermissions('files.read')
@@ -28,7 +19,7 @@ export class FilesController {
   @RequirePermissions('files.read', 'files.write')
   @Post()
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file', uploadOptions))
+  @UseInterceptors(SingleFileUploadInterceptor)
   upload(@CurrentUser() u: AuthContext, @UploadedFile() file: Express.Multer.File | undefined, @Body() dto: UploadFileDto) {
     return this.files.upload(u, file, dto);
   }
@@ -47,19 +38,30 @@ export class FilesController {
   @Get(':id/download')
   async download(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const { file, stream } = await this.files.open(u, id);
-    const inline = INLINE_TYPES.has(file.mimeType);
-    res.setHeader('Content-Type', file.mimeType);
+    // Content-Type 은 클라이언트 선언값이 아니라 업로드 시 판별한 실제 형식을 사용
+    // (판별값이 없는 기존 파일은 업로드 시 매직 바이트를 확인했던 이미지/PDF 만 선언값 사용)
+    const type = file.detectedMime ?? (INLINE_TYPES.has(file.mimeType) ? file.mimeType : 'application/octet-stream');
+    const inline = INLINE_TYPES.has(type);
+    res.setHeader('Content-Type', type);
     res.setHeader('Content-Length', String(file.size));
     res.setHeader('Content-Disposition', contentDisposition(inline ? 'inline' : 'attachment', file.originalName));
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Cache-Control', 'private, no-store');
-    // PDF 는 브라우저 내장 뷰어가 sandbox CSP 에서 동작하지 않으므로 제외
-    if (file.mimeType !== 'application/pdf') res.setHeader('Content-Security-Policy', "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox");
+    // 업로드 콘텐츠는 어떤 경우에도 스크립트 실행·외부 리소스 로드를 허용하지 않는다
+    res.setHeader('Content-Security-Policy', "sandbox; default-src 'none'");
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
     stream.on('error', () => {
       if (!res.headersSent) res.status(500).end();
       else res.destroy();
     });
     stream.pipe(res);
+  }
+
+  /** 악성코드 재검사 (엔진 오류로 다운로드가 차단된 파일). 업로더 본인 또는 settings.manage */
+  @RequirePermissions('files.read', 'files.write')
+  @Post(':id/rescan')
+  rescan(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string) {
+    return this.files.rescan(u, id);
   }
 
   @RequirePermissions('files.read', 'files.write')

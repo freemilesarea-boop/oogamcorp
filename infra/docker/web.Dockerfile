@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 # OOGAM Web (Next.js standalone)
 FROM node:22-bookworm-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH NEXT_TELEMETRY_DISABLED=1
@@ -8,7 +9,10 @@ FROM base AS build
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc tsconfig.base.json ./
 COPY packages/shared/package.json packages/shared/
 COPY apps/web/package.json apps/web/
-RUN pnpm install --frozen-lockfile --filter @oogam/web... --filter @oogam/shared
+# 사내 프록시/사설 CA 환경 빌드 시에만 선택적으로 CA 주입 (이미지에 남지 않음): --secret id=ca,src=<ca.pem>
+RUN --mount=type=secret,id=ca,required=false \
+    if [ -f /run/secrets/ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/ca; fi; \
+    pnpm install --frozen-lockfile --filter @oogam/web... --filter @oogam/shared
 COPY packages/shared packages/shared
 COPY apps/web apps/web
 ARG NEXT_PUBLIC_COLLAB_URL

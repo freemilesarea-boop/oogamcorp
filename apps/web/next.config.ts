@@ -12,6 +12,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // 병렬 작업/검수용 별도 빌드 디렉터리 지원
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   reactStrictMode: true,
   poweredByHeader: false,
   transpilePackages: ['@oogam/shared'],

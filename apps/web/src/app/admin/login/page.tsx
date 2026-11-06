@@ -26,10 +26,13 @@ function LoginForm() {
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      await api('/auth/login', { method: 'POST', json: values });
+      const r = await api<{ mfaRequired?: boolean; mfaEnrollmentRequired?: boolean }>('/auth/login', { method: 'POST', json: values });
       qc.clear();
-      const next = params.get('next');
-      router.replace(next && next.startsWith('/admin') && !next.startsWith('/admin/login') ? next : '/admin');
+      const raw = params.get('next');
+      const next = raw && raw.startsWith('/admin') && !raw.startsWith('/admin/login') && !raw.startsWith('/admin/mfa') ? raw : '/admin';
+      if (r.mfaRequired) router.replace(`/admin/mfa?next=${encodeURIComponent(next)}`);
+      else if (r.mfaEnrollmentRequired) router.replace(`/admin/mfa/setup?next=${encodeURIComponent(next)}`);
+      else router.replace(next);
     } catch (e) {
       setError((e as Error).message);
     }
@@ -52,15 +55,15 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="relative hidden flex-col justify-between bg-ink p-12 text-white lg:flex">
+      <aside className="relative hidden flex-col justify-between bg-ink p-12 text-white lg:flex">
         <Link href="/" className="text-lg font-black tracking-tight">OOGAM</Link>
         <div>
           <p className="text-5xl font-bold leading-[1.05] tracking-[-0.04em]">Ideas Become<br />Impact.</p>
           <p className="mt-6 max-w-sm text-sm text-gray-400">OOGAM 임직원 전용 워크스페이스입니다. 계정은 관리자 초대를 통해서만 발급됩니다.</p>
         </div>
-        <p className="text-xs text-gray-500">© OOGAM. Internal use only.</p>
-      </div>
-      <div className="flex items-center justify-center p-6">
+        <p className="text-xs text-gray-400">© OOGAM. Internal use only.</p>
+      </aside>
+      <main className="flex items-center justify-center p-6">
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <p className="mb-6 text-lg font-black tracking-tight lg:hidden">OOGAM</p>
@@ -70,7 +73,7 @@ export default function LoginPage() {
           <Suspense><LoginForm /></Suspense>
           <p className="mt-8 text-xs text-muted-foreground">외부 회원가입은 지원하지 않습니다. 계정이 필요하면 관리자에게 초대를 요청하세요.</p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

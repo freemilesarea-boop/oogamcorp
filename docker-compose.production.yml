@@ -8,7 +8,12 @@ x-app-env: &app-env
   DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
   REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
   WEB_ORIGINS: ${WEB_ORIGINS}
-  COOKIE_SECURE: "true"
+  COOKIE_SECURE: ${COOKIE_SECURE:-true}
+  APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY}
+  MFA_REQUIRED_ROLES: ${MFA_REQUIRED_ROLES:-OWNER,EXECUTIVE}
+  MALWARE_SCAN_MODE: ${MALWARE_SCAN_MODE:-required}
+  CLAMAV_HOST: clamav
+  CLAMAV_PORT: 3310
   SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-12}
   SESSION_IDLE_MINUTES: ${SESSION_IDLE_MINUTES:-120}
   IP_HASH_SALT: ${IP_HASH_SALT}
@@ -62,7 +67,7 @@ services:
 
   api:
     build: { context: ., dockerfile: infra/docker/api.Dockerfile }
-    image: oogam-api:latest
+    image: oogam-api:${API_IMAGE_TAG:-latest}
     restart: unless-stopped
     command: ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
     environment: *app-env
@@ -72,8 +77,20 @@ services:
       redis: { condition: service_healthy }
     networks: [frontend, backend]
 
+  # 업로드 악성코드 검사 (clamd). 서명 DB 갱신(freshclam)에 database.clamav.net 아웃바운드 필요
+  clamav:
+    image: clamav/clamav:1.4
+    restart: unless-stopped
+    volumes: [clamavdb:/var/lib/clamav]
+    healthcheck:
+      test: ["CMD-SHELL", "clamdcheck.sh"]
+      interval: 60s
+      start_period: 300s
+      retries: 3
+    networks: [backend, egress]
+
   collab:
-    image: oogam-api:latest
+    image: oogam-api:${API_IMAGE_TAG:-latest}
     restart: unless-stopped
     command: ["node", "dist/collab.js"]
     environment: *app-env
@@ -86,7 +103,7 @@ services:
     networks: [frontend, backend]
 
   worker:
-    image: oogam-api:latest
+    image: oogam-api:${API_IMAGE_TAG:-latest}
     restart: unless-stopped
     command: ["node", "dist/worker.js"]
     environment: *app-env
@@ -126,8 +143,11 @@ networks:
   frontend:
   backend:
     internal: true
+  # clamav 서명 갱신 전용 외부 통신 네트워크 (DB/Redis 는 연결하지 않음)
+  egress:
 
 volumes:
+  clamavdb:
   pgdata:
   redisdata:
   uploads:

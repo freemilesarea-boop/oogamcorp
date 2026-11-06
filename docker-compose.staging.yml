@@ -1,0 +1,14 @@
+# 스테이징 오버레이: 운영 구성과 동일한 서비스, 로컬/스테이징 포트로만 노출
+# 사용: docker compose -f docker-compose.production.yml -f docker-compose.staging.yml --env-file .env.staging up -d
+services:
+  proxy:
+    ports: !override
+      - "127.0.0.1:${STAGING_HTTP_PORT:-8080}:80"
+  web:
+    image: oogam-web:staging
+  api:
+    image: oogam-api:staging
+  collab:
+    image: oogam-api:staging
+  worker:
+    image: oogam-api:staging

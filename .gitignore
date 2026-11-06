@@ -8,7 +8,8 @@ coverage/
 .env.*
 !.env.example
 !.env.test
-storage/
+/storage/
+apps/api/storage/
 backups/
 playwright-report/
 test-results/
@@ -19,3 +20,5 @@ next-env.d.ts
 dist-*/
 **/.test-storage/
 **/.e2e-storage/
+.next-*/
+!.env.staging.example

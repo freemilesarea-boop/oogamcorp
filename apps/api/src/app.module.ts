@@ -4,6 +4,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
 import { randomUUID } from 'node:crypto';
 import { loadConfig } from './config/configuration';
+import { redactUrl } from './common/utils/log-redact';
 import { ActivityModule } from './common/activity/activity.service';
 import { AuditModule } from './common/audit/audit.service';
 import { AuthCoreModule } from './common/auth/auth-core.module';
@@ -49,6 +50,10 @@ const cfg = loadConfig();
         autoLogging: { ignore: (req) => (req.url ?? '').includes('/health') },
         transport: cfg.env === 'development' ? { target: 'pino-pretty', options: { singleLine: true } } : undefined,
         quietReqLogger: true,
+        // 요청 본문은 로깅하지 않으며, URL 의 민감 쿼리 값(토큰·비밀번호 등)은 마스킹
+        serializers: {
+          req: (req: { id?: unknown; method?: string; url?: string; remoteAddress?: string }) => ({ id: req.id, method: req.method, url: redactUrl(req.url), remoteAddress: req.remoteAddress }),
+        },
         enabled: cfg.env !== 'test',
       },
     }),

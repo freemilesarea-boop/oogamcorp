@@ -1,14 +1,19 @@
+# syntax=docker/dockerfile:1.7
 # OOGAM API / Collaboration / Worker 공용 이미지 (명령으로 프로세스 선택)
-FROM node:22-bookworm-slim AS base
+# Prisma 엔진에 OpenSSL(libssl3) 이 필요 → 이를 포함한 bookworm 이미지를 사용 (apt 네트워크 의존 제거)
+FROM node:22-bookworm AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
-RUN corepack enable && apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN corepack enable
 WORKDIR /app
 
 FROM base AS build
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc tsconfig.base.json ./
 COPY packages/shared/package.json packages/shared/
 COPY apps/api/package.json apps/api/
-RUN pnpm install --frozen-lockfile --filter @oogam/api... --filter @oogam/shared
+# 사내 프록시/사설 CA 환경 빌드 시에만 선택적으로 CA 주입 (이미지에 남지 않음): --secret id=ca,src=<ca.pem>
+RUN --mount=type=secret,id=ca,required=false \
+    if [ -f /run/secrets/ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/ca; fi; \
+    pnpm install --frozen-lockfile --filter @oogam/api... --filter @oogam/shared
 COPY packages/shared packages/shared
 COPY apps/api apps/api
 RUN pnpm --filter @oogam/shared build && pnpm --filter @oogam/api build
