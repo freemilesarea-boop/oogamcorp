@@ -17,3 +17,5 @@ test-results/
 .DS_Store
 next-env.d.ts
 dist-*/
+**/.test-storage/
+**/.e2e-storage/

@@ -76,6 +76,9 @@ export function DocEditor({ pageId, content, version, editable, collab, onStatus
         onStatusRef.current({ kind: 'conflict', currentVersion: (e.body as { currentVersion?: number } | undefined)?.currentVersion });
       } else {
         onStatusRef.current({ kind: 'error', message: (e as Error).message });
+        // 네트워크/서버 오류는 잠시 후 재시도
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => void save(), 5000);
       }
     } finally {
       savingRef.current = false;

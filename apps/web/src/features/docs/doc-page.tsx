@@ -49,6 +49,7 @@ function DocView({ doc, refetch }: { doc: DocumentDetail; refetch: () => Promise
   const reload = async () => {
     const res = await refetch();
     if (res.data) setSnapshot(res.data);
+    setOverwrite(null);
     setStatus({ kind: 'idle' });
     setEditorKey((k) => k + 1);
   };

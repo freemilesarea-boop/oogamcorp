@@ -111,7 +111,7 @@ function AnnouncementsInner() {
       <AnnouncementDialog
         id={openId}
         onClose={() => setOpen(null)}
-        onEdit={(a) => setCompose({ editing: a })}
+        onEdit={(a) => { setOpen(null); setCompose({ editing: a }); }}
         onDelete={(a) => setToDelete(a)}
       />
       <ComposeDialog open={!!compose} onOpenChange={(o) => !o && setCompose(null)} editing={compose?.editing ?? null} />
