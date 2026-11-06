@@ -59,6 +59,7 @@ docker compose -f docker-compose.production.yml -f docker-compose.staging.yml --
 | 공동 편집 | Nginx `/collab` WebSocket 경유 쿠키 인증 → 동기화 → 편집 DB 저장(버전 증가), 위조 세션 거부 |
 | 재시작 영속성 | `compose down` → `up` 후 세션·문서·협업 편집 내용·업로드 파일 바이트·Redis 데이터 유지 |
 | 네트워크 노출 | 호스트 공개 포트는 proxy(127.0.0.1:8080) 뿐, postgres/redis 는 `internal` 네트워크 전용 |
+| E2E (스테이징 대상) | 수정 반영 이미지 재빌드 후 `E2E_EXTERNAL=1 BASE_URL=http://localhost:8080` 로 공개 페이지·반응형·보안 헤더 15/15 통과 |
 | 미검증 | HTTPS/인증서(443 블록), S3 실제 버킷, SMTP 실제 발송, ClamAV 서명 자동 갱신(이 환경에서 database.clamav.net 차단 — 이미지 번들 서명으로만 검사) |
 
 ## 4. HTTPS (승인 후)
