@@ -1,10 +1,11 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+import { Suspense } from 'react';
+import { LoadingRows } from '@/components/admin/states';
+import { CalendarPage } from '@/features/calendar/calendar-page';
 
 export default function Page() {
   return (
-    <>
-      <PageHeader title="캘린더" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
-    </>
+    <Suspense fallback={<LoadingRows rows={8} />}>
+      <CalendarPage />
+    </Suspense>
   );
 }
