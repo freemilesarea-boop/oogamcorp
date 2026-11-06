@@ -20,6 +20,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 import { CmsModule } from './modules/cms/cms.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { EntityAccessModule } from './modules/access/entity-access.service';
+import { DirectoryModule } from './modules/directory/directory.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { DatabasesModule } from './modules/databases/databases.module';
 import { DocumentsModule } from './modules/documents/documents.module';
@@ -60,6 +62,8 @@ const cfg = loadConfig();
     NotifyModule,
     HealthModule,
     AuthModule,
+    EntityAccessModule,
+    DirectoryModule,
     EmployeesModule,
     TeamsModule,
     WorkspacesModule,

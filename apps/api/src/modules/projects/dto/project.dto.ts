@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-  ArrayMaxSize, IsArray, IsDateString, IsEnum, IsIn, IsInt, IsOptional, IsString, IsUUID, Matches, Max, MaxLength, Min, MinLength, ValidateNested,
+  ArrayMaxSize, IsArray, IsBoolean, IsDateString, IsEnum, IsIn, IsInt, IsOptional, IsString, IsUUID, Matches, Max, MaxLength, Min, MinLength, ValidateNested,
 } from 'class-validator';
 import { EntityType, MilestoneStatus, Priority, ProjectMemberRole, ProjectStatus, TaskStatus } from '@prisma/client';
 import { PaginationQueryDto } from '../../../common/dto/pagination.dto';
@@ -78,7 +78,7 @@ export class LinkDto {
 export class ChecklistItemDto {
   @IsString() @MaxLength(50) id: string;
   @IsString() @MaxLength(500) text: string;
-  done: boolean;
+  @IsBoolean() done: boolean;
 }
 
 export class ChecklistDto {

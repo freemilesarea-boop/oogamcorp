@@ -7,6 +7,10 @@ import type { AuthContext } from '../../common/auth/auth.types';
 import { CurrentUser, Public, SkipCsrf } from '../../common/auth/decorators';
 import { SessionService } from '../../common/auth/session.service';
 import { reqMeta } from '../../common/utils/request';
+import { loadConfig } from '../../config/configuration';
+
+/** 테스트 환경에서는 제한을 완화 (운영/개발은 IP 당 분당 제한 적용) */
+const limit = (n: number) => () => (loadConfig().env === 'test' ? 10_000 : n);
 import { AcceptInvitationDto, ChangePasswordDto, LoginDto } from './auth.dto';
 import { AuthService } from './auth.service';
 
@@ -22,7 +26,7 @@ export class AuthController {
   /** 로그인 (IP 당 분당 10회 제한 + 계정 단위 실패 잠금) */
   @Public()
   @SkipCsrf()
-  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @Throttle({ default: { limit: limit(10), ttl: 60_000 } })
   @Post('login')
   @HttpCode(200)
   async login(@Body() dto: LoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -63,7 +67,7 @@ export class AuthController {
   }
 
   @Public()
-  @Throttle({ default: { limit: 20, ttl: 60_000 } })
+  @Throttle({ default: { limit: limit(20), ttl: 60_000 } })
   @Get('invitation')
   invitation(@Query('token') token: string) {
     return this.auth.invitationInfo(String(token ?? ''));
@@ -71,7 +75,7 @@ export class AuthController {
 
   @Public()
   @SkipCsrf()
-  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  @Throttle({ default: { limit: limit(5), ttl: 60_000 } })
   @Post('accept-invitation')
   @HttpCode(200)
   async accept(@Body() dto: AcceptInvitationDto, @Req() req: Request) {
