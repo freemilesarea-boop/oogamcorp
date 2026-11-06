@@ -14,12 +14,13 @@ export default defineConfig({
   retries: 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   timeout: 60_000,
-  use: { baseURL: 'http://localhost:3000', trace: 'off', locale: 'ko-KR', timezoneId: 'Asia/Seoul' },
+  use: { baseURL: process.env.BASE_URL ?? 'http://localhost:3000', trace: 'off', locale: 'ko-KR', timezoneId: 'Asia/Seoul' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] }, testIgnore: /responsive\.spec\.ts/ },
     { name: 'mobile', use: { ...devices['Pixel 7'] }, testMatch: /responsive\.spec\.ts/ },
   ],
-  webServer: [
+  // E2E_EXTERNAL=1: 이미 실행 중인 서버(예: 스테이징 프록시)를 대상으로 실행 — BASE_URL 로 주소 지정
+  webServer: process.env.E2E_EXTERNAL ? undefined : [
     {
       command: 'bash e2e/start-api.sh',
       url: 'http://localhost:4000/api/v1/health/live',

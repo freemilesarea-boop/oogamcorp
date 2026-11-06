@@ -21,7 +21,7 @@ export const getPosts = cache((type: PostType | undefined, page = 1, pageSize = 
   return publicFetch<PublicPaginated<PublicPost>>(`/posts?${sp.toString()}`);
 });
 export const getPost = cache((type: PostType, slug: string) => publicFetch<PublicPost>(`/posts/${type}/${encodeURIComponent(slug)}`));
-export const getSitemap = () => publicFetch<SitemapData>('/sitemap', 300);
+export const getSitemap = () => publicFetch<SitemapData>('/sitemap');
 
 /** CMS SEO 필드 → Next Metadata (OpenGraph 포함) */
 export function seoMetadata(opts: { seo?: Partial<Seo> | null; fallbackTitle: string; fallbackDescription?: string; path: string; image?: string | null; type?: 'website' | 'article' }): Metadata {

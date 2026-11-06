@@ -6,7 +6,7 @@ import { Toaster } from 'sonner';
 import { ApiError } from '@/lib/api';
 import { TooltipProvider } from '@/components/ui/misc';
 
-export function AdminProviders({ children }: { children: React.ReactNode }) {
+export function AdminProviders({ children, nonce }: { children: React.ReactNode; nonce?: string }) {
   const [client] = useState(
     () =>
       new QueryClient({
@@ -20,7 +20,7 @@ export function AdminProviders({ children }: { children: React.ReactNode }) {
       }),
   );
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem storageKey="oogam-admin-theme">
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem storageKey="oogam-admin-theme" nonce={nonce}>
       <QueryClientProvider client={client}>
         <TooltipProvider>
           {children}

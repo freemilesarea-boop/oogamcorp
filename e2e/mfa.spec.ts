@@ -27,6 +27,8 @@ test('MFA: 등록 → 로그아웃 → 재로그인 시 2단계 검증 요구 �
   // 계정 설정에서 MFA 등록
   await p.goto('/admin/settings');
   await p.getByRole('link', { name: '2단계 인증 설정' }).click();
+  await expect(p).toHaveURL(/\/admin\/mfa\/setup/);
+  await expect(p.getByRole('heading', { name: '2단계 인증 등록' })).toBeVisible();
   await p.getByLabel('현재 비밀번호').fill(USER.password);
   await p.getByRole('button', { name: '다음' }).click();
   await expect(p.getByAltText('인증 앱 등록용 QR 코드')).toBeVisible();
@@ -55,7 +57,7 @@ test('MFA: 등록 → 로그아웃 → 재로그인 시 2단계 검증 요구 �
 
   await p.getByLabel('인증 코드').fill('000000');
   await p.getByRole('button', { name: '확인' }).click();
-  await expect(p.getByRole('alert')).toContainText('올바르지 않습니다');
+  await expect(p.getByText('인증 코드가 올바르지 않습니다.')).toBeVisible();
   await p.getByLabel('인증 코드').fill(totp(secret, 1));
   await p.getByRole('button', { name: '확인' }).click();
   await expect(p).toHaveURL(/\/admin\/projects/);

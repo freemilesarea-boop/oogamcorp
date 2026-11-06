@@ -1,6 +1,6 @@
 # OOGAM 구현 현황
 
-기준일: 2026-11-06 · 판정 기준: **IMPLEMENTED**(API+UI+테스트로 검증) / **PARTIAL**(핵심 동작하나 일부 미구현) / **SCAFFOLDED**(구조만) / **NOT_STARTED** / **BLOCKED**(외부 승인·자원 필요)
+기준일: 2026-11-06 (2차: 보안 강화·스테이징 검증 반영) · 판정 기준: **IMPLEMENTED**(API+UI+테스트로 검증) / **PARTIAL**(핵심 동작하나 일부 미구현) / **SCAFFOLDED**(구조만) / **NOT_STARTED** / **BLOCKED**(외부 승인·자원 필요)
 
 ## 검증 결과 요약
 | 항목 | 결과 |
@@ -15,9 +15,10 @@
 | API build (`nest build`) | 성공 (main / collab / worker) |
 | collab 서버 / worker 기동 | 기동 확인, worker 작업(유지보수·마감 알림) 실행 확인 |
 | Docker Compose 설정 (`docker compose config`) | 개발·운영 모두 유효 |
-| Docker 이미지 빌드 | **미실행** — 이 환경에 Docker 데몬 없음 |
+| Docker 이미지 빌드 | 성공 (api 555MB, web 449MB) — 2차 검증 |
+| Docker 스테이징 기동 (8개 서비스) | 성공, healthcheck·프록시 경유 통신·재시작 영속성 확인 — DEPLOYMENT.md §3-1 |
 | 백업 → 복원 | 로컬 pg_dump 백업을 별도 DB 에 복원, 행 수 일치 확인 |
-| 브라우저 육안 디자인 검수 | **미실시** (자동화 테스트로 렌더링·반응형만 확인) |
+| 디자인·사용성 검수 | 실시 — 3개 뷰포트 스크린샷 61장(`docs/screenshots/`), 칸반 드래그·에디터 슬래시 블록·모바일 메뉴·키보드 실사용 확인, axe serious/critical 25→0 |
 
 ## Phase 1 — Repository & Infrastructure
 | 기능 | 상태 | 비고 |
@@ -27,9 +28,9 @@
 | 환경 기반 설정 / 개발·스테이징·운영 분리 | IMPLEMENTED | 운영에서 필수 env 누락 시 기동 거부 |
 | 구조화 로깅 (pino, 요청 ID, 민감 헤더 redaction) | IMPLEMENTED | |
 | 헬스 체크 (live / DB·Redis readiness) | IMPLEMENTED | |
-| Dockerfile (api 공용 이미지 / web standalone) | PARTIAL | 작성 완료, 이 환경에서 이미지 빌드 미검증 |
-| docker-compose.yml / docker-compose.production.yml | PARTIAL | config 검증 통과, 실제 기동 미검증. 운영 DB/Redis 내부망 전용 |
-| Nginx reverse proxy (HTTPS-ready) | PARTIAL | 설정 작성, 443 블록은 인증서 발급 후 활성화 |
+| Dockerfile (api 공용 이미지 / web standalone) | IMPLEMENTED | 이미지 빌드 검증. 사설 CA 빌드 시크릿 지원 |
+| docker-compose.yml / docker-compose.production.yml (+ staging 오버레이) | IMPLEMENTED | 스테이징 오버레이로 실제 기동·재시작 영속성 검증, DB/Redis 내부망 전용 확인 |
+| Nginx reverse proxy (HTTPS-ready) | PARTIAL | HTTP 경유 라우팅·WebSocket(/collab) 검증. 443/인증서는 미검증(승인 필요) |
 | 백업/복구 스크립트 | IMPLEMENTED | 로컬 스크립트로 복원 검증. Docker 버전 스크립트는 문법만 검증 |
 | CI (GitHub Actions) | SCAFFOLDED | 워크플로 작성, 원격 실행 미확인 |
 | 운영 배포 / DNS / 인증서 / 방화벽 | BLOCKED | 별도 승인 필요 (DEPLOYMENT.md) |
@@ -57,7 +58,9 @@
 | RBAC (5개 역할, OWNER≠EXECUTIVE) + 권한 매트릭스 UI | IMPLEMENTED | 서열 규칙, 마지막 OWNER 보호 |
 | 리소스별 접근 제어 (프로젝트/문서/DB/결재/일정/파일) | IMPLEMENTED | API·파일 다운로드·공동 편집 연결 모두 서버 검증 |
 | 모듈 권한 명시 부여 (사용자/부서, 만료) | IMPLEMENTED | |
-| MFA | SCAFFOLDED | 데이터 필드·로그인 응답 구조만 존재 |
+| MFA (TOTP: 등록·검증·해제·복구 코드·관리자 초기화) | IMPLEMENTED | 미완료 세션 API·공동 편집 차단, OWNER/EXECUTIVE 필수 정책(운영 기본) |
+| CSP (웹 nonce + strict-dynamic, API default-src 'none', 다운로드 sandbox) | IMPLEMENTED | 주요 화면 위반 0건 E2E 검증 |
+| 로그 민감정보 보호 | IMPLEMENTED | 실측 점검 후 URL 쿼리 마스킹 추가 |
 | 관리자 레이아웃 (접이식 사이드바, 검색, 알림 센터, 프로필, Breadcrumb, 다크모드, 반응형, 단축키) | IMPLEMENTED | |
 | 대시보드 | IMPLEMENTED | 재무 카드는 finance.read 보유 시만 |
 | 직원 관리 (목록, 상세, 역할/부서 변경, 비활성화, 활동) | IMPLEMENTED | |
@@ -75,7 +78,8 @@
 | 프로젝트별 사용자 정의 상태 | IMPLEMENTED | |
 | 프로젝트 뷰: List / Kanban / Calendar / Timeline | IMPLEMENTED | |
 | Gantt | NOT_STARTED | 후속 단계 (화면에 표시) |
-| 파일 (로컬/S3 드라이버, MIME 허용목록, 다운로드 권한 재검사) | PARTIAL | S3 드라이버 실제 버킷 연동 미검증 |
+| 파일 (로컬/S3 드라이버, 매직바이트 판별, 위험 형식 차단, 다운로드 권한 재검사) | PARTIAL | S3 실제 버킷 연동 미검증 |
+| 악성코드 검사 (ClamAV, fail-closed 정책) | IMPLEMENTED | 스테이징에서 실제 clamd 탐지 확인. 서명 자동 갱신은 이 환경 네트워크 차단으로 미검증 |
 | 인앱 알림 (배정, 멘션, 결재, 공지, 마감) | IMPLEMENTED | |
 | 이메일 알림 | BLOCKED | 코드 구현(nodemailer), SMTP 설정·승인 필요 |
 
@@ -115,11 +119,24 @@
 | 보안 검토 | PARTIAL | SECURITY.md 에 설계·제한 사항 정리, 외부 침투 테스트 미실시 |
 | 문서 (README, ARCHITECTURE, DATABASE, API, SECURITY, DEPLOYMENT, ROADMAP) | IMPLEMENTED | |
 
+## 2차 작업에서 해결된 이슈
+- 초대 토큰 원문이 Redis 작업 데이터에 저장되던 문제 → AES-256-GCM 암호문만 저장 (테스트로 원문 0건 확인)
+- CSP 미적용 → 웹/API/다운로드 모두 적용
+- **(중대) `.gitignore`/`.dockerignore` 의 `storage/` 패턴이 `apps/api/src/common/storage/` 소스를 제외** → 1차 푸시본은 새 클론에서 빌드 불가였음. 패턴 수정 후 커밋
+- `nest build` 증분 캐시로 `dist` 가 비어 버리는 문제 → 빌드 설정에서 incremental 비활성
+- URL 쿼리의 토큰/비밀번호가 API 로그에 기록되던 문제 → 마스킹
+- 공개 사이트 데이터 캐시(stale-while-revalidate)로 게시 취소된 콘텐츠가 재시작 후에도 노출되던 문제 → CMS 조회 캐시 제거(no-store)
+- 관리자 테마 스크립트가 CSP 에 차단되던 문제 → nonce 전달
+- HTTP 스테이징에서 `upgrade-insecure-requests` 가 리소스를 깨뜨리던 문제 → HTTPS 요청에서만 적용
+- 키보드 포커스 비가시(다크 영역), 모바일 드로어 포커스 누출, 탭 가로 넘침, 명도 대비 등 UI·접근성 문제
+
 ## 알려진 이슈 / 후속 조치
-1. SMTP 활성화 시 초대 메일 작업 동안 초대 토큰이 Redis 작업 데이터에 일시 저장됨 → 작업 페이로드 암호화 또는 토큰 재발급 방식으로 변경 권장
-2. 공개 사이트 CSP 미적용, 외부 폰트 CDN 사용
-3. 레이트 리밋 인메모리 저장소 (다중 인스턴스 시 Redis 저장소 필요)
-4. 문서 트리/검색이 요청마다 조직 전체 페이지 권한을 계산 (대규모 시 최적화 필요)
-5. CMS 페이지 SEO 필드는 초안 없이 즉시 반영
-6. 파일 삭제 시 객체 삭제 실패는 로그만 남김 (정리 배치 없음)
-7. 결재 번호 연도는 서버 로컬 시간 기준
+1. 레이트 리밋 인메모리 저장소 (다중 인스턴스 시 Redis 저장소 필요)
+2. 스타일 CSP `'unsafe-inline'`, 외부 폰트 CDN(jsdelivr) 의존 — 자체 호스팅 권장
+3. ClamAV 서명 자동 갱신 미검증 (운영 서버에서 freshclam 성공 확인 필요)
+4. 칸반은 마우스 드래그만 지원 (키보드 사용자는 업무 패널에서 상태 변경)
+5. 이미 열린 공동 편집 연결은 세션 폐기 후 즉시 끊기지 않음
+6. 문서 트리/검색이 요청마다 조직 전체 페이지 권한을 계산 (대규모 시 최적화 필요)
+7. CMS 페이지 SEO 필드는 초안 없이 즉시 반영
+8. 파일 삭제 시 객체 삭제 실패는 로그만 남김 (정리 배치 없음)
+9. 결재 번호 연도는 서버 로컬 시간 기준
