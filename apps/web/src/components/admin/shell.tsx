@@ -295,8 +295,10 @@ function ProfileMenu({ me }: { me: Me }) {
   };
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full" aria-label={`${me.user.name} 계정 메뉴`} data-testid="profile-menu">
+      <DropdownMenuTrigger className="rounded-full" data-testid="profile-menu">
+        {/* 이니셜은 장식 — 접근 가능한 이름은 sr-only 텍스트로 제공 (label-content-name-mismatch 방지) */}
         <span aria-hidden className="block"><Avatar name={me.user.name} src={me.user.avatarUrl} className="size-8" /></span>
+        <span className="sr-only">{me.user.name} 계정 메뉴</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
