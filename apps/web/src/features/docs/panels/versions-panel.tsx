@@ -80,7 +80,7 @@ export function VersionsPanel({ pageId, canEdit, onRestored }: { pageId: string;
             {detail.isLoading ? <LoadingRows rows={4} /> : detail.isError ? <ErrorState error={detail.error} /> : detail.data && (
               <>
                 <h2 className="mb-3 text-2xl font-bold">{detail.data.title || '제목 없음'}</h2>
-                <div className="doc-compact-wrap"><DocPreview content={detail.data.content} /></div>
+                <DocPreview content={detail.data.content} />
               </>
             )}
           </div>

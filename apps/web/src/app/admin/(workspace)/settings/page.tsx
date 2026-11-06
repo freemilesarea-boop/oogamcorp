@@ -1,10 +1,26 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+'use client';
+import { PageHeader } from '@/components/admin/states';
+import { useCan } from '@/lib/auth';
+import { MfaCard, PasswordCard, ProfileCard, SessionsCard } from '@/features/settings/account';
+import { SystemSettings } from '@/features/settings/system-settings';
 
-export default function Page() {
+export default function SettingsPage() {
+  const can = useCan();
   return (
     <>
-      <PageHeader title="설정" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
+      <PageHeader title="내 계정" description="프로필, 비밀번호, 로그인된 기기를 관리합니다." />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ProfileCard />
+        <PasswordCard />
+        <div className="lg:col-span-2"><SessionsCard /></div>
+        <div className="lg:col-span-2"><MfaCard /></div>
+      </div>
+      {can('settings.manage') && (
+        <section className="mt-10">
+          <h2 className="mb-4 text-lg font-semibold tracking-tight">시스템 설정</h2>
+          <SystemSettings />
+        </section>
+      )}
     </>
   );
 }

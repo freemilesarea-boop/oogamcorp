@@ -48,10 +48,11 @@ export function DocEditor({ pageId, content, version, editable, collab, onStatus
   const imageInput = useRef<HTMLInputElement>(null);
   const onStatusRef = useRef(onStatus);
   onStatusRef.current = onStatus;
+  const isCollab = !!collab;
 
   const save = useCallback(async (opts: { keepalive?: boolean; baseVersion?: number } = {}) => {
     const editor = editorRef.current;
-    if (!editor || collab) return;
+    if (!editor || isCollab) return;
     if (savingRef.current) {
       pendingRef.current = true;
       return;
@@ -83,16 +84,16 @@ export function DocEditor({ pageId, content, version, editable, collab, onStatus
         void save();
       }
     }
-  }, [pageId, collab]);
+  }, [pageId, isCollab]);
 
   const schedule = useCallback(() => {
-    if (collab) return;
+    if (isCollab) return;
     dirtyRef.current = true;
     if (blockedRef.current) return;
     onStatusRef.current({ kind: 'dirty' });
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => void save(), AUTOSAVE_MS);
-  }, [collab, save]);
+  }, [isCollab, save]);
 
   const openUpload = useCallback((kind: 'image' | 'file') => (kind === 'image' ? imageInput : fileInput).current?.click(), []);
 
@@ -166,7 +167,7 @@ export function DocEditor({ pageId, content, version, editable, collab, onStatus
 
   // 페이지 이탈 시 미저장 내용 저장 + 경고
   useEffect(() => {
-    if (collab) return;
+    if (isCollab) return;
     const beforeUnload = (e: BeforeUnloadEvent) => {
       if (dirtyRef.current || savingRef.current) e.preventDefault();
     };
@@ -176,7 +177,7 @@ export function DocEditor({ pageId, content, version, editable, collab, onStatus
       if (timerRef.current) clearTimeout(timerRef.current);
       if (dirtyRef.current && !blockedRef.current) void save({ keepalive: true });
     };
-  }, [collab, save]);
+  }, [isCollab, save]);
 
   if (!editor) return <div className="doc-prose animate-pulse text-muted-foreground" aria-busy="true">불러오는 중…</div>;
 

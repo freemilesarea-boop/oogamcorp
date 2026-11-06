@@ -1,7 +1,7 @@
 'use client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, CornerDownRight, MessageSquare, MoreHorizontal, Pencil, RotateCcw, Trash2 } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { EmptyState, ErrorState, LoadingRows } from '@/components/admin/states';
 import { Button } from '@/components/ui/button';
@@ -176,7 +176,7 @@ function Composer({
   const [active, setActive] = useState(0);
   const [busy, setBusy] = useState(false);
   const ref = useRef<HTMLTextAreaElement>(null);
-  const listId = useMemo(() => `mention-${Math.random().toString(36).slice(2)}`, []);
+  const listId = useId();
 
   const matches = useMemo(() => {
     if (query === null) return [];

@@ -1,10 +1,8 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+'use client';
+import { useParams } from 'next/navigation';
+import { DocPage } from '@/features/docs/doc-page';
 
-export default function Page() {
-  return (
-    <>
-      <PageHeader title="문서" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
-    </>
-  );
+export default function DocumentPage() {
+  const { id } = useParams<{ id: string }>();
+  return <DocPage id={id} />;
 }
