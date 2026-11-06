@@ -9,8 +9,10 @@
 | ESLint (api / web) | 오류 0 (경고 2: next 기본 규칙 스타일 경고) |
 | Shared 단위 테스트 (Vitest) | 8/8 통과 |
 | Web 단위 테스트 (Vitest, 마크다운 렌더러) | 3/3 통과 |
-| API 통합 테스트 (Jest + Supertest + 실제 PostgreSQL, 10개 스위트) | **149/149 통과** |
-| E2E (Playwright, 실제 production 빌드 + API + PostgreSQL) | **21/21 통과** |
+| 보안 회귀 (`test/security.e2e-spec.ts`) | 21/21 — MFA·우회·초대 토큰 큐·세션/CSRF/권한·로그인 레이트 리밋 |
+| 업로드 보안 (`test/files-security.e2e-spec.ts`) | 27/27 |
+| API 테스트 (Jest: 통합 12개 스위트 + 단위 4개, 실제 PostgreSQL·Redis) | **246/246 통과** (1차 149 → 보안·업로드·MFA 회귀 추가) |
+| E2E (Playwright, 실제 production 빌드 + API + PostgreSQL) | **24/24 통과** (MFA UI 흐름, 보안 헤더, CSP 위반 0건 추가) |
 | Web production build (`next build`) | 성공 (45 라우트) |
 | API build (`nest build`) | 성공 (main / collab / worker) |
 | collab 서버 / worker 기동 | 기동 확인, worker 작업(유지보수·마감 알림) 실행 확인 |
