@@ -1,0 +1,13 @@
+**/node_modules
+**/.next
+**/dist
+**/dist-*
+**/.test-storage
+**/storage
+.git
+.env
+.env.*
+!.env.example
+backups
+playwright-report
+test-results
