@@ -97,8 +97,8 @@ export class EntityAccessService {
         const perm = need === 'edit' ? 'finance.write' : 'finance.read';
         if (!auth.permissions.has(perm)) return false;
         const exists = type === 'BUDGET'
-          ? await this.prisma.budget.count({ where: { id, organizationId: auth.organizationId } })
-          : await this.prisma.financialTransaction.count({ where: { id, organizationId: auth.organizationId } });
+          ? await this.prisma.budget.count({ where: { id, organizationId: auth.organizationId, deletedAt: null } })
+          : await this.prisma.financialTransaction.count({ where: { id, organizationId: auth.organizationId, deletedAt: null } });
         return exists > 0;
       }
       case 'DATABASE':

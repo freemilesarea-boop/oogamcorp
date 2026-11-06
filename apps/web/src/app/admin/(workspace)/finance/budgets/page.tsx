@@ -1,10 +1,14 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+'use client';
+import { PageHeader } from '@/components/admin/states';
+import { BudgetsView } from '@/features/finance/budgets-view';
+import { FinanceGate, FinanceNotice } from '@/features/finance/common';
 
-export default function Page() {
+export default function BudgetsPage() {
   return (
     <>
-      <PageHeader title="예산" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
+      <PageHeader title="예산 관리" description="예산 편성 → 승인 → 집행. 승인 금액과 집행(승인된 지출 배분) 금액은 별도로 관리됩니다." />
+      <FinanceNotice />
+      <FinanceGate><BudgetsView /></FinanceGate>
     </>
   );
 }

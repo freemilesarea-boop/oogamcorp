@@ -1,10 +1,17 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+'use client';
+import { Suspense } from 'react';
+import { LoadingRows, PageHeader } from '@/components/admin/states';
+import { FinanceGate, FinanceNotice } from '@/features/finance/common';
+import { TransactionsView } from '@/features/finance/transactions-view';
 
-export default function Page() {
+export default function TransactionsPage() {
   return (
     <>
-      <PageHeader title="매출·지출" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
+      <PageHeader title="수입·지출 거래" description="거래 등록, 부가세 자동 계산, 증빙 첨부, 예산 배분, 승인/반려 (등록자 본인 승인 불가)" />
+      <FinanceNotice />
+      <FinanceGate>
+        <Suspense fallback={<LoadingRows />}><TransactionsView /></Suspense>
+      </FinanceGate>
     </>
   );
 }
