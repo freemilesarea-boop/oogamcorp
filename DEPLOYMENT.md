@@ -23,14 +23,43 @@ git clone <repo> /srv/oogam && cd /srv/oogam
 cp .env.example .env.production
 # 필수 값 수정: NODE_ENV=production, POSTGRES_PASSWORD, REDIS_PASSWORD, IP_HASH_SALT(openssl rand -hex 32),
 # WEB_ORIGINS=https://oogam.co.kr, PUBLIC_SITE_URL=https://oogam.co.kr, NEXT_PUBLIC_COLLAB_URL=wss://oogam.co.kr/collab,
-# COOKIE_SECURE=true, SWAGGER_ENABLED=false, STORAGE_DRIVER=s3 + S3_* (또는 local), SEED_OWNER_EMAIL/PASSWORD
+# COOKIE_SECURE=true, SWAGGER_ENABLED=false, STORAGE_DRIVER=s3 + S3_* (또는 local),
+# APP_ENCRYPTION_KEY(openssl rand -base64 32 — 분실 시 MFA 비밀키 복호화 불가, 별도 보관), MFA_REQUIRED_ROLES=OWNER,EXECUTIVE,
+# MALWARE_SCAN_MODE=required (clamav 서비스 필요)
 docker compose -f docker-compose.production.yml --env-file .env.production build
 docker compose -f docker-compose.production.yml --env-file .env.production up -d postgres redis
 docker compose -f docker-compose.production.yml --env-file .env.production up -d api   # 기동 시 prisma migrate deploy 자동 실행
-docker compose -f docker-compose.production.yml --env-file .env.production run --rm api npx tsx prisma/seed.ts   # 최초 1회
+docker compose -f docker-compose.production.yml --env-file .env.production exec \
+  -e SEED_OWNER_EMAIL=admin@oogam.co.kr -e SEED_OWNER_PASSWORD='<강력한 임시 비밀번호>' api npx tsx prisma/seed.ts   # 최초 1회 (비밀번호는 이 명령에만 전달)
 docker compose -f docker-compose.production.yml --env-file .env.production up -d
 ```
-시드 후 `.env.production` 의 `SEED_OWNER_PASSWORD` 는 삭제하고, 최고관리자로 로그인해 비밀번호를 즉시 변경하세요.
+최고관리자로 로그인하면 MFA 등록 화면으로 이동합니다(OWNER/EXECUTIVE 필수). 등록 후 복구 코드를 오프라인으로 보관하고 비밀번호를 즉시 변경하세요.
+
+## 3-1. 스테이징 (검증 완료 절차)
+운영과 동일한 `docker-compose.production.yml` 에 `docker-compose.staging.yml` 오버레이를 적용합니다 (프록시를 127.0.0.1:8080 에만 노출).
+```bash
+cp .env.staging.example .env.staging && chmod 600 .env.staging   # 모든 change-me 값을 무작위 값으로 교체
+docker build -f infra/docker/api.Dockerfile -t oogam-api:staging .
+docker build -f infra/docker/web.Dockerfile -t oogam-web:staging --build-arg NEXT_PUBLIC_COLLAB_URL=ws://localhost:8080/collab .
+docker compose -f docker-compose.production.yml -f docker-compose.staging.yml --env-file .env.staging up -d --no-build
+docker compose -f docker-compose.production.yml -f docker-compose.staging.yml --env-file .env.staging exec \
+  -e SEED_OWNER_EMAIL=owner@staging.oogam.invalid -e SEED_OWNER_PASSWORD='<임시>' api npx tsx prisma/seed.ts
+```
+사내 프록시·사설 CA 환경에서 빌드할 때는 `--secret id=ca,src=<ca.pem>` 와 프록시 build-arg 를 추가합니다(CA 는 이미지에 남지 않음).
+스테이징에는 **가상 데이터만** 사용합니다 (실제 고객·직원 데이터 금지).
+
+**스테이징 검증 결과 (2026-11-06, 이 저장소의 개발 컨테이너에서 Docker 29 로 실행)**
+| 항목 | 결과 |
+|---|---|
+| 이미지 빌드 | api 555MB, web 449MB 빌드 성공 |
+| 서비스 기동 | proxy, web, api, collab, worker, postgres, redis, clamav 8개 기동, healthcheck healthy |
+| 프록시 경유 | `/api/v1/health` DB·Redis up, 홈 200(CMS 히어로), `/admin` → 로그인 307, CSP·보안 헤더, `/api/docs` 403 |
+| MFA 정책 | 운영 모드에서 OWNER 로그인 시 `MFA_ENROLLMENT_REQUIRED`, 등록 후 접근 허용 |
+| 업로드/ClamAV | 정상 파일 CLEAN(clamav), 압축 ZIP 내 EICAR 를 clamd 가 탐지·거부 |
+| 공동 편집 | Nginx `/collab` WebSocket 경유 쿠키 인증 → 동기화 → 편집 DB 저장(버전 증가), 위조 세션 거부 |
+| 재시작 영속성 | `compose down` → `up` 후 세션·문서·협업 편집 내용·업로드 파일 바이트·Redis 데이터 유지 |
+| 네트워크 노출 | 호스트 공개 포트는 proxy(127.0.0.1:8080) 뿐, postgres/redis 는 `internal` 네트워크 전용 |
+| 미검증 | HTTPS/인증서(443 블록), S3 실제 버킷, SMTP 실제 발송, ClamAV 서명 자동 갱신(이 환경에서 database.clamav.net 차단 — 이미지 번들 서명으로만 검사) |
 
 ## 4. HTTPS (승인 후)
 1. DNS: `oogam.co.kr`, `www.oogam.co.kr` A 레코드 → 서버 IP
@@ -76,3 +105,7 @@ curl -fsS https://oogam.co.kr/api/v1/health
 - [ ] SMTP 설정 및 테스트(승인 후), 발신 도메인 SPF/DKIM
 - [ ] 백업 cron + 오프사이트 복제 + 복구 리허설
 - [ ] 스테이징에서 E2E 테스트 통과
+- [ ] `APP_ENCRYPTION_KEY` 생성·오프라인 백업 (분실 시 모든 사용자 MFA 재등록 필요)
+- [ ] OWNER/EXECUTIVE 전원 MFA 등록, 복구 코드 보관 확인
+- [ ] ClamAV 서명 갱신 확인 (`docker compose logs clamav` 에 freshclam 성공), clamd `StreamMaxLength` ≥ `MAX_UPLOAD_MB`
+- [ ] HTTPS 적용 후 CSP 헤더에 `upgrade-insecure-requests` 포함 확인
