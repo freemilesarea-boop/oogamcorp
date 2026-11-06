@@ -13,6 +13,8 @@ export function configureApp(app: INestApplication): void {
 
   app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'same-site' } }));
   app.use(cookieParser());
+  // 문서 본문(Tiptap JSON) 자동 저장을 위해 JSON 본문 한도를 2MB 로 설정
+  (app as unknown as { useBodyParser: (t: string, o: object) => void }).useBodyParser('json', { limit: '2mb' });
   app.setGlobalPrefix('api/v1');
   app.enableCors({ origin: cfg.webOrigins, credentials: true });
   app.useGlobalPipes(

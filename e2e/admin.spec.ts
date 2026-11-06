@@ -13,7 +13,7 @@ test('잘못된 비밀번호는 거부된다', async ({ page }) => {
   await page.getByLabel('이메일').fill(OWNER.email);
   await page.getByLabel('비밀번호').fill('wrong-password-1');
   await page.getByRole('button', { name: '로그인' }).click();
-  await expect(page.getByRole('alert')).toContainText('올바르지 않습니다');
+  await expect(page.getByText('이메일 또는 비밀번호가 올바르지 않습니다.')).toBeVisible();
 });
 
 test('관리자 로그인 → 프로젝트 생성 → 업무 생성 → 칸반 확인', async ({ page }) => {

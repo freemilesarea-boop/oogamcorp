@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getBrands, seoMetadata } from '@/components/site/data';
 import { BrandCard, EmptyBlock, PageIntro, Unavailable } from '@/components/site/ui';
 
-export const revalidate = 60;
 
 export const metadata: Metadata = seoMetadata({
   fallbackTitle: 'Brands',

@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getHome, getSite, seoMetadata } from '@/components/site/data';
 import { BrandsSection, BusinessGrid, CtaSection, FeaturedSection, Hero, Intro, NewsSection } from '@/components/site/home-sections';
 
-export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const home = await getHome();

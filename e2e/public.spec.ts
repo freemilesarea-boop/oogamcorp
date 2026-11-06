@@ -13,7 +13,7 @@ for (const route of ROUTES) {
 
 test('홈 Hero 는 CMS 문구를 표시한다', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByText('Ideas Become Impact.').first()).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Ideas Become Impact.' })).toBeVisible();
 });
 
 test('robots / sitemap', async ({ request }) => {

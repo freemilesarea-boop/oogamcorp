@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getPortfolio, seoMetadata } from '@/components/site/data';
 import { EmptyBlock, PageIntro, PortfolioCard, Unavailable } from '@/components/site/ui';
 
-export const revalidate = 60;
 
 export const metadata: Metadata = seoMetadata({
   fallbackTitle: 'Portfolio',

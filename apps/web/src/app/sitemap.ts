@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getSitemap } from '@/components/site/data';
 import { siteUrl } from '@/lib/server-api';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 const PAGE_PATHS: Record<string, string> = {
   home: '/', about: '/about', business: '/business', careers: '/careers', contact: '/contact', privacy: '/privacy', terms: '/terms',

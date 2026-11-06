@@ -49,9 +49,9 @@ function AcceptForm() {
       })}
     >
       <p className="text-sm text-muted-foreground">{info.data?.organization} · {info.data?.role} · {info.data?.email}</p>
-      <Field label="이름" error={formState.errors.name?.message}><Input {...register('name')} /></Field>
-      <Field label="비밀번호" error={formState.errors.password?.message}><Input type="password" autoComplete="new-password" {...register('password')} /></Field>
-      <Field label="비밀번호 확인" error={formState.errors.confirm?.message}><Input type="password" autoComplete="new-password" {...register('confirm')} /></Field>
+      <Field label="이름" htmlFor="inv-name" error={formState.errors.name?.message}><Input id="inv-name" autoComplete="name" {...register('name')} /></Field>
+      <Field label="비밀번호" htmlFor="inv-password" error={formState.errors.password?.message}><Input id="inv-password" type="password" autoComplete="new-password" {...register('password')} /></Field>
+      <Field label="비밀번호 확인" htmlFor="inv-confirm" error={formState.errors.confirm?.message}><Input id="inv-confirm" type="password" autoComplete="new-password" {...register('confirm')} /></Field>
       {error && <p role="alert" className="text-sm text-danger">{error}</p>}
       <Button type="submit" className="w-full" loading={formState.isSubmitting}>계정 활성화</Button>
     </form>

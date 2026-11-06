@@ -5,7 +5,6 @@ import { excerptOf, getBrand, seoMetadata } from '@/components/site/data';
 import { Markdown, safeHref } from '@/components/site/markdown';
 import { CmsImage, PortfolioCard, SectionLabel } from '@/components/site/ui';
 
-export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { LegalPage, legalMetadata } from '@/components/site/legal-page';
 
-export const revalidate = 60;
 
 export function generateMetadata(): Promise<Metadata> {
   return legalMetadata('terms', '이용약관', '/terms');

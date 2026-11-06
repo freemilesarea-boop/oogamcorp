@@ -2,6 +2,12 @@ import { getSite } from '@/components/site/data';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteHeader } from '@/components/site/site-header';
 
+/**
+ * 공개 페이지는 요청 시 렌더링한다(빌드 시점에 API 가 없어도 빈 페이지가 캐시되지 않도록).
+ * API 응답은 publicFetch 의 데이터 캐시(revalidate 60초)로 캐싱된다.
+ */
+export const dynamic = 'force-dynamic';
+
 const FALLBACK_NAV = [
   { href: '/about', label: 'About' },
   { href: '/business', label: 'Business' },

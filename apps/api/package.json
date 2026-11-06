@@ -52,7 +52,9 @@
     "pino-http": "^11.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "yjs": "^13.6.33"
+    "yjs": "^13.6.33",
+    "prisma": "6.19.3",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -70,11 +72,9 @@
     "eslint": "^9.39.5",
     "jest": "^29.7.0",
     "pino-pretty": "^13.2.0",
-    "prisma": "6.19.3",
     "supertest": "^7.3.1",
     "ts-jest": "^29.4.15",
     "ts-node": "^10.9.2",
-    "tsx": "^4.23.15",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.72.1"
   }

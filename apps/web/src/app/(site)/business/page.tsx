@@ -4,7 +4,6 @@ import { BusinessGrid } from '@/components/site/home-sections';
 import { Markdown } from '@/components/site/markdown';
 import { ArrowLink, PageIntro, Unavailable } from '@/components/site/ui';
 
-export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage('business');

@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { join } from 'node:path';
 
 const apiUrl = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 
@@ -14,7 +15,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   transpilePackages: ['@oogam/shared'],
-  outputFileTracingRoot: require('node:path').join(__dirname, '../../'),
+  outputFileTracingRoot: join(__dirname, '../../'),
   images: { remotePatterns: [{ protocol: 'https', hostname: '**' }] },
   async rewrites() {
     // 브라우저는 항상 동일 출처(/api/v1)로 호출 → 쿠키가 1st-party 로 유지된다

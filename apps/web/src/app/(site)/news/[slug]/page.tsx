@@ -6,7 +6,6 @@ import { Markdown } from '@/components/site/markdown';
 import { CmsImage, formatDate } from '@/components/site/ui';
 import { POST_TYPE_LABELS } from '@/components/site/types';
 
-export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 

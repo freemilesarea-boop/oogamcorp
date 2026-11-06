@@ -3,7 +3,6 @@ import { ContactForm } from '@/components/site/contact-form';
 import { getPage, seoMetadata } from '@/components/site/data';
 import { PageIntro, SectionLabel } from '@/components/site/ui';
 
-export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage('contact');

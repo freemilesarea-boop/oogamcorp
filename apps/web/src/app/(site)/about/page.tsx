@@ -3,7 +3,6 @@ import { getPage, seoMetadata } from '@/components/site/data';
 import { Markdown } from '@/components/site/markdown';
 import { PageIntro, SectionLabel, Unavailable } from '@/components/site/ui';
 
-export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage('about');

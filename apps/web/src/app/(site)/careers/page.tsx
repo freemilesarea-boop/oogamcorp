@@ -4,7 +4,6 @@ import { getPage, getPosts, seoMetadata } from '@/components/site/data';
 import { Markdown } from '@/components/site/markdown';
 import { CareerMetaList, EmptyBlock, isClosed, PageIntro, postHref, SectionLabel, Unavailable } from '@/components/site/ui';
 
-export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage('careers');
