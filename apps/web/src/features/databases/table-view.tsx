@@ -86,7 +86,7 @@ export function TableView({ properties, rows, canEdit, mutations, onOpenRow, onE
         <table className="w-full min-w-max border-collapse text-sm">
           <thead className="bg-muted/50 text-left">
             <tr className="border-b border-border">
-              <th className="w-14" aria-label="행 도구" />
+              <th className="w-14"><span className="sr-only">행 도구</span></th>
               {properties.map((p) => (
                 <th key={p.id} scope="col" style={{ width: widths?.[p.id] ?? (p.type === 'TITLE' ? 260 : 180) }} className="h-9 border-l border-border px-2 text-xs font-medium text-muted-foreground first-of-type:border-l-0">
                   <button type="button" disabled={!canEdit} onClick={() => onEditProperty(p)} className="flex w-full items-center gap-1.5 truncate rounded px-1 py-1 text-left hover:bg-muted disabled:hover:bg-transparent" aria-label={`${p.name} 속성 편집`}>

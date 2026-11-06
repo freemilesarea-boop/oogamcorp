@@ -29,7 +29,7 @@ export function SiteFooter({ site }: { site: SiteInfo | null }) {
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/60">{f?.tagline || 'Ideas Become Impact.'}</p>
         </div>
         <nav aria-label="푸터 메뉴" className="col-span-6 md:col-span-3">
-          <p className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40">Menu</p>
+          <p className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/60">Menu</p>
           <ul className="space-y-2.5 text-sm">
             {nav.map((n) => (
               <li key={n.href}><Link href={n.href} className="text-white/75 transition-colors hover:text-white">{n.label}</Link></li>
@@ -37,7 +37,7 @@ export function SiteFooter({ site }: { site: SiteInfo | null }) {
           </ul>
         </nav>
         <div className="col-span-6 md:col-span-4">
-          <p className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40">Connect</p>
+          <p className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/60">Connect</p>
           {socials.length > 0 ? (
             <ul className="space-y-2.5 text-sm">
               {socials.map((s) => (
@@ -52,7 +52,7 @@ export function SiteFooter({ site }: { site: SiteInfo | null }) {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="container-site flex flex-col gap-6 py-8 text-xs text-white/45 md:flex-row md:items-end md:justify-between">
+        <div className="container-site flex flex-col gap-6 py-8 text-xs text-white/60 md:flex-row md:items-end md:justify-between">
           {shown.length > 0 ? (
             <dl className="flex flex-wrap gap-x-5 gap-y-1.5">
               {shown.map(([k, v]) => (

@@ -81,12 +81,13 @@ export function BusinessGrid({ areas, index = '02', withLink = true }: { areas: 
       <div className="container-site">
         <div className="mb-14 flex items-end justify-between gap-6 md:mb-20">
           <SectionLabel index={index}>Business Areas</SectionLabel>
+          <h2 className="sr-only">사업 영역</h2>
           {withLink && <ArrowLink href="/business" className="hidden md:inline-flex">사업 영역 전체</ArrowLink>}
         </div>
         <ol className="grid grid-cols-1 gap-px bg-gray-200 md:grid-cols-3">
           {list.map((a, i) => (
             <li key={a.key ?? i} className="group flex min-h-[18rem] flex-col justify-between bg-paper p-8 transition-colors duration-500 hover:bg-gray-50 md:min-h-[24rem] md:p-10">
-              <span className="text-sm tabular-nums text-gray-400">{String(i + 1).padStart(2, '0')}</span>
+              <span className="text-sm tabular-nums text-gray-500">{String(i + 1).padStart(2, '0')}</span>
               <div>
                 <h3 className="text-3xl font-semibold tracking-[-0.035em] md:text-4xl">{a.title}</h3>
                 {a.body && <p className="mt-4 max-w-xs whitespace-pre-line text-[15px] leading-relaxed text-gray-600">{a.body}</p>}

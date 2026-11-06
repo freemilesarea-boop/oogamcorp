@@ -62,7 +62,7 @@ export default function ProjectsPage() {
                   <TD className="text-xs">{PRIORITY_LABELS[p.priority]}</TD>
                   <TD>{p.manager ? <span className="flex items-center gap-2 text-sm"><Avatar name={p.manager.name} className="size-6" />{p.manager.name}</span> : '-'}</TD>
                   <TD className="text-sm">{p.department?.name ?? '-'}</TD>
-                  <TD><div className="flex items-center gap-2"><ProgressBar value={p.progress} /><span className="w-9 text-right text-xs tabular-nums">{p.progress}%</span></div></TD>
+                  <TD><div className="flex items-center gap-2"><ProgressBar value={p.progress} label={`${p.name} 진행률`} /><span className="w-9 text-right text-xs tabular-nums">{p.progress}%</span></div></TD>
                   <TD className="whitespace-nowrap text-xs tabular-nums text-muted-foreground">{formatDate(p.startDate)} ~ {formatDate(p.endDate)}</TD>
                 </TR>
               ))}

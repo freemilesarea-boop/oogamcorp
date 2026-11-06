@@ -60,8 +60,8 @@ export default function NotificationsPage() {
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Tabs value={tab} onValueChange={(v) => { setTab(v as 'all' | 'unread'); setPage(1); }}>
           <TabsList>
-            <TabsTrigger value="all">전체</TabsTrigger>
-            <TabsTrigger value="unread">읽지 않음</TabsTrigger>
+            <TabsTrigger noPanel value="all">전체</TabsTrigger>
+            <TabsTrigger noPanel value="unread">읽지 않음</TabsTrigger>
           </TabsList>
         </Tabs>
         <NativeSelect value={type} onChange={(e) => { setType(e.target.value); setPage(1); }} className="w-40" aria-label="알림 유형">

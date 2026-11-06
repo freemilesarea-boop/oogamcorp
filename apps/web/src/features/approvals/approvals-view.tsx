@@ -57,7 +57,7 @@ export function ApprovalsView() {
         <Tabs value={box} onValueChange={(v) => { setBox(v as Box); setPage(1); setParam('box', v); }}>
           <TabsList>
             {boxes.map((b) => (
-              <TabsTrigger key={b} value={b}>
+              <TabsTrigger noPanel key={b} value={b}>
                 {BOX_LABELS[b]}
                 {b === 'todo' && !!summary.data?.todo && <span className="rounded-full bg-foreground px-1.5 text-[10px] text-background tabular-nums">{summary.data.todo}</span>}
                 {b === 'mine' && !!summary.data?.changesRequested && <span className="rounded-full bg-warning px-1.5 text-[10px] text-white tabular-nums" title="보완 요청">{summary.data.changesRequested}</span>}

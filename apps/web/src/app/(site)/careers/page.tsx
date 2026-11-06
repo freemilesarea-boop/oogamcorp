@@ -42,7 +42,7 @@ export default async function CareersPage() {
                       </div>
                       <CareerMetaList meta={job.metadata ?? {}} className="col-span-10 md:col-span-4" />
                       <span className="col-span-2 text-right text-xs md:col-span-1">
-                        {closed ? <span className="text-gray-400">마감</span> : <span aria-hidden>→</span>}
+                        {closed ? <span className="text-gray-500">마감</span> : <span aria-hidden>→</span>}
                       </span>
                     </Link>
                   </li>

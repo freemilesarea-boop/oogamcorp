@@ -44,7 +44,7 @@
   --bg: #ffffff;
   --fg: #0a0a0a;
   --muted: #f4f4f5;
-  --muted-fg: #71717a;
+  --muted-fg: #66666e; /* #f4f4f5(muted) 위에서도 WCAG AA 4.5:1 충족 */
   --border: #e4e4e7;
   --card: #ffffff;
   --primary: #0a0a0a;
@@ -75,6 +75,8 @@
     word-break: keep-all;
   }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  /* 공개 사이트의 어두운 영역(히어로 위 투명 헤더·푸터·CTA)에서는 포커스 링을 흰색으로 */
+  .bg-ink :focus-visible, header.text-white :focus-visible { outline-color: #fff; }
   ::selection { background: #0a0a0a; color: #fff; }
   .dark ::selection { background: #fafafa; color: #0a0a0a; }
 }

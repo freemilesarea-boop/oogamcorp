@@ -38,7 +38,7 @@ export default async function AboutPage() {
             <ol className="grid grid-cols-1 gap-px bg-gray-200 md:grid-cols-2 lg:grid-cols-3">
               {values.map((v, i) => (
                 <li key={i} className="bg-paper p-8 md:p-10">
-                  <span className="text-sm tabular-nums text-gray-400">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="text-sm tabular-nums text-gray-500">{String(i + 1).padStart(2, '0')}</span>
                   <h2 className="mt-10 text-2xl font-semibold tracking-tight md:text-3xl">{v.title}</h2>
                   {v.body && <p className="mt-4 whitespace-pre-line leading-relaxed text-gray-600">{v.body}</p>}
                 </li>

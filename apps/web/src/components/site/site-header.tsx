@@ -115,7 +115,7 @@ export function SiteHeader({ nav }: { nav: { href: string; label: string }[] }) 
               </li>
             ))}
           </ul>
-          <p className="mt-12 text-xs uppercase tracking-[0.2em] text-white/40">Ideas Become Impact.</p>
+          <p className="mt-12 text-xs uppercase tracking-[0.2em] text-white/60">Ideas Become Impact.</p>
         </nav>
       </div>
     </header>

@@ -16,16 +16,17 @@ export function ProjectStatusBadge({ status }: { status: ProjectStatus }) {
 export function PriorityIcon({ priority, withLabel }: { priority: Priority; withLabel?: boolean }) {
   const Icon = { LOW: ArrowDown, MEDIUM: Minus, HIGH: ArrowUp, URGENT: ChevronsUp }[priority];
   return (
-    <span className={cn('inline-flex items-center gap-1 text-xs', priority === 'URGENT' ? 'text-accent' : priority === 'HIGH' ? 'text-foreground' : 'text-muted-foreground')} title={`우선순위: ${PRIORITY_LABELS[priority]}`}>
-      <Icon className="size-3.5" />
+    <span className={cn('inline-flex items-center gap-1 text-xs', priority === 'URGENT' ? 'font-semibold text-foreground' : priority === 'HIGH' ? 'text-foreground' : 'text-muted-foreground')} title={`우선순위: ${PRIORITY_LABELS[priority]}`}>
+      {/* 포인트 컬러는 아이콘에만 — 텍스트는 대비 4.5:1 확보 */}
+      <Icon className={cn('size-3.5', priority === 'URGENT' && 'text-accent')} />
       {withLabel && PRIORITY_LABELS[priority]}
     </span>
   );
 }
 
-export function ProgressBar({ value, className }: { value: number; className?: string }) {
+export function ProgressBar({ value, className, label = '진행률' }: { value: number; className?: string; label?: string }) {
   return (
-    <div className={cn('h-1.5 w-full overflow-hidden rounded-full bg-muted', className)} role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
+    <div className={cn('h-1.5 w-full overflow-hidden rounded-full bg-muted', className)} role="progressbar" aria-label={label} aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
       <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
     </div>
   );

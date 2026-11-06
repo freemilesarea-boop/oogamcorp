@@ -178,8 +178,8 @@ function DocHeader({
   const onError = (e: unknown) => toast.error((e as Error).message);
   return (
     <header className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2">
-      <nav aria-label="문서 경로" className="flex min-w-0 flex-1 items-center gap-1 text-sm text-muted-foreground">
-        <Link href="/admin/docs" className="shrink-0 hover:text-foreground">{doc.workspace?.name ?? '문서'}</Link>
+      <nav aria-label="문서 경로" className="flex w-full min-w-0 items-center gap-1 text-sm text-muted-foreground sm:w-auto sm:flex-1">
+        <Link href="/admin/docs" className="min-w-0 truncate hover:text-foreground sm:shrink-0">{doc.workspace?.name ?? '문서'}</Link>
         {doc.breadcrumbs.map((b) => (
           <span key={b.id} className="flex min-w-0 items-center gap-1">
             <span aria-hidden>/</span>
@@ -297,6 +297,8 @@ function TitleBlock({ doc, editable }: { doc: DocumentDetail; editable: boolean 
           </Popover.Root>
         ) : null}
       </div>
+      {/* 편집 가능한 제목은 textarea 이므로 문서 구조용 h1 을 스크린리더에만 제공 */}
+      <h1 className="sr-only">{title || '제목 없음'}</h1>
       <textarea
         ref={ref}
         rows={1}

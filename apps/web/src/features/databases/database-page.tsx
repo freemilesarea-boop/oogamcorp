@@ -137,12 +137,14 @@ export function DatabasePage({ id }: { id: string }) {
       </DevStatus>
 
       {/* 뷰 탭 */}
-      <div className="mb-3 flex items-center gap-1 overflow-x-auto border-b border-border" role="tablist" aria-label="보기">
+      <div className="mb-3 flex items-center gap-1 overflow-x-auto border-b border-border" role="group" aria-label="보기">
         {views.map((v) => (
           <div key={v.id} className={cn('group flex shrink-0 items-center border-b-2 -mb-px', v.id === view.id ? 'border-foreground' : 'border-transparent')}>
-            <button type="button" role="tab" aria-selected={v.id === view.id} onClick={() => selectView(v.id)} className={cn('px-2.5 py-2 text-sm', v.id === view.id ? 'font-medium' : 'text-muted-foreground hover:text-foreground')}>
+            <button type="button" aria-pressed={v.id === view.id} onClick={() => selectView(v.id)} className={cn('px-2.5 py-2 text-sm', v.id === view.id ? 'font-medium' : 'text-muted-foreground hover:text-foreground')}>
               {v.name}
-              <span className="ml-1 text-xs text-muted-foreground">{VIEW_TYPE_LABELS[v.type]}{v.personal ? ' · 개인' : ''}</span>
+              {(VIEW_TYPE_LABELS[v.type] !== v.name || v.personal) && (
+                <span className="ml-1 text-xs text-muted-foreground">{VIEW_TYPE_LABELS[v.type] !== v.name ? VIEW_TYPE_LABELS[v.type] : ''}{v.personal ? `${VIEW_TYPE_LABELS[v.type] !== v.name ? ' · ' : ''}개인` : ''}</span>
+              )}
             </button>
             {(v.personal || canEdit) && v.id === view.id && (
               <DropdownMenu>

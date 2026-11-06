@@ -29,7 +29,7 @@ export default async function ContactPage() {
               <dl className="space-y-6">
                 {shown.map(([k, v, href]) => (
                   <div key={k}>
-                    <dt className="text-[11px] uppercase tracking-[0.18em] text-gray-400">{k}</dt>
+                    <dt className="text-[11px] uppercase tracking-[0.18em] text-gray-500">{k}</dt>
                     <dd className="mt-1 text-lg">{href ? <a href={href} className="hover:underline">{v}</a> : v}</dd>
                   </div>
                 ))}

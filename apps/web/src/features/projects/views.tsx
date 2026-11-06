@@ -40,7 +40,7 @@ export function TaskListView({ tasks, onOpen, showProject }: { tasks: Task[]; on
             <TD><TaskStatusBadge status={t.status} custom={t.customStatus} /></TD>
             <TD><PriorityIcon priority={t.priority} withLabel /></TD>
             <TD>{t.assignees.length ? <AvatarStack users={t.assignees} /> : <span className="text-xs text-muted-foreground">미지정</span>}</TD>
-            <TD className={cn('text-xs tabular-nums', isOverdue(t.dueDate, t.status) && 'font-medium text-danger')}>{formatDate(t.dueDate)}</TD>
+            <TD className={cn('whitespace-nowrap text-xs tabular-nums', isOverdue(t.dueDate, t.status) && 'font-medium text-danger')}>{formatDate(t.dueDate)}</TD>
           </TR>
         ))}
       </TBody>
@@ -110,7 +110,7 @@ function Card({ task, onOpen }: { task: Task; onOpen: (id: string) => void }) {
   const { setNodeRef: setDropRef } = useDroppable({ id: `task:${task.id}` });
   return (
     <div ref={setDropRef}>
-      <article
+      <div
         ref={setNodeRef}
         {...attributes}
         {...listeners}
@@ -129,7 +129,7 @@ function Card({ task, onOpen }: { task: Task; onOpen: (id: string) => void }) {
           </div>
           {task.assignees.length > 0 && <AvatarStack users={task.assignees} max={3} />}
         </div>
-      </article>
+      </div>
     </div>
   );
 }

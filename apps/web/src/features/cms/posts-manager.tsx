@@ -184,7 +184,7 @@ export function PostsManager() {
       />
       <Tabs value={type} onValueChange={(v) => router.replace(`${pathname}?type=${v}`)}>
         <TabsList>
-          {TYPES.map((x) => <TabsTrigger key={x} value={x}>{POST_TYPE_LABELS[x]}</TabsTrigger>)}
+          {TYPES.map((x) => <TabsTrigger noPanel key={x} value={x}>{POST_TYPE_LABELS[x]}</TabsTrigger>)}
         </TabsList>
       </Tabs>
       <div className="mt-4 flex flex-wrap items-center gap-2">

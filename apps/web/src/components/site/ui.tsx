@@ -85,7 +85,7 @@ export function BrandCard({ brand, index }: { brand: PublicBrand; index: number 
       href={`/brands/${encodeURIComponent(brand.slug)}`}
       className="group relative flex aspect-[4/3] flex-col justify-between border-b border-r border-gray-200 bg-paper p-6 transition-colors duration-500 hover:bg-ink hover:text-white md:p-8"
     >
-      <div className="flex items-start justify-between text-[11px] uppercase tracking-[0.2em] text-gray-400 group-hover:text-white/50">
+      <div className="flex items-start justify-between text-[11px] uppercase tracking-[0.2em] text-gray-500 group-hover:text-white/50">
         <span className="tabular-nums">{String(index + 1).padStart(2, '0')}</span>
         {brand.category && <span>{brand.category}</span>}
       </div>
@@ -122,7 +122,7 @@ export function PortfolioCard({ item, priority }: { item: PublicPortfolioItem; p
           <h3 className="text-lg font-semibold tracking-tight md:text-xl">{item.title}</h3>
           {item.summary && <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-gray-500">{item.summary}</p>}
         </div>
-        <div className="shrink-0 text-right text-xs text-gray-400">
+        <div className="shrink-0 text-right text-xs text-gray-500">
           {item.year && <p className="tabular-nums">{item.year}</p>}
           {item.brand && (
             <Link href={`/brands/${encodeURIComponent(item.brand.slug)}`} className="mt-1 block underline-offset-4 hover:text-ink hover:underline">
@@ -132,7 +132,7 @@ export function PortfolioCard({ item, priority }: { item: PublicPortfolioItem; p
         </div>
       </div>
       {(item.client || item.tags.length > 0) && (
-        <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.14em] text-gray-400">
+        <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.14em] text-gray-500">
           {item.client && <span>{item.client}</span>}
           {item.tags.map((t) => <span key={t}>#{t}</span>)}
         </p>
@@ -156,7 +156,7 @@ export function PostRow({ post, invert }: { post: PublicPost; invert?: boolean }
         )}
       >
         <span className={cn('col-span-6 text-xs tabular-nums md:col-span-2', invert ? 'text-white/50' : 'text-gray-500')}>{formatDate(post.publishedAt)}</span>
-        <span className={cn('col-span-6 text-right text-[11px] uppercase tracking-[0.2em] md:order-last md:col-span-2', invert ? 'text-white/50' : 'text-gray-400')}>
+        <span className={cn('col-span-6 text-right text-[11px] uppercase tracking-[0.2em] md:order-last md:col-span-2', invert ? 'text-white/50' : 'text-gray-500')}>
           {POST_TYPE_LABELS[post.type]}
         </span>
         <span className="col-span-12 md:col-span-8">
@@ -179,7 +179,7 @@ export function CareerMetaList({ meta, className }: { meta: CareerMeta; classNam
   return (
     <dl className={cn('flex flex-wrap gap-x-6 gap-y-1 text-sm', className)}>
       {items.filter(([, v]) => v).map(([k, v]) => (
-        <div key={k} className="flex gap-2"><dt className="text-gray-400">{k}</dt><dd className="text-gray-700">{v}</dd></div>
+        <div key={k} className="flex gap-2"><dt className="text-gray-500">{k}</dt><dd className="text-gray-700">{v}</dd></div>
       ))}
     </dl>
   );

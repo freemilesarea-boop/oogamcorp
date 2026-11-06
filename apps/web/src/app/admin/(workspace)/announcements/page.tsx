@@ -70,9 +70,9 @@ function AnnouncementsInner() {
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Tabs value={filter} onValueChange={(v) => { setFilter(v as Filter); setPage(1); }}>
           <TabsList>
-            <TabsTrigger value="all">전체</TabsTrigger>
-            <TabsTrigger value="unread">읽지 않음{list.data && list.data.unreadCount > 0 && filter !== 'unread' ? <span className="tabular-nums text-accent">{list.data.unreadCount}</span> : null}</TabsTrigger>
-            {can('announcements.write') && <TabsTrigger value="mine">내가 쓴 공지</TabsTrigger>}
+            <TabsTrigger noPanel value="all">전체</TabsTrigger>
+            <TabsTrigger noPanel value="unread">읽지 않음{list.data && list.data.unreadCount > 0 && filter !== 'unread' ? <span className="tabular-nums font-semibold text-foreground">{list.data.unreadCount}</span> : null}</TabsTrigger>
+            {can('announcements.write') && <TabsTrigger noPanel value="mine">내가 쓴 공지</TabsTrigger>}
           </TabsList>
         </Tabs>
         <div className="relative w-full max-w-xs">
