@@ -11,6 +11,8 @@ export SEED_OWNER_EMAIL=owner@e2e.oogam
 export SEED_OWNER_PASSWORD='E2eOwnerPassw0rd'
 export SWAGGER_ENABLED=false
 export LOG_LEVEL=warn
+# E2E 는 짧은 시간에 여러 번 로그인하므로 IP 로그인 제한만 완화 (운영 기본 10/분)
+export LOGIN_RATE_LIMIT_PER_MIN=200
 export STORAGE_LOCAL_DIR=./.e2e-storage
 npx prisma migrate deploy >/dev/null
 node -e '

@@ -11,6 +11,8 @@ import { loadConfig } from '../../config/configuration';
 
 /** 테스트 환경에서는 제한을 완화 (운영/개발은 IP 당 분당 제한 적용) */
 const limit = (n: number) => () => (loadConfig().env === 'test' ? 10_000 : n);
+/** 로그인 IP 제한: LOGIN_RATE_LIMIT_PER_MIN (기본 10/분) */
+const loginLimit = () => (loadConfig().env === 'test' ? 10_000 : Number(process.env.LOGIN_RATE_LIMIT_PER_MIN ?? 10));
 import { AcceptInvitationDto, ChangePasswordDto, LoginDto } from './auth.dto';
 import { AuthService } from './auth.service';
 
@@ -26,7 +28,7 @@ export class AuthController {
   /** 로그인 (IP 당 분당 10회 제한 + 계정 단위 실패 잠금) */
   @Public()
   @SkipCsrf()
-  @Throttle({ default: { limit: limit(10), ttl: 60_000 } })
+  @Throttle({ default: { limit: loginLimit, ttl: 60_000 } })
   @Post('login')
   @HttpCode(200)
   async login(@Body() dto: LoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {

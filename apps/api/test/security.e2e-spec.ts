@@ -308,4 +308,30 @@ describe('Security hardening', () => {
       expect((await c.get('/projects?sort=password&order=asc')).status).toBe(200);
     });
   });
+
+  describe('Login rate limit (IP)', () => {
+    it('returns 429 with a Korean message after the per-minute limit', async () => {
+      const prevEnv = cfg.env;
+      const prevLimit = process.env.LOGIN_RATE_LIMIT_PER_MIN;
+      try {
+        (cfg as { env: string }).env = 'development';
+        process.env.LOGIN_RATE_LIMIT_PER_MIN = '3';
+        const statuses: number[] = [];
+        let last: request.Response | undefined;
+        for (let i = 0; i < 5; i++) {
+          last = await request(app.getHttpServer()).post('/api/v1/auth/login').send({ email: 'nobody@test.oogam', password: 'x' });
+          statuses.push(last.status);
+        }
+        // 같은 IP 의 이전 로그인 요청도 집계되므로 순서와 무관하게: 한도 초과 시 429 로 전환되고 이후 계속 429
+        expect(statuses.every((st) => st === 401 || st === 429)).toBe(true);
+        expect(statuses[4]).toBe(429);
+        expect(statuses.filter((st) => st === 401).length).toBeLessThanOrEqual(3);
+        expect(last!.body.message).toContain('요청이 너무 많습니다');
+      } finally {
+        (cfg as { env: string }).env = prevEnv;
+        if (prevLimit === undefined) delete process.env.LOGIN_RATE_LIMIT_PER_MIN;
+        else process.env.LOGIN_RATE_LIMIT_PER_MIN = prevLimit;
+      }
+    });
+  });
 });
