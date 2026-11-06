@@ -1,0 +1,1373 @@
+// OOGAM 통합 플랫폼 데이터 모델
+// 규칙: UUID 기본키, 모든 업무 데이터에 organizationId(조직 격리), createdAt/updatedAt,
+//       사용자 생성 콘텐츠는 deletedAt 기반 소프트 삭제, 금액은 DECIMAL(18,2)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────────── Enums ─────────────────────────────
+enum UserStatus {
+  INVITED
+  ACTIVE
+  DISABLED
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  ON_LEAVE
+  RESIGNED
+}
+
+enum ResourceType {
+  MODULE
+  PAGE
+  DATABASE
+  PROJECT
+  FILE
+  WORKSPACE
+}
+
+enum AccessLevel {
+  VIEW
+  COMMENT
+  EDIT
+  FULL
+}
+
+enum WorkspaceRole {
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum PageVisibility {
+  WORKSPACE
+  PRIVATE
+  RESTRICTED
+}
+
+enum SnapshotReason {
+  MANUAL
+  AUTO
+  RESTORE
+  COLLAB
+}
+
+enum CommentTarget {
+  PAGE
+  TASK
+  PROJECT
+  APPROVAL
+  DATABASE_ROW
+}
+
+enum EntityType {
+  PAGE
+  TASK
+  PROJECT
+  APPROVAL
+  DATABASE
+  DATABASE_ROW
+  BUDGET
+  TRANSACTION
+  ANNOUNCEMENT
+  EVENT
+  USER
+  DEPARTMENT
+  CMS
+}
+
+enum DbPropertyType {
+  TITLE
+  TEXT
+  NUMBER
+  SELECT
+  MULTI_SELECT
+  DATE
+  CHECKBOX
+  PERSON
+  URL
+  FILE
+  RELATION
+  FORMULA
+  ROLLUP
+}
+
+enum DbViewType {
+  TABLE
+  BOARD
+  CALENDAR
+  LIST
+  GALLERY
+  TIMELINE
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum ProjectMemberRole {
+  MANAGER
+  MEMBER
+  VIEWER
+}
+
+enum MilestoneStatus {
+  OPEN
+  DONE
+}
+
+enum AttendeeResponse {
+  PENDING
+  ACCEPTED
+  DECLINED
+  TENTATIVE
+}
+
+enum ApprovalType {
+  GENERAL
+  EXPENSE
+  BUDGET
+  PURCHASE
+  CONTRACT
+  LEAVE
+}
+
+enum ApprovalStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+  CANCELLED
+}
+
+enum ApprovalStepStatus {
+  WAITING
+  PENDING
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+  SKIPPED
+}
+
+enum ApprovalActionType {
+  SUBMIT
+  APPROVE
+  REJECT
+  REQUEST_CHANGES
+  RESUBMIT
+  CANCEL
+  COMMENT
+}
+
+enum BudgetPeriod {
+  ANNUAL
+  QUARTERLY
+}
+
+enum BudgetStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  CLOSED
+}
+
+enum TransactionType {
+  REVENUE
+  EXPENSE
+}
+
+enum TransactionStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ContentStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PostType {
+  NEWS
+  INSIGHT
+  CAREER
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  SPAM
+}
+
+enum AnnouncementScope {
+  COMPANY
+  DEPARTMENT
+  PROJECT
+}
+
+enum NotificationType {
+  MENTION
+  TASK_ASSIGNED
+  TASK_DUE
+  APPROVAL_REQUESTED
+  APPROVAL_COMPLETED
+  APPROVAL_CHANGES_REQUESTED
+  ANNOUNCEMENT
+  COMMENT
+  SYSTEM
+}
+
+// ───────────────────────────── Core ─────────────────────────────
+model Organization {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String   @unique
+  domain    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships   Membership[]
+  departments   Department[]
+  roles         Role[]
+  workspaces    Workspace[]
+  projects      Project[]
+  invitations   Invitation[]
+  auditLogs     AuditLog[]
+  settings      SystemSetting[]
+  businessUnits BusinessUnit[]
+
+  @@map("organizations")
+}
+
+model User {
+  id                String     @id @default(uuid()) @db.Uuid
+  email             String     @unique
+  name              String
+  passwordHash      String?
+  status            UserStatus @default(INVITED)
+  avatarUrl         String?
+  locale            String     @default("ko")
+  mfaEnabled        Boolean    @default(false)
+  /// 향후 TOTP 비밀키(암호화 저장) — MFA 도입 시 사용
+  mfaSecretEnc      String?
+  failedLoginCount  Int        @default(0)
+  lockedUntil       DateTime?
+  lastLoginAt       DateTime?
+  passwordChangedAt DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  deletedAt         DateTime?
+
+  memberships      Membership[]
+  sessions         Session[]
+  notifications    Notification[]
+  taskAssignments  TaskAssignee[]
+  projectMembers   ProjectMember[]
+  workspaceMembers WorkspaceMember[]
+  grants           ResourceGrant[]   @relation("GrantUser")
+  eventAttendees   EventAttendee[]
+  approvalSteps    ApprovalStep[]
+
+  @@index([status])
+  @@map("users")
+}
+
+model Membership {
+  id               String           @id @default(uuid()) @db.Uuid
+  organizationId   String           @db.Uuid
+  userId           String           @db.Uuid
+  roleId           String           @db.Uuid
+  departmentId     String?          @db.Uuid
+  title            String?
+  employeeNumber   String?
+  phone            String?
+  hireDate         DateTime?        @db.Date
+  employmentStatus EmploymentStatus @default(ACTIVE)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role         Role         @relation(fields: [roleId], references: [id])
+  department   Department?  @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  hrRecord     HrRecord?
+
+  @@unique([organizationId, userId])
+  @@unique([organizationId, employeeNumber])
+  @@index([departmentId])
+  @@index([roleId])
+  @@map("memberships")
+}
+
+/// 민감 인사정보 — hr.sensitive.read / hr.sensitive.write 권한 필요
+model HrRecord {
+  id            String   @id @default(uuid()) @db.Uuid
+  membershipId  String   @unique @db.Uuid
+  annualSalary  Decimal? @db.Decimal(18, 2)
+  salaryNote    String?
+  bankAccount   String?
+  emergencyInfo String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  membership Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@map("hr_records")
+}
+
+model Department {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  name           String
+  code           String?
+  description    String?
+  parentId       String?   @db.Uuid
+  managerId      String?   @db.Uuid
+  sortOrder      Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  parent       Department?   @relation("DepartmentTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Department[]  @relation("DepartmentTree")
+  memberships  Membership[]
+  projects     Project[]
+  budgets      Budget[]
+  grants       ResourceGrant[] @relation("GrantDepartment")
+
+  @@unique([organizationId, name])
+  @@index([organizationId, parentId])
+  @@map("departments")
+}
+
+model Role {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  key            String
+  name           String
+  description    String?
+  isSystem       Boolean  @default(false)
+  rank           Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  permissions  RolePermission[]
+  memberships  Membership[]
+  invitations  Invitation[]
+
+  @@unique([organizationId, key])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique
+  module      String
+  label       String
+  sensitive   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid()) @db.Uuid
+  roleId       String   @db.Uuid
+  permissionId String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+/// 리소스별 접근 권한. resourceType=MODULE 인 경우 resourceId 는 권한 키(예: finance.read)이며
+/// 해당 사용자/부서에 모듈 권한을 명시적으로 추가 부여한다.
+model ResourceGrant {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @db.Uuid
+  resourceType   ResourceType
+  resourceId     String
+  userId         String?      @db.Uuid
+  departmentId   String?      @db.Uuid
+  access         AccessLevel  @default(VIEW)
+  grantedById    String?      @db.Uuid
+  expiresAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  user       User?       @relation("GrantUser", fields: [userId], references: [id], onDelete: Cascade)
+  department Department? @relation("GrantDepartment", fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceType, resourceId, userId])
+  @@unique([resourceType, resourceId, departmentId])
+  @@index([organizationId, resourceType, resourceId])
+  @@index([userId])
+  @@map("resource_grants")
+}
+
+model Session {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @db.Uuid
+  organizationId String    @db.Uuid
+  /// 세션 토큰의 SHA-256 해시 (원문은 HttpOnly 쿠키에만 존재)
+  tokenHash      String    @unique
+  /// CSRF 동기화 토큰 (세션 바인딩)
+  csrfToken      String
+  ip             String?
+  userAgent      String?
+  mfaVerified    Boolean   @default(false)
+  expiresAt      DateTime
+  lastSeenAt     DateTime  @default(now())
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model Invitation {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  email          String
+  name           String?
+  roleId         String    @db.Uuid
+  departmentId   String?   @db.Uuid
+  title          String?
+  tokenHash      String    @unique
+  invitedById    String    @db.Uuid
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role         Role         @relation(fields: [roleId], references: [id])
+
+  @@index([organizationId, email])
+  @@map("invitations")
+}
+
+// ───────────────────────────── Workspace / Docs ─────────────────────────────
+model Workspace {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  name           String
+  slug           String
+  icon           String?
+  description    String?
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members      WorkspaceMember[]
+  pages        Page[]
+  databases    Database[]
+
+  @@unique([organizationId, slug])
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String        @id @default(uuid()) @db.Uuid
+  workspaceId String        @db.Uuid
+  userId      String        @db.Uuid
+  role        WorkspaceRole @default(MEMBER)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_members")
+}
+
+model Page {
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String         @db.Uuid
+  workspaceId    String         @db.Uuid
+  parentId       String?        @db.Uuid
+  title          String         @default("")
+  icon           String?
+  coverUrl       String?
+  /// Tiptap(ProseMirror) JSON 문서
+  content        Json?
+  /// 검색용 평문 추출본
+  contentText    String         @default("")
+  /// Yjs 문서 상태 (실시간 공동 편집)
+  yState         Bytes?
+  position       Float          @default(0)
+  isTemplate     Boolean        @default(false)
+  visibility     PageVisibility @default(WORKSPACE)
+  version        Int            @default(1)
+  createdById    String         @db.Uuid
+  updatedById    String?        @db.Uuid
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+  deletedById    String?        @db.Uuid
+
+  workspace Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  parent    Page?          @relation("PageTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Page[]         @relation("PageTree")
+  snapshots PageSnapshot[]
+  updates   PageUpdate[]
+
+  @@index([organizationId, workspaceId, parentId, position])
+  @@index([organizationId, deletedAt])
+  @@index([createdById])
+  @@map("pages")
+}
+
+model PageSnapshot {
+  id          String         @id @default(uuid()) @db.Uuid
+  pageId      String         @db.Uuid
+  version     Int
+  title       String
+  content     Json?
+  yState      Bytes?
+  reason      SnapshotReason @default(AUTO)
+  createdById String?        @db.Uuid
+  createdAt   DateTime       @default(now())
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, version])
+  @@map("page_snapshots")
+}
+
+/// Yjs 증분 업데이트 로그 (공동 편집 변경 로그, 스냅샷 이후 압축 정리 대상)
+model PageUpdate {
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @db.Uuid
+  update    Bytes
+  userId    String?  @db.Uuid
+  createdAt DateTime @default(now())
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId, createdAt])
+  @@map("page_updates")
+}
+
+model Comment {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  targetType     CommentTarget
+  targetId       String        @db.Uuid
+  parentId       String?       @db.Uuid
+  body           String
+  mentions       String[]      @db.Uuid
+  authorId       String        @db.Uuid
+  resolvedAt     DateTime?
+  editedAt       DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  parent  Comment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentThread")
+
+  @@index([organizationId, targetType, targetId])
+  @@map("comments")
+}
+
+model File {
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String         @db.Uuid
+  storageKey     String         @unique
+  originalName   String
+  mimeType       String
+  size           Int
+  checksum       String?
+  targetType     EntityType?
+  targetId       String?        @db.Uuid
+  uploadedById   String         @db.Uuid
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+
+  @@index([organizationId, targetType, targetId])
+  @@index([uploadedById])
+  @@map("files")
+}
+
+/// 엔터티 간 범용 연결 (프로젝트-문서, 업무-문서 등)
+model EntityLink {
+  id             String     @id @default(uuid()) @db.Uuid
+  organizationId String     @db.Uuid
+  sourceType     EntityType
+  sourceId       String     @db.Uuid
+  targetType     EntityType
+  targetId       String     @db.Uuid
+  createdById    String?    @db.Uuid
+  createdAt      DateTime   @default(now())
+
+  @@unique([sourceType, sourceId, targetType, targetId])
+  @@index([targetType, targetId])
+  @@map("entity_links")
+}
+
+// ───────────────────────────── Custom Databases ─────────────────────────────
+model Database {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  workspaceId    String    @db.Uuid
+  name           String
+  description    String?
+  icon           String?
+  createdById    String    @db.Uuid
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  workspace  Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  properties DatabaseProperty[]
+  rows       DatabaseRow[]
+  views      DatabaseView[]
+
+  @@index([organizationId, workspaceId])
+  @@map("databases")
+}
+
+model DatabaseProperty {
+  id         String         @id @default(uuid()) @db.Uuid
+  databaseId String         @db.Uuid
+  name       String
+  type       DbPropertyType
+  /// 타입별 설정: SELECT/MULTI_SELECT options, NUMBER format, RELATION targetDatabaseId, FORMULA expression(후속)
+  config     Json           @default("{}")
+  position   Int            @default(0)
+  isPrimary  Boolean        @default(false)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  database Database       @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  cells    DatabaseCell[]
+
+  @@unique([databaseId, name])
+  @@index([databaseId, position])
+  @@map("database_properties")
+}
+
+model DatabaseRow {
+  id          String    @id @default(uuid()) @db.Uuid
+  databaseId  String    @db.Uuid
+  position    Float     @default(0)
+  createdById String    @db.Uuid
+  updatedById String?   @db.Uuid
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  database Database       @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  cells    DatabaseCell[]
+
+  @@index([databaseId, deletedAt, position])
+  @@map("database_rows")
+}
+
+model DatabaseCell {
+  id         String   @id @default(uuid()) @db.Uuid
+  rowId      String   @db.Uuid
+  propertyId String   @db.Uuid
+  value      Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  row      DatabaseRow      @relation(fields: [rowId], references: [id], onDelete: Cascade)
+  property DatabaseProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([rowId, propertyId])
+  @@index([propertyId])
+  @@map("database_cells")
+}
+
+model DatabaseView {
+  id         String     @id @default(uuid()) @db.Uuid
+  databaseId String     @db.Uuid
+  name       String
+  type       DbViewType @default(TABLE)
+  /// { filters: [], sorts: [], groupBy?: propertyId, visibleProperties?: [], datePropertyId? }
+  config     Json       @default("{}")
+  position   Int        @default(0)
+  /// null 이면 공유 뷰, 값이 있으면 개인 뷰
+  ownerId    String?    @db.Uuid
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  database    Database                 @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  preferences DatabaseViewPreference[]
+
+  @@index([databaseId, position])
+  @@map("database_views")
+}
+
+/// 사용자별 보기 설정 (공유 뷰 위에 덮어쓰는 개인 필터/정렬/열 너비 등)
+model DatabaseViewPreference {
+  id        String   @id @default(uuid()) @db.Uuid
+  viewId    String   @db.Uuid
+  userId    String   @db.Uuid
+  config    Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  view DatabaseView @relation(fields: [viewId], references: [id], onDelete: Cascade)
+
+  @@unique([viewId, userId])
+  @@map("database_view_preferences")
+}
+
+// ───────────────────────────── Projects ─────────────────────────────
+model Project {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  key            String
+  name           String
+  description    String?
+  departmentId   String?       @db.Uuid
+  managerId      String?       @db.Uuid
+  status         ProjectStatus @default(PLANNING)
+  priority       Priority      @default(MEDIUM)
+  progress       Int           @default(0)
+  startDate      DateTime?     @db.Date
+  endDate        DateTime?     @db.Date
+  budgetId       String?       @db.Uuid
+  createdById    String        @db.Uuid
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  department   Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  budget       Budget?         @relation("ProjectBudget", fields: [budgetId], references: [id], onDelete: SetNull)
+  members      ProjectMember[]
+  milestones   Milestone[]
+  tasks        Task[]
+  statuses     ProjectTaskStatus[]
+
+  @@unique([organizationId, key])
+  @@index([organizationId, status, deletedAt])
+  @@map("projects")
+}
+
+/// 프로젝트별 사용자 정의 업무 상태. category 는 기본 상태(TODO..DONE)에 매핑된다.
+model ProjectTaskStatus {
+  id        String     @id @default(uuid()) @db.Uuid
+  projectId String     @db.Uuid
+  name      String
+  category  TaskStatus
+  color     String?
+  position  Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+
+  @@unique([projectId, name])
+  @@map("project_task_statuses")
+}
+
+model ProjectMember {
+  id        String            @id @default(uuid()) @db.Uuid
+  projectId String            @db.Uuid
+  userId    String            @db.Uuid
+  role      ProjectMemberRole @default(MEMBER)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+  @@map("project_members")
+}
+
+model Milestone {
+  id          String          @id @default(uuid()) @db.Uuid
+  projectId   String          @db.Uuid
+  name        String
+  description String?
+  dueDate     DateTime?       @db.Date
+  status      MilestoneStatus @default(OPEN)
+  position    Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+
+  @@index([projectId])
+  @@map("milestones")
+}
+
+model Task {
+  id             String     @id @default(uuid()) @db.Uuid
+  organizationId String     @db.Uuid
+  projectId      String?    @db.Uuid
+  parentId       String?    @db.Uuid
+  milestoneId    String?    @db.Uuid
+  customStatusId String?    @db.Uuid
+  title          String
+  description    String?
+  status         TaskStatus @default(TODO)
+  priority       Priority   @default(MEDIUM)
+  startDate      DateTime?  @db.Date
+  dueDate        DateTime?  @db.Date
+  position       Float      @default(0)
+  /// [{ id, text, done }]
+  checklist      Json       @default("[]")
+  createdById    String     @db.Uuid
+  completedAt    DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  deletedAt      DateTime?
+
+  project      Project?           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent       Task?              @relation("Subtasks", fields: [parentId], references: [id], onDelete: Cascade)
+  subtasks     Task[]             @relation("Subtasks")
+  milestone    Milestone?         @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  customStatus ProjectTaskStatus? @relation(fields: [customStatusId], references: [id], onDelete: SetNull)
+  assignees    TaskAssignee[]
+  dependencies TaskDependency[]   @relation("TaskDeps")
+  dependents   TaskDependency[]   @relation("TaskDependents")
+
+  @@index([organizationId, projectId, status, deletedAt])
+  @@index([parentId])
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+model TaskAssignee {
+  id        String   @id @default(uuid()) @db.Uuid
+  taskId    String   @db.Uuid
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+  @@index([userId])
+  @@map("task_assignees")
+}
+
+model TaskDependency {
+  id          String   @id @default(uuid()) @db.Uuid
+  taskId      String   @db.Uuid
+  dependsOnId String   @db.Uuid
+  createdAt   DateTime @default(now())
+
+  task      Task @relation("TaskDeps", fields: [taskId], references: [id], onDelete: Cascade)
+  dependsOn Task @relation("TaskDependents", fields: [dependsOnId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, dependsOnId])
+  @@map("task_dependencies")
+}
+
+/// 업무 도메인 활동/변경 이력 (프로젝트 활동 로그, 업무 변경 이력)
+model ActivityLog {
+  id             String     @id @default(uuid()) @db.Uuid
+  organizationId String     @db.Uuid
+  entityType     EntityType
+  entityId       String     @db.Uuid
+  action         String
+  actorId        String?    @db.Uuid
+  changes        Json?
+  createdAt      DateTime   @default(now())
+
+  @@index([organizationId, entityType, entityId, createdAt])
+  @@map("activity_logs")
+}
+
+// ───────────────────────────── Calendar ─────────────────────────────
+model CalendarEvent {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  title          String
+  description    String?
+  location       String?
+  startAt        DateTime
+  endAt          DateTime
+  allDay         Boolean   @default(false)
+  isPrivate      Boolean   @default(false)
+  projectId      String?   @db.Uuid
+  departmentId   String?   @db.Uuid
+  /// RRULE (반복 일정, 후속 구현)
+  recurrence     String?
+  createdById    String    @db.Uuid
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  attendees EventAttendee[]
+
+  @@index([organizationId, startAt, endAt])
+  @@map("calendar_events")
+}
+
+model EventAttendee {
+  id        String           @id @default(uuid()) @db.Uuid
+  eventId   String           @db.Uuid
+  userId    String           @db.Uuid
+  response  AttendeeResponse @default(PENDING)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  event CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([userId])
+  @@map("event_attendees")
+}
+
+// ───────────────────────────── Approvals ─────────────────────────────
+model ApprovalRequest {
+  id               String         @id @default(uuid()) @db.Uuid
+  organizationId   String         @db.Uuid
+  number           String
+  type             ApprovalType   @default(GENERAL)
+  title            String
+  content          String
+  amount           Decimal?       @db.Decimal(18, 2)
+  status           ApprovalStatus @default(DRAFT)
+  requesterId      String         @db.Uuid
+  currentStepOrder Int?
+  projectId        String?        @db.Uuid
+  budgetId         String?        @db.Uuid
+  transactionId    String?        @db.Uuid
+  /// 낙관적 잠금 버전 (동시 처리 방지)
+  version          Int            @default(0)
+  submittedAt      DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime?
+
+  steps   ApprovalStep[]
+  actions ApprovalAction[]
+
+  @@unique([organizationId, number])
+  @@index([organizationId, status])
+  @@index([requesterId])
+  @@map("approval_requests")
+}
+
+model ApprovalStep {
+  id         String             @id @default(uuid()) @db.Uuid
+  requestId  String             @db.Uuid
+  order      Int
+  approverId String             @db.Uuid
+  status     ApprovalStepStatus @default(WAITING)
+  actedAt    DateTime?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  request  ApprovalRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  approver User            @relation(fields: [approverId], references: [id])
+
+  @@unique([requestId, order])
+  @@index([approverId, status])
+  @@map("approval_steps")
+}
+
+model ApprovalAction {
+  id        String             @id @default(uuid()) @db.Uuid
+  requestId String             @db.Uuid
+  stepId    String?            @db.Uuid
+  actorId   String             @db.Uuid
+  action    ApprovalActionType
+  comment   String?
+  createdAt DateTime           @default(now())
+
+  request ApprovalRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, createdAt])
+  @@map("approval_actions")
+}
+
+// ───────────────────────────── Finance ─────────────────────────────
+/// 사업 구분 (매출/지출/예산 분류 기준). 브랜드와 별개로 내부 관리 단위
+model BusinessUnit {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  name           String
+  code           String
+  description    String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  budgets      Budget[]
+  transactions FinancialTransaction[]
+
+  @@unique([organizationId, code])
+  @@map("business_units")
+}
+
+model Budget {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @db.Uuid
+  name           String
+  fiscalYear     Int
+  period         BudgetPeriod @default(ANNUAL)
+  quarter        Int?
+  departmentId   String?      @db.Uuid
+  projectId      String?      @db.Uuid
+  businessUnitId String?      @db.Uuid
+  status         BudgetStatus @default(DRAFT)
+  /// 편성(요청) 금액 합계
+  plannedAmount  Decimal      @default(0) @db.Decimal(18, 2)
+  /// 승인 금액 (승인 데이터) — 집행 금액은 transaction_allocations 로 별도 관리
+  approvedAmount Decimal      @default(0) @db.Decimal(18, 2)
+  currency       String       @default("KRW")
+  approvedById   String?      @db.Uuid
+  approvedAt     DateTime?
+  notes          String?
+  createdById    String       @db.Uuid
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
+
+  department   Department?   @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  businessUnit BusinessUnit? @relation(fields: [businessUnitId], references: [id], onDelete: SetNull)
+  lines        BudgetLine[]
+  projects     Project[]     @relation("ProjectBudget")
+
+  @@index([organizationId, fiscalYear, deletedAt])
+  @@map("budgets")
+}
+
+model BudgetLine {
+  id             String   @id @default(uuid()) @db.Uuid
+  budgetId       String   @db.Uuid
+  category       String
+  description    String?
+  plannedAmount  Decimal  @default(0) @db.Decimal(18, 2)
+  approvedAmount Decimal  @default(0) @db.Decimal(18, 2)
+  position       Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  budget      Budget                  @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  allocations TransactionAllocation[]
+
+  @@index([budgetId])
+  @@map("budget_lines")
+}
+
+model FinancialTransaction {
+  id                String            @id @default(uuid()) @db.Uuid
+  organizationId    String            @db.Uuid
+  txDate            DateTime          @db.Date
+  type              TransactionType
+  businessUnitId    String?           @db.Uuid
+  projectId         String?           @db.Uuid
+  departmentId      String?           @db.Uuid
+  counterparty      String?
+  description       String
+  supplyAmount      Decimal           @db.Decimal(18, 2)
+  vatAmount         Decimal           @default(0) @db.Decimal(18, 2)
+  totalAmount       Decimal           @db.Decimal(18, 2)
+  currency          String            @default("KRW")
+  evidenceFileId    String?           @db.Uuid
+  status            TransactionStatus @default(DRAFT)
+  approvalRequestId String?           @db.Uuid
+  createdById       String            @db.Uuid
+  approvedById      String?           @db.Uuid
+  approvedAt        DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  deletedAt         DateTime?
+
+  businessUnit BusinessUnit?           @relation(fields: [businessUnitId], references: [id], onDelete: SetNull)
+  allocations  TransactionAllocation[]
+
+  @@index([organizationId, txDate, type, deletedAt])
+  @@index([organizationId, status])
+  @@index([projectId])
+  @@map("financial_transactions")
+}
+
+/// 실제 집행 데이터: 거래(지출)를 예산 항목에 배분
+model TransactionAllocation {
+  id            String   @id @default(uuid()) @db.Uuid
+  transactionId String   @db.Uuid
+  budgetLineId  String   @db.Uuid
+  amount        Decimal  @db.Decimal(18, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transaction FinancialTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  budgetLine  BudgetLine           @relation(fields: [budgetLineId], references: [id], onDelete: Restrict)
+
+  @@unique([transactionId, budgetLineId])
+  @@index([budgetLineId])
+  @@map("transaction_allocations")
+}
+
+// ───────────────────────────── CMS ─────────────────────────────
+model Brand {
+  id               String        @id @default(uuid()) @db.Uuid
+  organizationId   String        @db.Uuid
+  slug             String
+  name             String
+  tagline          String?
+  description      String?
+  logoUrl          String?
+  imageUrl         String?
+  websiteUrl       String?
+  category         String?
+  /// 법인 관계 확인 메모 (예: "관계 확인 필요 — 공식 계열사로 표기 금지")
+  relationshipNote String?
+  sortOrder        Int           @default(0)
+  status           ContentStatus @default(DRAFT)
+  publishedAt      DateTime?
+  seoTitle         String?
+  seoDescription   String?
+  createdById      String?       @db.Uuid
+  updatedById      String?       @db.Uuid
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+
+  portfolioItems PortfolioItem[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId, status, sortOrder])
+  @@map("brands")
+}
+
+model PortfolioItem {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  slug           String
+  title          String
+  summary        String?
+  body           String?
+  client         String?
+  year           Int?
+  imageUrl       String?
+  brandId        String?       @db.Uuid
+  tags           String[]
+  featured       Boolean       @default(false)
+  sortOrder      Int           @default(0)
+  status         ContentStatus @default(DRAFT)
+  publishedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  brand Brand? @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, slug])
+  @@index([organizationId, status, sortOrder])
+  @@map("portfolio_items")
+}
+
+/// 고정 페이지 (home, about, business, careers, contact, privacy, terms).
+/// content = 편집 중(미리보기), publishedContent = 공개 사이트에 노출되는 승인본
+model WebsitePage {
+  id               String        @id @default(uuid()) @db.Uuid
+  organizationId   String        @db.Uuid
+  key              String
+  title            String
+  content          Json          @default("{}")
+  publishedContent Json?
+  status           ContentStatus @default(DRAFT)
+  seoTitle         String?
+  seoDescription   String?
+  ogImageUrl       String?
+  publishedAt      DateTime?
+  publishedById    String?       @db.Uuid
+  updatedById      String?       @db.Uuid
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@unique([organizationId, key])
+  @@map("website_pages")
+}
+
+model WebsitePost {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  type           PostType      @default(NEWS)
+  slug           String
+  title          String
+  excerpt        String?
+  body           String        @default("")
+  coverImageUrl  String?
+  /// 채용공고 등 유형별 부가정보 (근무지, 고용형태, 마감일 등)
+  metadata       Json          @default("{}")
+  status         ContentStatus @default(DRAFT)
+  publishedAt    DateTime?
+  authorId       String?       @db.Uuid
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  @@unique([organizationId, type, slug])
+  @@index([organizationId, type, status, publishedAt])
+  @@map("website_posts")
+}
+
+model ContactInquiry {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  name           String
+  email          String
+  phone          String?
+  company        String?
+  category       String        @default("GENERAL")
+  message        String
+  status         InquiryStatus @default(NEW)
+  consentAt      DateTime
+  ipHash         String?
+  userAgent      String?
+  handledById    String?       @db.Uuid
+  internalNote   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId, status, createdAt])
+  @@map("contact_inquiries")
+}
+
+// ───────────────────────────── Communication / System ─────────────────────────────
+model Announcement {
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @db.Uuid
+  scope          AnnouncementScope @default(COMPANY)
+  departmentId   String?           @db.Uuid
+  projectId      String?           @db.Uuid
+  title          String
+  body           String
+  pinned         Boolean           @default(false)
+  authorId       String            @db.Uuid
+  publishedAt    DateTime          @default(now())
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  deletedAt      DateTime?
+
+  reads AnnouncementRead[]
+
+  @@index([organizationId, scope, publishedAt])
+  @@map("announcements")
+}
+
+model AnnouncementRead {
+  id             String   @id @default(uuid()) @db.Uuid
+  announcementId String   @db.Uuid
+  userId         String   @db.Uuid
+  readAt         DateTime @default(now())
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId])
+  @@map("announcement_reads")
+}
+
+model Notification {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @db.Uuid
+  userId         String           @db.Uuid
+  type           NotificationType
+  title          String
+  body           String?
+  link           String?
+  entityType     EntityType?
+  entityId       String?          @db.Uuid
+  readAt         DateTime?
+  emailedAt      DateTime?
+  createdAt      DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String?  @db.Uuid
+  actorId        String?  @db.Uuid
+  action         String
+  entityType     String?
+  entityId       String?
+  metadata       Json?
+  ip             String?
+  userAgent      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([actorId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model SystemSetting {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  key            String
+  value          Json
+  updatedById    String?  @db.Uuid
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, key])
+  @@map("system_settings")
+}

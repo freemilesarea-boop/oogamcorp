@@ -1,0 +1,31 @@
+{
+  "name": "oogam",
+  "private": true,
+  "version": "0.1.0",
+  "description": "OOGAM 기업 공식 홈페이지 + 사내 협업 워크스페이스 (모듈형 모놀리스)",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build:shared": "pnpm --filter @oogam/shared build",
+    "build": "pnpm build:shared && pnpm --filter @oogam/api build && pnpm --filter @oogam/web build",
+    "dev": "pnpm build:shared && pnpm -r --parallel --filter @oogam/api --filter @oogam/web dev",
+    "dev:api": "pnpm --filter @oogam/api dev",
+    "dev:web": "pnpm --filter @oogam/web dev",
+    "dev:collab": "pnpm --filter @oogam/api dev:collab",
+    "dev:worker": "pnpm --filter @oogam/api dev:worker",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "test:e2e": "playwright test",
+    "db:migrate": "pnpm --filter @oogam/api prisma:migrate",
+    "db:deploy": "pnpm --filter @oogam/api prisma:deploy",
+    "db:seed": "pnpm --filter @oogam/api seed"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "typescript": "5.9.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["argon2", "@prisma/client", "@prisma/engines", "prisma", "esbuild", "sharp", "@nestjs/core", "msgpackr-extract", "unrs-resolver"]
+  }
+}
