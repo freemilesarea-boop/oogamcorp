@@ -1,10 +1,8 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+import type { Metadata } from 'next';
+import { CmsOverview } from '@/features/cms/overview';
+
+export const metadata: Metadata = { title: '홈페이지 CMS' };
 
 export default function Page() {
-  return (
-    <>
-      <PageHeader title="홈페이지 CMS" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
-    </>
-  );
+  return <CmsOverview />;
 }

@@ -1,10 +1,10 @@
-import { DevStatus, PageHeader } from '@/components/admin/states';
+import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import { LoadingRows } from '@/components/admin/states';
+import { PostsManager } from '@/features/cms/posts-manager';
+
+export const metadata: Metadata = { title: '뉴스·채용 · CMS' };
 
 export default function Page() {
-  return (
-    <>
-      <PageHeader title="뉴스·채용" />
-      <DevStatus status="NOT_STARTED">이 화면은 아직 구현되지 않았습니다. IMPLEMENTATION_STATUS.md 를 참고하세요.</DevStatus>
-    </>
-  );
+  return <Suspense fallback={<LoadingRows />}><PostsManager /></Suspense>;
 }

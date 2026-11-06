@@ -1,3 +1,12 @@
-export default function Page() {
-  return <main className="container-site py-32"><p className="text-sm text-gray-500">준비 중인 페이지입니다.</p></main>;
+import type { Metadata } from 'next';
+import { LegalPage, legalMetadata } from '@/components/site/legal-page';
+
+export const revalidate = 60;
+
+export function generateMetadata(): Promise<Metadata> {
+  return legalMetadata('privacy', '개인정보처리방침', '/privacy');
+}
+
+export default function PrivacyPage() {
+  return <LegalPage pageKey="privacy" label="Privacy" fallbackTitle="개인정보처리방침" />;
 }
