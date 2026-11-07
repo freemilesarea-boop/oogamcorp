@@ -1,6 +1,13 @@
 import type { NextConfig } from 'next';
 import { join } from 'node:path';
 
+// Vercel 에는 아직 백엔드가 없다 → 환경변수가 빠져도 정적(읽기 전용) 미리보기 모드로 안전하게 빌드한다.
+// (fail-closed: /admin 404, /api 503, 검색 차단. 값을 명시하면 그 값이 우선. Docker 배포는 VERCEL 이 없어 영향 없음)
+if (process.env.VERCEL) {
+  process.env.NEXT_PUBLIC_DATA_SOURCE ||= 'static';
+  process.env.NEXT_PUBLIC_SITE_MODE ||= 'preview';
+}
+
 const apiUrl = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 
 const securityHeaders = [
