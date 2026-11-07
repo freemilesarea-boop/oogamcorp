@@ -22,3 +22,6 @@ dist-*/
 **/.e2e-storage/
 .next-*/
 !.env.staging.example
+
+# Preview 환경 비밀값·인증서·접속정보 (절대 커밋 금지)
+/.preview/

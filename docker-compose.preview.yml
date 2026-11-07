@@ -1,0 +1,25 @@
+# OOGAM Preview (대표 검수용) 오버레이 — 운영 구성 위에 적용, 별도 프로젝트 이름(oogam-preview)으로 실행해
+# 네트워크·볼륨·데이터가 운영/스테이징과 완전히 분리된다. 직접 실행하지 말고 infra/preview/up.sh 를 사용.
+services:
+  proxy:
+    ports: !override
+      - "${PREVIEW_BIND:-127.0.0.1}:${PREVIEW_HTTPS_PORT:-8443}:443"
+      - "${PREVIEW_BIND:-127.0.0.1}:${PREVIEW_HTTP_PORT:-8088}:80"
+      - "127.0.0.1:${PREVIEW_LOCAL_PORT:-8081}:8080"
+    volumes: !override
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/preview/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ${PREVIEW_DIR:-./.preview}/tls:/etc/nginx/certs:ro
+      - ${PREVIEW_DIR:-./.preview}/htpasswd:/etc/nginx/preview/htpasswd:ro
+      - certbot-www:/var/www/certbot:ro
+  web:
+    image: oogam-web:preview
+    build:
+      args:
+        NEXT_PUBLIC_SITE_MODE: preview
+  api:
+    image: oogam-api:preview
+  collab:
+    image: oogam-api:preview
+  worker:
+    image: oogam-api:preview

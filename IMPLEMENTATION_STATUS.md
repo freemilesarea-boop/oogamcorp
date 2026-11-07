@@ -121,6 +121,15 @@
 | 보안 검토 | PARTIAL | SECURITY.md 에 설계·제한 사항 정리, 외부 침투 테스트 미실시 |
 | 문서 (README, ARCHITECTURE, DATABASE, API, SECURITY, DEPLOYMENT, ROADMAP) | IMPLEMENTED | |
 
+## Preview (대표 검수용) 환경
+| 기능 | 상태 | 비고 |
+|---|---|---|
+| Preview 빌드 모드(검색 차단·가상 데이터 배지) | IMPLEMENTED | `NEXT_PUBLIC_SITE_MODE=preview` |
+| Preview 인프라(Basic 인증·HTTPS·noindex, 별도 Docker 프로젝트) | IMPLEMENTED | `docker-compose.preview.yml`, `infra/preview/` |
+| 가상 데모 데이터 자동 생성(API 경유) | IMPLEMENTED | `infra/preview/seed-demo.mjs` |
+| Preview E2E | IMPLEMENTED | 19/19 통과 (docs/PREVIEW.md) |
+| 외부 공개 URL(서버·DNS·정식 인증서) | BLOCKED | 서버 생성·DNS·비용 승인 필요 |
+
 ## 2차 작업에서 해결된 이슈
 - 초대 토큰 원문이 Redis 작업 데이터에 저장되던 문제 → AES-256-GCM 암호문만 저장 (테스트로 원문 0건 확인)
 - CSP 미적용 → 웹/API/다운로드 모두 적용

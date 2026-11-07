@@ -1,0 +1,14 @@
+proxy_http_version 1.1;
+# 포트를 포함한 원래 호스트를 전달 (Origin 검사 일치)
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Forwarded-Host $http_host;
+proxy_set_header X-Request-Id $request_id;
+proxy_set_header Connection "";
+# Basic 인증 헤더는 애플리케이션으로 넘기지 않는다
+proxy_set_header Authorization "";
+# 프록시가 직접 설정하는 보안 헤더는 업스트림 값을 숨겨 중복 방지
+proxy_hide_header X-Content-Type-Options;
+proxy_hide_header Referrer-Policy;

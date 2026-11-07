@@ -16,6 +16,9 @@ RUN --mount=type=secret,id=ca,required=false \
 COPY packages/shared packages/shared
 COPY apps/web apps/web
 ARG NEXT_PUBLIC_COLLAB_URL
+# preview: 검색 차단·가상 데이터 배지 (빌드 시점 값)
+ARG NEXT_PUBLIC_SITE_MODE=production
+ENV NEXT_PUBLIC_SITE_MODE=$NEXT_PUBLIC_SITE_MODE
 # rewrites 는 빌드 시점에 평가된다 (운영에서는 Nginx 가 /api 를 직접 api 로 라우팅)
 ARG API_INTERNAL_URL=http://api:4000
 ENV API_INTERNAL_URL=$API_INTERNAL_URL

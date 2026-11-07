@@ -6,3 +6,6 @@ proxy_set_header X-Forwarded-Proto $scheme;
 proxy_set_header X-Forwarded-Host $host;
 proxy_set_header X-Request-Id $request_id;
 proxy_set_header Connection "";
+# 프록시가 직접 설정하는 보안 헤더는 업스트림 값을 숨겨 중복 방지
+proxy_hide_header X-Content-Type-Options;
+proxy_hide_header Referrer-Policy;
