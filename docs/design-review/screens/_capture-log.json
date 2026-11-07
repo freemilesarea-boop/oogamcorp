@@ -1,0 +1,278 @@
+[
+  {
+    "file": "public-home-desktop.png",
+    "url": "/",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-about-desktop.png",
+    "url": "/about",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-business-desktop.png",
+    "url": "/business",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-brands-desktop.png",
+    "url": "/brands",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-brand-detail-desktop.png",
+    "url": "/brands/sample-studio",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-portfolio-desktop.png",
+    "url": "/portfolio",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-news-desktop.png",
+    "url": "/news",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-careers-desktop.png",
+    "url": "/careers",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-contact-desktop.png",
+    "url": "/contact",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-login-desktop.png",
+    "url": "/admin/login",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-dashboard-desktop.png",
+    "url": "/admin",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-dashboard-dark-desktop.png",
+    "url": "/admin",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-sidebar-collapsed-desktop.png",
+    "url": "/admin",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-my-tasks-desktop.png",
+    "url": "/admin/my-tasks",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-projects-desktop.png",
+    "url": "/admin/projects",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-project-list-desktop.png",
+    "url": "/admin/projects/75bf9cd0-45e7-4e98-ad80-6fefeb96a500",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-kanban-desktop.png",
+    "url": "/admin/projects/75bf9cd0-45e7-4e98-ad80-6fefeb96a500",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-task-panel-desktop.png",
+    "url": "/admin/projects/75bf9cd0-45e7-4e98-ad80-6fefeb96a500",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-timeline-desktop.png",
+    "url": "/admin/projects/75bf9cd0-45e7-4e98-ad80-6fefeb96a500",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-doc-editor-desktop.png",
+    "url": "/admin/docs/a0cb05a5-4e91-4e32-b540-cbc518f4f78a",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-docs-home-desktop.png",
+    "url": "/admin/docs",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-database-table-desktop.png",
+    "url": "/admin/databases/ef9538eb-4cc7-43b5-9213-00b1ff5e927b",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-database-board-desktop.png",
+    "url": "/admin/databases/ef9538eb-4cc7-43b5-9213-00b1ff5e927b",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-calendar-desktop.png",
+    "url": "/admin/calendar",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-finance-desktop.png",
+    "url": "/admin/finance",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-budgets-desktop.png",
+    "url": "/admin/finance/budgets",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-transactions-desktop.png",
+    "url": "/admin/finance/transactions",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-approvals-desktop.png",
+    "url": "/admin/approvals",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-approval-detail-desktop.png",
+    "url": "/admin/approvals?id=4710f4ad-275b-4482-a979-0d6e5e81142e",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-employees-desktop.png",
+    "url": "/admin/employees",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-employee-detail-desktop.png",
+    "url": "/admin/employees",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-teams-desktop.png",
+    "url": "/admin/teams",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-cms-pages-desktop.png",
+    "url": "/admin/cms/pages",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-settings-desktop.png",
+    "url": "/admin/settings",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-home-mobile.png",
+    "url": "/",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-brands-mobile.png",
+    "url": "/brands",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-contact-mobile.png",
+    "url": "/contact",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "public-menu-open-mobile.png",
+    "url": "/",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-login-mobile.png",
+    "url": "/admin/login",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-dashboard-mobile.png",
+    "url": "/admin",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-drawer-open-mobile.png",
+    "url": "/admin",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-kanban-mobile.png",
+    "url": "/admin/projects/75bf9cd0-45e7-4e98-ad80-6fefeb96a500",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-doc-editor-mobile.png",
+    "url": "/admin/docs/a0cb05a5-4e91-4e32-b540-cbc518f4f78a",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-finance-mobile.png",
+    "url": "/admin/finance",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-approvals-mobile.png",
+    "url": "/admin/approvals",
+    "ok": true,
+    "fontOk": true
+  },
+  {
+    "file": "admin-employees-mobile.png",
+    "url": "/admin/employees",
+    "ok": true,
+    "fontOk": true
+  }
+]

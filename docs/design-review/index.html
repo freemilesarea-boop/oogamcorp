@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OOGAM 디자인 검수</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 단일 열 검수 문서 — 결정 사항 → 디자인 평가 → 필터 가능한 화면 갤러리, OOGAM 흑백 기조를 그대로 따름 */
+:root {
+  --bg: #f6f6f4; --surface: #ffffff; --ink: #0a0a0a; --muted: #5f5f66; --line: #e2e2df;
+  --shot: #ececea; --point: #ff4d1c;
+  --ok: #1d7a46; --ok-bg: #e6f3eb; --warn: #8a5a00; --warn-bg: #fbf1dc; --hi: #b42318; --hi-bg: #fdecea;
+  --display: 'Archivo', 'Noto Sans KR', system-ui, sans-serif;
+  --body: 'Noto Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0b0b0c; --surface: #141416; --ink: #f4f4f2; --muted: #a3a3aa; --line: #2a2a2e; --shot: #1c1c1f; --point: #ff6a3d;
+  --ok: #6fd39b; --ok-bg: #12291c; --warn: #f0c060; --warn-bg: #2b2210; --hi: #ff8a7a; --hi-bg: #2e1512; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0b0b0c; --surface: #141416; --ink: #f4f4f2; --muted: #a3a3aa; --line: #2a2a2e; --shot: #1c1c1f; --point: #ff6a3d;
+  --ok: #6fd39b; --ok-bg: #12291c; --warn: #f0c060; --warn-bg: #2b2210; --hi: #ff8a7a; --hi-bg: #2e1512; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.65 var(--body); word-break: keep-all; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.masthead { background: #0a0a0a; color: #fafafa; }
+.masthead .wrap { padding-block: 56px 44px; display: grid; gap: 28px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #a3a3aa; }
+.masthead h1 { font: 800 clamp(40px, 7vw, 84px)/.95 var(--display); letter-spacing: -.035em; margin: 0; text-wrap: balance; }
+.masthead p { margin: 0; max-width: 62ch; color: #d4d4d8; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font: 400 13.5px/1.4 var(--body); color: #a3a3aa; }
+.facts b { color: #fafafa; font-weight: 500; }
+section { padding-block: 56px 8px; }
+h2 { font: 700 clamp(24px, 3vw, 32px)/1.2 var(--display); letter-spacing: -.02em; margin: 0 0 6px; text-wrap: balance; }
+.lead { color: var(--muted); margin: 0 0 24px; max-width: 70ch; }
+.notice { border: 1px solid var(--line); background: var(--surface); padding: 14px 18px; font-size: 14px; color: var(--muted); display: grid; gap: 4px; }
+.notice b { color: var(--ink); }
+/* decisions */
+.decisions { list-style: none; margin: 0; padding: 0; counter-reset: d; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.decisions li { counter-increment: d; background: var(--surface); padding: 18px 20px 20px 58px; position: relative; min-width: 0; }
+.decisions li::before { content: counter(d); position: absolute; left: 20px; top: 16px; font: 700 22px/1 var(--display); color: var(--ink); }
+.dec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.dec-title { font-weight: 700; }
+.decisions p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+.prio { font: 700 11.5px/1 var(--body); padding: 4px 7px; border-radius: 2px; white-space: nowrap; }
+.prio-hi { background: var(--hi-bg); color: var(--hi); } .prio-mid { background: var(--warn-bg); color: var(--warn); } .prio-lo { background: var(--shot); color: var(--muted); }
+.quick { margin-top: 20px; display: grid; gap: 8px; }
+.quick h3 { font: 700 15px/1.3 var(--body); margin: 0; }
+.quick ul { margin: 0; padding-left: 18px; color: var(--muted); columns: 2 320px; column-gap: 40px; font-size: 14px; }
+/* design system */
+.ds-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 16px; }
+.ds { background: var(--surface); border: 1px solid var(--line); padding: 20px; min-width: 0; }
+.ds header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.ds h3 { margin: 0; font: 700 17px/1.3 var(--body); }
+.ds p { margin: 10px 0; font-size: 14px; }
+.ds ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; display: grid; gap: 4px; }
+.verdict { font: 700 11.5px/1 var(--body); padding: 5px 8px; border-radius: 2px; white-space: nowrap; }
+.v-good { background: var(--ok-bg); color: var(--ok); } .v-improve { background: var(--warn-bg); color: var(--warn); } .v-decide { background: var(--hi-bg); color: var(--hi); }
+/* gallery */
+.toolbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 24px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.seg { display: inline-flex; border: 1px solid var(--line); background: var(--surface); }
+.seg button { font: 500 13px/1 var(--body); border: 0; background: none; color: var(--muted); padding: 9px 14px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.seg button:focus-visible, .shot:focus-visible, .lb-close:focus-visible { outline: 2px solid var(--point); outline-offset: 2px; }
+.count { font: 500 12.5px/1 var(--body); font-variant-numeric: tabular-nums; color: var(--muted); margin-left: auto; }
+.area-title { font: 700 13px/1 var(--body); color: var(--muted); margin: 36px 0 14px; display: flex; align-items: center; gap: 12px; }
+.area-title::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+.screen { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 28px; padding-block: 28px; border-top: 1px solid var(--line); }
+.screen:first-of-type { border-top: 0; }
+.shots { display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
+.shot { display: block; padding: 0; border: 1px solid var(--line); background: var(--shot); cursor: zoom-in; overflow: hidden; position: relative; flex: 1 1 0; min-width: 0; }
+.shot.desktop { aspect-ratio: 16 / 10; }
+.shot.mobile { aspect-ratio: 9 / 19.5; flex: 0 0 26%; }
+.shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.shot .tag { position: absolute; left: 8px; bottom: 8px; font: 500 10.5px/1 var(--mono); background: rgba(10,10,10,.82); color: #fafafa; padding: 4px 6px; }
+.more { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.more button { font: 500 12.5px/1 var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--muted); padding: 6px 8px; cursor: zoom-in; }
+.more button:hover { color: var(--ink); border-color: var(--ink); }
+.info { min-width: 0; display: grid; gap: 12px; align-content: start; }
+.info-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: baseline; }
+.info h3 { margin: 0; font: 700 22px/1.25 var(--body); letter-spacing: -.01em; }
+.route { font: 400 12.5px/1.4 var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.status { font: 700 11.5px/1 var(--body); padding: 5px 8px; border-radius: 2px; }
+.s-done { background: var(--ok-bg); color: var(--ok); } .s-partial { background: var(--warn-bg); color: var(--warn); } .s-content { background: var(--hi-bg); color: var(--hi); }
+.info h4 { margin: 0 0 4px; font: 700 12.5px/1.3 var(--body); color: var(--muted); }
+.info ul { margin: 0; padding-left: 18px; font-size: 14px; display: grid; gap: 3px; }
+.todo li::marker { color: var(--point); }
+.empty { color: var(--muted); padding: 40px 0; }
+footer { padding-block: 48px 64px; color: var(--muted); font-size: 13px; }
+footer code { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+/* lightbox */
+dialog.lb { border: 0; padding: 0; max-width: min(1200px, 96vw); width: 96vw; height: 92vh; background: var(--surface); color: var(--ink); }
+dialog.lb::backdrop { background: rgba(0,0,0,.72); }
+.lb-bar { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface); border-bottom: 1px solid var(--line); z-index: 1; }
+.lb-bar span { font: 500 12.5px/1.3 var(--mono); overflow-wrap: anywhere; }
+.lb-close { font: 500 13px/1 var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 12px; cursor: pointer; }
+.lb-body { overflow: auto; height: calc(100% - 50px); background: var(--shot); }
+.lb-body img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.lb-body img.mobile { max-width: 420px; width: 100%; }
+@media (max-width: 860px) {
+  .screen { grid-template-columns: 1fr; }
+  .shot.mobile { flex-basis: 30%; }
+}
+@media (prefers-reduced-motion: no-preference) { .shot img { transition: transform .4s ease; } .shot:hover img { transform: scale(1.015); } }
+</style>
+</head>
+<body>
+
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="eyebrow">OOGAM · Design Review · 2026-11-07</span>
+    <h1>OOGAM 디자인 검수</h1>
+    <p>공식 홈페이지와 사내 워크스페이스의 현재 화면을 모았습니다. 맨 위의 결정 항목부터 보시고, 아래 화면을 눌러 원본 크기로 확인하세요.</p>
+    <div class="facts"><span><b>18</b> 화면</span><span><b>46</b> 스크린샷</span><span>데스크톱 1440px · 모바일 390px</span><span>구현 완료 8 · 부분 구현 5 · 기능 완료 · 콘텐츠 필요 5</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <div class="notice">
+      <span><b>모든 데이터는 가상입니다.</b> "샘플" · "데모" · "가상"이 붙은 브랜드 · 프로젝트 · 직원 · 거래는 검수용입니다. 실제 브랜드 후보는 법인 관계 확인 전이라 넣지 않았습니다.</span>
+      <span>"CMS에서 작성하세요"로 보이는 문구는 실제 현재 상태입니다 (공개 문구 미입력). 현재 프로덕션 빌드와 실제 서체(Pretendard)로 캡처했습니다.</span>
+    </div>
+  </section>
+
+  <section id="decisions">
+    <h2>대표 결정이 필요한 항목</h2>
+    <p class="lead">번호는 처리 순서입니다. 1~3번은 공개 사이트 오픈 전에 필요합니다.</p>
+    <ol class="decisions"><li><div class="dec-head"><span class="dec-title">공개 사이트 문구 확정</span><span class="prio prio-hi">높음</span></div><p>회사 소개·사업 영역·채용 안내·메인 소개 문단에 &quot;CMS에서 작성하세요&quot; 안내문이 공개 화면에 보입니다. 운영 전 실제 문구가 필요합니다. 담당자가 관리자 CMS에서 바로 입력할 수 있습니다.</p></li>
+<li><div class="dec-head"><span class="dec-title">브랜드 공개 범위와 자료</span><span class="prio prio-hi">높음</span></div><p>듣다·Louver·247Streams·콘텐츠 제작·교육의 법인 관계를 확인한 뒤 공개 여부를 정해 주세요. 공개할 브랜드는 로고·대표 이미지·소개 문구가 필요합니다.</p></li>
+<li><div class="dec-head"><span class="dec-title">비주얼 방향: 사진 중심 vs 타이포 중심</span><span class="prio prio-hi">높음</span></div><p>현재는 이미지 없이 타이포그래피만으로 구성되어 포트폴리오·사업 영역이 비어 보입니다. 프로젝트 사진·영상 썸네일을 준비할지, 이미지 없는 타이포 중심 디자인으로 다듬을지 정해 주세요.</p></li>
+<li><div class="dec-head"><span class="dec-title">푸터 회사 정보</span><span class="prio prio-mid">중간</span></div><p>상호·대표자·사업자등록번호·주소·대표 연락처 표기 여부와 내용을 정해 주세요. 현재 푸터에는 메뉴와 문의 링크만 있습니다.</p></li>
+<li><div class="dec-head"><span class="dec-title">메뉴·섹션 언어 정책</span><span class="prio prio-mid">중간</span></div><p>공개 메뉴와 섹션 제목을 영문으로 유지할지, 국문 병기할지 정해 주세요. 현재 영문과 국문이 섞여 있습니다.</p></li>
+<li><div class="dec-head"><span class="dec-title">관리자 상태 색상</span><span class="prio prio-mid">중간</span></div><p>업무 상태 배지에 색(파랑·노랑·초록)을 쓸지, 흑백 톤 + 아이콘으로 통일할지 정해 주세요. 색은 상태 파악이 빠르고, 흑백은 브랜드 일관성이 높습니다.</p></li>
+<li><div class="dec-head"><span class="dec-title">관리자 메뉴 그룹화</span><span class="prio prio-lo">낮음</span></div><p>14개 메뉴를 업무(내 업무·프로젝트·문서·데이터베이스·캘린더) / 경영(전자결재·재무) / 조직(직원·부서·공지·파일) / 관리(CMS·설정)로 묶을지 정해 주세요.</p></li>
+<li><div class="dec-head"><span class="dec-title">Hero 대형 &quot;OOGAM&quot; 워드마크</span><span class="prio prio-lo">낮음</span></div><p>메인 첫 화면에 헤드라인과 대형 워드마크가 함께 있습니다. 강한 브랜드 인상을 유지할지, 헤드라인만 남겨 간결하게 할지 정해 주세요.</p></li></ol>
+    <div class="quick"><h3>결정 없이 다음 개발에서 바로 고칠 항목</h3><ul><li>한글 라벨의 과도한 자간 제거</li>
+<li>업무·직원 상세 패널의 배경 처리 통일</li>
+<li>날짜 입력을 한국식(YYYY. MM. DD.) 표시로 통일</li>
+<li>모바일 에디터 툴바를 한 줄 스크롤 또는 &quot;더보기&quot;로 정리, 툴바 버튼에 이름 표시(툴팁)</li>
+<li>전자결재 상세를 열 때 해당 문서가 있는 탭으로 자동 전환</li>
+<li>파트너십 CTA 모서리를 다른 요소와 같은 직각으로 통일</li>
+<li>대시보드 지표 카드 수를 그리드에 맞게 조정 (모바일 2열 짝수)</li>
+<li>칸반 열마다 업무 추가 버튼, 키보드 이동 지원</li></ul></div>
+  </section>
+
+  <section id="design">
+    <h2>디자인 시스템 검토</h2>
+    <p class="lead">타이포그래피, 여백, 색상, 메뉴 구성, 정보 위계, 반응형 동작을 화면 전체에서 평가했습니다.</p>
+    <div class="ds-grid"><article class="ds"><header><h3>타이포그래피</h3><span class="verdict v-good">양호</span></header><p>Pretendard 단일 서체로 국문·영문이 일관됩니다. 공개 사이트는 초대형 디스플레이(Hero 최대 156px)와 작은 영문 라벨의 대비가 강해 프리미엄 미디어 회사다운 인상을 줍니다. 관리자는 13~15px 본문으로 정보 밀도가 적절합니다.</p><ul><li>한글 라벨에도 넓은 자간이 적용되어 &quot;크 리 에 이 티 브&quot;처럼 글자가 흩어져 보임 (브랜드 카드·채용 메타)</li><li>섹션 제목이 영문(Selected Work, Latest)과 국문(OOGAM과 함께하는 브랜드)으로 섞여 있음 — 언어 정책 결정 필요</li></ul></article>
+<article class="ds"><header><h3>여백 · 그리드</h3><span class="verdict v-improve">보완 필요</span></header><p>12열 그리드와 넉넉한 섹션 여백이 일관됩니다. 관리자 화면은 카드·표 간격이 고르고 정렬이 정확합니다.</p><ul><li>콘텐츠가 없는 영역(사업 영역 카드 상단, 회사 소개)이 큰 빈 공간으로 남음</li><li>모바일 홈이 약 7,500px로 김</li><li>파트너십 CTA만 둥근 모서리이고 나머지는 직각이라 형태 언어가 섞임</li></ul></article>
+<article class="ds"><header><h3>색상</h3><span class="verdict v-decide">결정 필요</span></header><p>공개 사이트는 블랙 #0A0A0A · 화이트 · 회색만 사용하고 포인트 컬러(오렌지)는 긴급 표시 등에 최소 사용해 방향과 일치합니다. 재무 차트도 흑백 톤입니다.</p><ul><li>관리자 상태 배지(진행 중=파랑, 검토=노랑, 완료=초록)와 개발 상태 안내(노랑)가 흑백 기조에서 벗어남 — 기능적 색으로 유지할지 결정 필요</li><li>음수 금액은 빨강 표시 (유지 권장)</li></ul></article>
+<article class="ds"><header><h3>메뉴 구성</h3><span class="verdict v-decide">결정 필요</span></header><p>공개 사이트는 영문 7개 메뉴(About · Business · Brands · Portfolio · News · Careers · Contact)로 간결합니다. 관리자는 14개 메뉴가 한 줄 목록이며 권한에 따라 자동으로 숨겨집니다.</p><ul><li>관리자 메뉴 14개가 묶음 없이 나열 — &quot;업무 / 경영 / 조직 / 관리&quot; 그룹화 제안</li><li>공개 메뉴 언어(영문 유지 vs 국문 병기) 결정 필요</li></ul></article>
+<article class="ds"><header><h3>정보 위계</h3><span class="verdict v-good">양호</span></header><p>대시보드 → 목록 → 상세 패널 흐름이 일관되고, 핵심 수치를 먼저 보여줍니다. 재무 대시보드는 지표 → 추이 → 구분별 → 미승인 순서가 명확합니다.</p><ul><li>전자결재 상세와 왼쪽 목록 탭이 어긋날 수 있음</li><li>업무 패널(어둡게)과 직원 패널(흐리게)의 배경 처리가 다름</li><li>편집기 툴바가 아이콘만 있어 기능 파악이 어려움</li></ul></article>
+<article class="ds"><header><h3>반응형</h3><span class="verdict v-good">양호</span></header><p>데스크톱·태블릿·모바일에서 가로 스크롤 없이 동작하며, 관리자 사이드바는 모바일 드로어로 전환됩니다. 키보드 포커스·명도 대비 자동 점검(axe) 심각 문제는 0건입니다.</p><ul><li>모바일 에디터 툴바 3줄</li><li>데이터베이스 보드는 넓은 화면에서도 가로 스크롤</li><li>대시보드 지표 카드 5개가 모바일에서 마지막 1개만 남음</li></ul></article></div>
+  </section>
+
+  <section id="screens">
+    <h2>화면 갤러리</h2>
+    <p class="lead">화면마다 구현 완료된 기능과 미완성·개선 항목을 나눴습니다. 이미지를 누르면 원본 크기로 스크롤하며 볼 수 있습니다.</p>
+    <div class="toolbar" role="toolbar" aria-label="화면 필터">
+      <div class="seg" id="f-area">
+        <button type="button" data-v="all" aria-pressed="true">전체</button>
+        <button type="button" data-v="site" aria-pressed="false">공식 홈페이지</button>
+        <button type="button" data-v="admin" aria-pressed="false">관리자</button>
+      </div>
+      <div class="seg" id="f-status">
+        <button type="button" data-v="all" aria-pressed="true">모든 상태</button>
+        <button type="button" data-v="done" aria-pressed="false">구현 완료</button>
+        <button type="button" data-v="partial" aria-pressed="false">부분 구현</button>
+        <button type="button" data-v="content" aria-pressed="false">콘텐츠 필요</button>
+      </div>
+      <span class="count" id="count"></span>
+    </div>
+    <div id="gallery"></div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>파일 위치: <code>docs/OOGAM_DESIGN_REVIEW.md</code> · <code>docs/design-review/index.html</code> · <code>docs/design-review/screens/</code></p>
+  <p>캡처: 현재 프로덕션 빌드, Chromium, 로컬 검수 DB(가상 데이터). 소스 코드는 변경하지 않았습니다. 기능·보안 검증 결과는 IMPLEMENTATION_STATUS.md · SECURITY.md 참고.</p>
+</footer>
+
+<dialog class="lb" id="lb" aria-label="스크린샷 원본 보기">
+  <div class="lb-bar"><span id="lb-title"></span><button type="button" class="lb-close" id="lb-close">닫기 (Esc)</button></div>
+  <div class="lb-body"><img id="lb-img" alt=""></div>
+</dialog>
+
+<script>
+const SCREENS = [{"id": "home", "area": "site", "title": "메인", "route": "/", "shots": ["public-home-desktop", "public-home-mobile", "public-menu-open-mobile"], "status": "content", "done": ["9개 섹션 구성: 내비게이션, Hero, 회사 소개, 사업 영역, 브랜드, 프로젝트, 뉴스, 파트너십 CTA, 푸터", "Hero 문구는 CMS에서 수정 가능 (현재 \"Ideas Become Impact.\" 임시 카피)", "게시 승인된 콘텐츠만 노출, 게시 취소 즉시 반영", "모바일 전체 화면 메뉴, 스크롤 시 헤더 전환"], "todo": ["회사 소개 문단에 \"(임시 소개 문구 — CMS에서 수정하세요)\"가 공개 화면에 그대로 보임", "프로젝트 카드 이미지가 없어 회색 박스로 표시", "사업 영역 카드에 이미지·아이콘이 없어 카드 상단이 비어 보임", "모바일에서 홈 전체 길이가 약 7,500px로 김 (사업 영역 카드의 빈 높이가 원인)"], "statusLabel": "기능 완료 · 콘텐츠 필요"}, {"id": "about", "area": "site", "title": "회사 소개", "route": "/about", "shots": ["public-about-desktop"], "status": "content", "done": ["CMS 고정 페이지(제목·본문·SEO) 편집·게시 연동"], "todo": ["본문이 \"회사 소개 본문을 CMS에서 작성하세요.\" 안내문으로 공개됨", "연혁·비전·조직·대표 인사말 같은 회사 소개 전용 섹션 구조가 없음 (제목+본문 1단 구조)", "내용이 짧아 푸터가 화면 중간에서 시작"], "statusLabel": "기능 완료 · 콘텐츠 필요"}, {"id": "business", "area": "site", "title": "사업 영역", "route": "/business", "shots": ["public-business-desktop"], "status": "content", "done": ["3개 사업 영역(Creative Business · Media · Technology) 카드", "하단 문의 유도 문구"], "todo": ["소개 문단이 \"사업 영역 소개를 CMS에서 작성하세요.\"로 공개됨", "영역별 상세 설명·사례 연결·이미지 없음"], "statusLabel": "기능 완료 · 콘텐츠 필요"}, {"id": "brands", "area": "site", "title": "브랜드", "route": "/brands · /brands/[slug]", "shots": ["public-brands-desktop", "public-brand-detail-desktop", "public-brands-mobile"], "status": "content", "done": ["브랜드 목록·상세, CMS에서 이름·로고·소개·이미지·웹사이트·노출 순서 관리", "법인 관계 메모가 있는 브랜드는 게시 전 확인 절차 (관리자 경고)"], "todo": ["실제 브랜드(듣다, Louver, 247Streams, 콘텐츠 제작·교육)는 법인 관계 확인 전이라 비공개 상태 — 화면은 가상 샘플", "로고·이미지가 없으면 텍스트만 표시되어 카드가 단조로움", "4개일 때 3열 그리드에 빈 칸 2개가 남음"], "statusLabel": "기능 완료 · 콘텐츠 필요"}, {"id": "portfolio", "area": "site", "title": "포트폴리오", "route": "/portfolio", "shots": ["public-portfolio-desktop"], "status": "partial", "done": ["게시된 프로젝트 목록, 대표 프로젝트(featured)는 메인에 노출, 태그·연도·클라이언트 표기"], "todo": ["포트폴리오 개별 상세 페이지 없음 (목록만)", "이미지 미등록 시 회색 자리표시"], "statusLabel": "부분 구현"}, {"id": "news", "area": "site", "title": "뉴스 · 채용", "route": "/news · /careers", "shots": ["public-news-desktop", "public-careers-desktop"], "status": "content", "done": ["뉴스/인사이트 탭, 상세 페이지, 안전한 마크다운 렌더링", "채용 공고(근무지·고용형태·마감일)와 상세 페이지"], "todo": ["채용 페이지 상단 안내가 \"채용 안내 문구를 CMS에서 작성하세요.\"로 공개됨", "외부 지원 링크/지원서 접수 기능 없음"], "statusLabel": "기능 완료 · 콘텐츠 필요"}, {"id": "contact", "area": "site", "title": "문의", "route": "/contact", "shots": ["public-contact-desktop", "public-contact-mobile"], "status": "done", "done": ["이름·이메일·연락처·회사·유형·내용 입력과 검증", "개인정보 수집 동의 필수, 스팸 차단(숨김 필드·요청 제한)", "접수 시 관리자 알림, CMS 문의 관리 화면"], "todo": ["접수 확인 자동 회신 메일 없음 (SMTP 설정 후 가능)", "주소·지도·대표 전화 표기 없음"], "statusLabel": "구현 완료"}, {"id": "login", "area": "admin", "title": "로그인 · 2단계 인증", "route": "/admin/login · /admin/mfa", "shots": ["admin-login-desktop", "admin-login-mobile"], "status": "done", "done": ["초대 기반 계정(외부 가입 없음), 로그인 시도 제한", "인증 앱(TOTP) 2단계 인증, 복구 코드, 경영진 필수 정책"], "todo": ["패스키(WebAuthn)·신뢰 기기 기억 미지원"], "statusLabel": "구현 완료"}, {"id": "dashboard", "area": "admin", "title": "대시보드", "route": "/admin", "shots": ["admin-dashboard-desktop", "admin-dashboard-mobile", "admin-dashboard-dark-desktop", "admin-sidebar-collapsed-desktop", "admin-drawer-open-mobile"], "status": "done", "done": ["업무 지표(진행·지연·오늘 마감·결재 대기·알림)", "이번 달 재무 요약 (재무 권한자에게만 표시)", "내 업무·결재 대기·내 프로젝트·공지·최근 문서", "다크 모드, 사이드바 접기, 모바일 드로어 메뉴, 키보드 단축키(⌘K 검색)"], "todo": ["지표 카드 5개가 모바일 2열 배치에서 마지막 카드 1개만 한 줄에 남음", "역할별(대표/팀장/직원) 맞춤 대시보드 구성 없음"], "statusLabel": "구현 완료"}, {"id": "projects", "area": "admin", "title": "프로젝트", "route": "/admin/projects · /admin/projects/[id]", "shots": ["admin-projects-desktop", "admin-project-list-desktop", "admin-timeline-desktop", "admin-my-tasks-desktop"], "status": "partial", "done": ["프로젝트 목록·필터, 상세(진행률 자동 계산, 멤버, 마일스톤, 사용자 정의 상태, 활동 로그)", "리스트·칸반·캘린더·타임라인 보기, 내 업무(마감 기준 묶음)"], "todo": ["Gantt 차트 미구현 (화면에 개발 상태 표시)", "타임라인은 시작일이 없으면 모든 막대가 같은 길이로 보임", "프로젝트 템플릿·반복 업무 없음"], "statusLabel": "부분 구현"}, {"id": "kanban", "area": "admin", "title": "칸반 · 업무 상세", "route": "/admin/projects/[id] (칸반 탭)", "shots": ["admin-kanban-desktop", "admin-task-panel-desktop", "admin-kanban-mobile"], "status": "done", "done": ["마우스 드래그로 상태 이동, 새로고침 후 유지 확인", "업무 상세 패널: 담당자·일정·체크리스트·하위 업무·선행 업무·관련 문서·첨부·댓글·변경 이력"], "todo": ["키보드로 카드 이동 불가 (상세 패널에서 상태 변경으로 대체)", "열마다 \"업무 추가\" 버튼 없음 (상단 입력란만)", "날짜 입력이 브라우저 기본 형식으로 표시 (OS 언어에 따라 mm/dd/yyyy)"], "statusLabel": "구현 완료"}, {"id": "docs", "area": "admin", "title": "문서 에디터", "route": "/admin/docs · /admin/docs/[id]", "shots": ["admin-doc-editor-desktop", "admin-doc-editor-mobile", "admin-docs-home-desktop"], "status": "partial", "done": ["블록: 제목 1~3, 목록, 체크리스트, 인용, 구분선, 코드, 표, 이미지, 파일, 링크, 토글, 콜아웃, \"/\" 메뉴", "자동 저장과 충돌 감지, 버전 기록·복원, 휴지통, 템플릿, 공유 권한, 댓글", "실시간 공동 편집(협업 서버 가동 시)"], "todo": ["본문 안의 @멘션 미구현 (댓글 멘션은 가능)", "문서 트리 드래그 정렬 대신 메뉴로 이동", "툴바가 아이콘만 있어 처음 쓰는 사람이 기능을 알기 어려움, 모바일에서 3줄로 늘어남"], "statusLabel": "부분 구현"}, {"id": "database", "area": "admin", "title": "데이터베이스", "route": "/admin/databases/[id]", "shots": ["admin-database-table-desktop", "admin-database-board-desktop"], "status": "partial", "done": ["11개 속성 타입, 셀 값 검증", "표·보드·캘린더·리스트·갤러리 보기, 필터·정렬·그룹, 저장된 보기, CSV 가져오기·내보내기"], "todo": ["타임라인 보기, 수식(Formula)·롤업 속성 미구현 (화면에 노란 개발 상태 안내)", "파일 셀에 파일 이름 대신 개수만 표시", "1440px에서도 보드 4번째 열이 잘림 (가로 스크롤)"], "statusLabel": "부분 구현"}, {"id": "calendar", "area": "admin", "title": "캘린더", "route": "/admin/calendar", "shots": ["admin-calendar-desktop"], "status": "partial", "done": ["월·주 보기, 일정 생성·수정, 참석자·응답, 비공개 일정, 업무 마감일 함께 보기"], "todo": ["반복 일정은 저장만 되고 달력에 펼쳐지지 않음", "외부 캘린더(Google 등) 연동 없음"], "statusLabel": "부분 구현"}, {"id": "finance", "area": "admin", "title": "재무", "route": "/admin/finance · /budgets · /transactions", "shots": ["admin-finance-desktop", "admin-finance-mobile", "admin-budgets-desktop", "admin-transactions-desktop"], "status": "done", "done": ["재무 대시보드: 총수입·지출·수지, 승인 대기, 월별 추이, 사업 구분별 실적, 프로젝트별 비용", "예산 편성·승인과 실제 집행 분리, 거래 등록(부가세 자동), 증빙, 승인·반려, CSV", "권한 없는 직원은 메뉴·화면·API 모두 차단"], "todo": ["\"내부 관리용 — 법정 회계·세무 시스템을 대체하지 않습니다\" 고지 유지 필요", "엑셀(XLSX) 리포트 내보내기 없음"], "statusLabel": "구현 완료"}, {"id": "approvals", "area": "admin", "title": "전자결재", "route": "/admin/approvals", "shots": ["admin-approvals-desktop", "admin-approval-detail-desktop", "admin-approvals-mobile"], "status": "done", "done": ["결재 작성(유형·금액·결재선·첨부), 승인·반려·보완 요청·재상신·취소, 처리 이력", "동시 승인 충돌 방지, 결재 요청·완료 알림, 프로젝트·예산·거래 연결"], "todo": ["결재 양식 템플릿·전결 규정 없음", "상세를 열었을 때 왼쪽 목록 탭과 문서가 일치하지 않는 경우가 있음 (예: \"결재 대기\" 탭에 없는 문서)"], "statusLabel": "구현 완료"}, {"id": "employees", "area": "admin", "title": "직원 관리", "route": "/admin/employees · /admin/teams", "shots": ["admin-employees-desktop", "admin-employee-detail-desktop", "admin-employees-mobile", "admin-teams-desktop"], "status": "done", "done": ["직원 목록·검색·필터, 초대 링크 발급, 역할·부서·직책 변경, 계정 비활성화", "민감 인사정보(급여)는 별도 권한자만 열람", "부서 트리·부서장·구성원"], "todo": ["조직도 시각화 없음", "직원 상세 패널은 배경을 흐리게, 업무 패널은 어둡게 처리해 두 패널의 동작이 다름"], "statusLabel": "구현 완료"}, {"id": "cms", "area": "admin", "title": "홈페이지 CMS · 설정", "route": "/admin/cms/pages · /admin/settings", "shots": ["admin-cms-pages-desktop", "admin-settings-desktop"], "status": "done", "done": ["페이지별 구조화 편집 + 실시간 미리보기, 초안/게시 분리, 게시 권한 분리", "내 계정: 비밀번호 변경, 로그인 기기 관리, 2단계 인증"], "todo": ["페이지 SEO 항목은 초안 없이 저장 즉시 반영"], "statusLabel": "구현 완료"}];
+const AREA = { site: '공식 홈페이지', admin: '관리자 워크스페이스' };
+const state = { area: 'all', status: 'all' };
+try { const s = JSON.parse(localStorage.getItem('oogam-review-filter') || '{}'); Object.assign(state, s); } catch (e) {}
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const isMobile = (shot) => shot.endsWith('-mobile');
+const label = (shot) => shot.replace(/^(admin|public)-/, '').replace(/-(desktop|mobile)$/, (m, v) => v === 'mobile' ? ' · 모바일' : ' · 데스크톱');
+
+function card(s) {
+  const desk = s.shots.find((x) => !isMobile(x));
+  const mob = s.shots.find((x) => isMobile(x));
+  const primary = [desk, mob].filter(Boolean);
+  const rest = s.shots.filter((x) => !primary.includes(x));
+  const shotBtn = (x) => `<button type="button" class="shot ${isMobile(x) ? 'mobile' : 'desktop'}" data-shot="${x}" aria-label="${esc(s.title)} ${isMobile(x) ? '모바일' : '데스크톱'} 원본 보기"><img src="screens/${x}.png" alt="${esc(s.title)} ${isMobile(x) ? '모바일' : '데스크톱'} 화면" loading="lazy"><span class="tag">${isMobile(x) ? 'MOBILE' : 'DESKTOP'}</span></button>`;
+  return `<article class="screen" id="screen-${s.id}">
+    <div>
+      <div class="shots">${primary.map(shotBtn).join('')}</div>
+      ${rest.length ? `<div class="more">${rest.map((x) => `<button type="button" data-shot="${x}">+ ${esc(label(x))}</button>`).join('')}</div>` : ''}
+    </div>
+    <div class="info">
+      <div class="info-head"><h3>${esc(s.title)}</h3><span class="status s-${s.status}">${esc(s.statusLabel)}</span></div>
+      <span class="route">${esc(s.route)}</span>
+      <div><h4>구현 완료</h4><ul>${s.done.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      <div><h4>미완성 · 개선 필요</h4><ul class="todo">${s.todo.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
+    </div>
+  </article>`;
+}
+
+function render() {
+  const list = SCREENS.filter((s) => (state.area === 'all' || s.area === state.area) && (state.status === 'all' || s.status === state.status));
+  const g = document.getElementById('gallery');
+  if (!list.length) { g.innerHTML = '<p class="empty">조건에 맞는 화면이 없습니다. 필터를 바꿔 보세요.</p>'; }
+  else {
+    g.innerHTML = ['site', 'admin'].map((a) => {
+      const items = list.filter((s) => s.area === a);
+      return items.length ? `<h3 class="area-title">${AREA[a]}</h3>${items.map(card).join('')}` : '';
+    }).join('');
+  }
+  document.getElementById('count').textContent = `${list.length} / ${SCREENS.length} 화면`;
+  for (const [id, key] of [['f-area', 'area'], ['f-status', 'status']]) {
+    document.querySelectorAll(`#${id} button`).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === state[key])));
+  }
+  try { localStorage.setItem('oogam-review-filter', JSON.stringify(state)); } catch (e) {}
+}
+
+for (const [id, key] of [['f-area', 'area'], ['f-status', 'status']]) {
+  document.getElementById(id).addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    state[key] = b.dataset.v; render();
+  });
+}
+
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lb-img');
+document.getElementById('gallery').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-shot]'); if (!b) return;
+  const shot = b.dataset.shot;
+  const s = SCREENS.find((x) => x.shots.includes(shot));
+  lbImg.src = `screens/${shot}.png`;
+  lbImg.alt = `${s ? s.title : ''} 원본`;
+  lbImg.className = isMobile(shot) ? 'mobile' : '';
+  document.getElementById('lb-title').textContent = `${s ? s.title + ' — ' : ''}${label(shot)}  ·  screens/${shot}.png`;
+  lb.showModal();
+  lb.querySelector('.lb-body').scrollTop = 0;
+});
+document.getElementById('lb-close').addEventListener('click', () => lb.close());
+lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+render();
+</script>
+
+</body>
+</html>
