@@ -1,4 +1,6 @@
 import 'server-only';
+import { isStaticSite } from './site-mode';
+import { staticFetch } from './static-site/static-fetch';
 
 const API = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 
@@ -11,6 +13,8 @@ const API = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
  * 트래픽 증가 시 Nginx 마이크로 캐시(수 초) 또는 게시 이벤트 기반 on-demand revalidate 로 확장한다.
  */
 export async function publicFetch<T>(path: string): Promise<T | null> {
+  // 백엔드 미연결 배포(Vercel 홈페이지 우선 공개): 번들된 가상 샘플 스냅샷을 읽기 전용으로 사용
+  if (isStaticSite) return (staticFetch(path) as T | null) ?? null;
   try {
     const res = await fetch(`${API}/api/v1/public${path}`, { cache: 'no-store' });
     if (!res.ok) return null;

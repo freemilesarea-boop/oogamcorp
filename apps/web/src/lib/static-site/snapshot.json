@@ -1,0 +1,1013 @@
+{
+ "site": {
+  "name": "OOGAM",
+  "nav": [
+   {
+    "href": "/about",
+    "label": "About"
+   },
+   {
+    "href": "/business",
+    "label": "Business"
+   },
+   {
+    "href": "/brands",
+    "label": "Brands"
+   },
+   {
+    "href": "/portfolio",
+    "label": "Portfolio"
+   },
+   {
+    "href": "/news",
+    "label": "News"
+   },
+   {
+    "href": "/careers",
+    "label": "Careers"
+   },
+   {
+    "href": "/contact",
+    "label": "Contact"
+   }
+  ],
+  "footer": null,
+  "seo": {
+   "title": "OOGAM — Ideas Become Impact.",
+   "description": null,
+   "ogImageUrl": null
+  }
+ },
+ "home": {
+  "page": {
+   "key": "home",
+   "title": "홈",
+   "content": {
+    "cta": {
+     "href": "/contact",
+     "label": "파트너십 문의",
+     "heading": "새로운 프로젝트를 함께 만들어 갈 파트너를 찾습니다."
+    },
+    "hero": {
+     "lines": [
+      "Creative Business.",
+      "Media.",
+      "Technology."
+     ],
+     "title": "Ideas Become Impact.",
+     "ctaHref": "/contact",
+     "eyebrow": "OOGAM",
+     "ctaLabel": "함께 일하기"
+    },
+    "intro": {
+     "body": "[샘플 문구] OOGAM은 크리에이티브 비즈니스, 미디어, 테크놀로지를 하나의 흐름으로 연결해 브랜드의 다음 장면을 만듭니다.",
+     "heading": "아이디어를 실행 가능한 임팩트로."
+    },
+    "business": [
+     {
+      "key": "creative",
+      "body": "브랜드 기획과 크리에이티브 사업 개발",
+      "title": "Creative Business"
+     },
+     {
+      "key": "media",
+      "body": "콘텐츠 기획·제작과 미디어 운영",
+      "title": "Media"
+     },
+     {
+      "key": "technology",
+      "body": "서비스와 플랫폼을 위한 기술 개발",
+      "title": "Technology"
+     }
+    ]
+   },
+   "seo": {
+    "title": "OOGAM — Ideas Become Impact.",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:35:21.194Z",
+   "updatedAt": "2026-11-07T04:35:21.195Z"
+  },
+  "brands": [
+   {
+    "id": "21e76641-84d3-4683-a5dc-13792ba7793d",
+    "slug": "sample-studio",
+    "name": "샘플 스튜디오",
+    "tagline": "크리에이티브 스튜디오 · 가상 샘플",
+    "description": "브랜드 기획과 영상 제작을 하는 가상의 크리에이티브 스튜디오입니다. (Preview 검수용 샘플)",
+    "logoUrl": null,
+    "imageUrl": null,
+    "websiteUrl": null,
+    "category": "크리에이티브 스튜디오",
+    "sortOrder": 0,
+    "publishedAt": "2026-11-07T04:35:21.300Z",
+    "updatedAt": "2026-11-07T04:35:21.301Z",
+    "seoTitle": null,
+    "seoDescription": null
+   },
+   {
+    "id": "bcb78fb0-c64b-4413-897b-e36a2af9455c",
+    "slug": "sample-audio",
+    "name": "샘플 오디오",
+    "tagline": "오디오 콘텐츠 · 가상 샘플",
+    "description": "오디오 콘텐츠를 기획하는 가상의 브랜드입니다. (Preview 검수용 샘플)",
+    "logoUrl": null,
+    "imageUrl": null,
+    "websiteUrl": null,
+    "category": "오디오 콘텐츠",
+    "sortOrder": 1,
+    "publishedAt": "2026-11-07T04:35:21.329Z",
+    "updatedAt": "2026-11-07T04:35:21.329Z",
+    "seoTitle": null,
+    "seoDescription": null
+   },
+   {
+    "id": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5",
+    "slug": "sample-live",
+    "name": "샘플 라이브",
+    "tagline": "라이브 미디어 · 가상 샘플",
+    "description": "라이브 스트리밍 기반의 가상 미디어 브랜드입니다. (Preview 검수용 샘플)",
+    "logoUrl": null,
+    "imageUrl": null,
+    "websiteUrl": null,
+    "category": "라이브 미디어",
+    "sortOrder": 2,
+    "publishedAt": "2026-11-07T04:35:21.359Z",
+    "updatedAt": "2026-11-07T04:35:21.359Z",
+    "seoTitle": null,
+    "seoDescription": null
+   },
+   {
+    "id": "bf4499e9-f335-418c-be35-f955607608ef",
+    "slug": "sample-academy",
+    "name": "샘플 아카데미",
+    "tagline": "교육 · 가상 샘플",
+    "description": "콘텐츠 제작 교육을 운영하는 가상의 브랜드입니다. (Preview 검수용 샘플)",
+    "logoUrl": null,
+    "imageUrl": null,
+    "websiteUrl": null,
+    "category": "교육",
+    "sortOrder": 3,
+    "publishedAt": "2026-11-07T04:35:21.388Z",
+    "updatedAt": "2026-11-07T04:35:21.389Z",
+    "seoTitle": null,
+    "seoDescription": null
+   },
+   {
+    "id": "35f6d9ad-6871-41ab-8f64-5b5187ae892c",
+    "slug": "sample-lab",
+    "name": "샘플 랩",
+    "tagline": "테크 · 가상 샘플",
+    "description": "서비스 프로토타입을 만드는 가상의 테크 브랜드입니다. (Preview 검수용 샘플)",
+    "logoUrl": null,
+    "imageUrl": null,
+    "websiteUrl": null,
+    "category": "테크",
+    "sortOrder": 4,
+    "publishedAt": "2026-11-07T04:35:21.417Z",
+    "updatedAt": "2026-11-07T04:35:21.418Z",
+    "seoTitle": null,
+    "seoDescription": null
+   },
+   {
+    "id": "3573a451-7c3f-449c-891c-0d62bd2affb1",
+    "slug": "sample-goods",
+    "name": "샘플 굿즈",
+    "tagline": "커머스 · 가상 샘플",
+    "description": "브랜드 굿즈를 기획하는 가상의 커머스 브랜드입니다. (Preview 검수용 샘플)",
+    "logoUrl": null,
+    "imageUrl": null,
+    "websiteUrl": null,
+    "category": "커머스",
+    "sortOrder": 5,
+    "publishedAt": "2026-11-07T04:35:21.447Z",
+    "updatedAt": "2026-11-07T04:35:21.447Z",
+    "seoTitle": null,
+    "seoDescription": null
+   }
+  ],
+  "featured": [
+   {
+    "id": "4934827d-9490-401e-8dc1-7f4eb4150444",
+    "slug": "sample-rebrand",
+    "title": "[샘플] 브랜드 리뉴얼 캠페인",
+    "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+    "client": "샘플 클라이언트 A",
+    "year": 2026,
+    "imageUrl": null,
+    "tags": [
+     "Branding",
+     "Campaign"
+    ],
+    "featured": true,
+    "sortOrder": 0,
+    "publishedAt": "2026-11-07T04:35:21.488Z",
+    "updatedAt": "2026-11-07T04:35:21.489Z",
+    "brandId": "21e76641-84d3-4683-a5dc-13792ba7793d",
+    "brand": {
+     "id": "21e76641-84d3-4683-a5dc-13792ba7793d",
+     "slug": "sample-studio",
+     "name": "샘플 스튜디오"
+    }
+   },
+   {
+    "id": "c129388c-3970-457a-be56-7db177a56316",
+    "slug": "sample-docu",
+    "title": "[샘플] 다큐멘터리 시리즈",
+    "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+    "client": "샘플 클라이언트 B",
+    "year": 2025,
+    "imageUrl": null,
+    "tags": [
+     "Media",
+     "Film"
+    ],
+    "featured": true,
+    "sortOrder": 1,
+    "publishedAt": "2026-11-07T04:35:21.522Z",
+    "updatedAt": "2026-11-07T04:35:21.523Z",
+    "brandId": "bcb78fb0-c64b-4413-897b-e36a2af9455c",
+    "brand": {
+     "id": "bcb78fb0-c64b-4413-897b-e36a2af9455c",
+     "slug": "sample-audio",
+     "name": "샘플 오디오"
+    }
+   },
+   {
+    "id": "0359dff7-f64f-42d9-a0eb-b94ec7b2460f",
+    "slug": "sample-platform",
+    "title": "[샘플] 커머스 플랫폼 구축",
+    "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+    "client": "샘플 클라이언트 C",
+    "year": 2026,
+    "imageUrl": null,
+    "tags": [
+     "Technology"
+    ],
+    "featured": true,
+    "sortOrder": 2,
+    "publishedAt": "2026-11-07T04:35:21.555Z",
+    "updatedAt": "2026-11-07T04:35:21.556Z",
+    "brandId": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5",
+    "brand": {
+     "id": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5",
+     "slug": "sample-live",
+     "name": "샘플 라이브"
+    }
+   }
+  ],
+  "news": [
+   {
+    "id": "7d1e9bad-c9bc-47a8-82e0-03dc0dccd530",
+    "type": "INSIGHT",
+    "slug": "sample-insight-1",
+    "title": "[샘플] 크리에이티브와 기술의 만남",
+    "excerpt": "가상의 인사이트 글입니다.",
+    "coverImageUrl": null,
+    "metadata": {},
+    "publishedAt": "2026-11-07T04:35:23.770Z",
+    "updatedAt": "2026-11-07T04:35:23.771Z"
+   },
+   {
+    "id": "1d7c68b0-1c5f-4b1e-9e55-e7ae69a66bcf",
+    "type": "NEWS",
+    "slug": "sample-news-3",
+    "title": "[샘플] 연말 캠페인 공개",
+    "excerpt": "가상의 캠페인 공개 소식입니다.",
+    "coverImageUrl": null,
+    "metadata": {},
+    "publishedAt": "2026-11-07T04:35:23.727Z",
+    "updatedAt": "2026-11-07T04:35:23.728Z"
+   },
+   {
+    "id": "909aaba7-5608-479e-8415-d8316a94b577",
+    "type": "NEWS",
+    "slug": "sample-news-2",
+    "title": "[샘플] 파트너십 체결 소식",
+    "excerpt": "가상의 파트너십 소식입니다.",
+    "coverImageUrl": null,
+    "metadata": {},
+    "publishedAt": "2026-11-07T04:35:23.688Z",
+    "updatedAt": "2026-11-07T04:35:23.689Z"
+   }
+  ]
+ },
+ "pages": {
+  "home": {
+   "key": "home",
+   "title": "홈",
+   "content": {
+    "cta": {
+     "href": "/contact",
+     "label": "파트너십 문의",
+     "heading": "새로운 프로젝트를 함께 만들어 갈 파트너를 찾습니다."
+    },
+    "hero": {
+     "lines": [
+      "Creative Business.",
+      "Media.",
+      "Technology."
+     ],
+     "title": "Ideas Become Impact.",
+     "ctaHref": "/contact",
+     "eyebrow": "OOGAM",
+     "ctaLabel": "함께 일하기"
+    },
+    "intro": {
+     "body": "[샘플 문구] OOGAM은 크리에이티브 비즈니스, 미디어, 테크놀로지를 하나의 흐름으로 연결해 브랜드의 다음 장면을 만듭니다.",
+     "heading": "아이디어를 실행 가능한 임팩트로."
+    },
+    "business": [
+     {
+      "key": "creative",
+      "body": "브랜드 기획과 크리에이티브 사업 개발",
+      "title": "Creative Business"
+     },
+     {
+      "key": "media",
+      "body": "콘텐츠 기획·제작과 미디어 운영",
+      "title": "Media"
+     },
+     {
+      "key": "technology",
+      "body": "서비스와 플랫폼을 위한 기술 개발",
+      "title": "Technology"
+     }
+    ]
+   },
+   "seo": {
+    "title": "OOGAM — Ideas Become Impact.",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:35:21.194Z",
+   "updatedAt": "2026-11-07T04:35:21.195Z"
+  },
+  "about": {
+   "key": "about",
+   "title": "회사 소개",
+   "content": {
+    "body": "[샘플 문구] OOGAM은 브랜드 기획, 콘텐츠 제작, 기술 개발을 한 팀에서 수행하는 크리에이티브 컴퍼니입니다.\n\n아이디어가 실제 결과로 이어지도록 기획부터 운영까지 함께합니다. 이 문구는 Preview 검수용 샘플입니다.",
+    "heading": "About OOGAM"
+   },
+   "seo": {
+    "title": "회사 소개 | OOGAM",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:35:21.216Z",
+   "updatedAt": "2026-11-07T04:35:21.217Z"
+  },
+  "business": {
+   "key": "business",
+   "title": "사업 영역",
+   "content": {
+    "body": "[샘플 문구] 세 가지 사업 영역이 하나의 프로젝트 안에서 유기적으로 연결됩니다.",
+    "areas": [
+     {
+      "key": "creative",
+      "body": "브랜드 기획과 크리에이티브 사업 개발",
+      "title": "Creative Business"
+     },
+     {
+      "key": "media",
+      "body": "콘텐츠 기획·제작과 미디어 운영",
+      "title": "Media"
+     },
+     {
+      "key": "technology",
+      "body": "서비스와 플랫폼을 위한 기술 개발",
+      "title": "Technology"
+     }
+    ],
+    "heading": "Business"
+   },
+   "seo": {
+    "title": "사업 영역 | OOGAM",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:35:21.241Z",
+   "updatedAt": "2026-11-07T04:35:21.242Z"
+  },
+  "careers": {
+   "key": "careers",
+   "title": "채용",
+   "content": {
+    "body": "[샘플 문구] 좋은 아이디어를 끝까지 실행하는 동료를 찾습니다. 아래 공고는 Preview 검수용 가상 공고입니다.",
+    "heading": "Careers"
+   },
+   "seo": {
+    "title": "채용 | OOGAM",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:35:21.259Z",
+   "updatedAt": "2026-11-07T04:35:21.260Z"
+  },
+  "contact": {
+   "key": "contact",
+   "title": "문의",
+   "content": {
+    "body": "[샘플 문구] 프로젝트·제휴·채용 문의를 남겨주세요. 공식 연락처는 확정 후 표시됩니다.",
+    "heading": "Contact"
+   },
+   "seo": {
+    "title": "문의 | OOGAM",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:34:05.430Z",
+   "updatedAt": "2026-11-07T04:34:05.431Z"
+  },
+  "privacy": {
+   "key": "privacy",
+   "title": "개인정보처리방침",
+   "content": {
+    "body": "[법무 검토 필요] 개인정보처리방침 초안을 CMS에서 작성하세요. 시행일과 처리 목적·보관 기간·위탁 현황을 반드시 기재해야 합니다.",
+    "heading": "개인정보처리방침"
+   },
+   "seo": {
+    "title": "개인정보처리방침 | OOGAM",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:34:05.431Z",
+   "updatedAt": "2026-11-07T04:34:05.432Z"
+  },
+  "terms": {
+   "key": "terms",
+   "title": "이용약관",
+   "content": {
+    "body": "[법무 검토 필요] 이용약관 초안을 CMS에서 작성하세요.",
+    "heading": "이용약관"
+   },
+   "seo": {
+    "title": "이용약관 | OOGAM",
+    "description": null,
+    "ogImageUrl": null
+   },
+   "publishedAt": "2026-11-07T04:34:05.433Z",
+   "updatedAt": "2026-11-07T04:34:05.434Z"
+  }
+ },
+ "brands": [
+  {
+   "id": "21e76641-84d3-4683-a5dc-13792ba7793d",
+   "slug": "sample-studio",
+   "name": "샘플 스튜디오",
+   "tagline": "크리에이티브 스튜디오 · 가상 샘플",
+   "description": "브랜드 기획과 영상 제작을 하는 가상의 크리에이티브 스튜디오입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "크리에이티브 스튜디오",
+   "sortOrder": 0,
+   "publishedAt": "2026-11-07T04:35:21.300Z",
+   "updatedAt": "2026-11-07T04:35:21.301Z",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "bcb78fb0-c64b-4413-897b-e36a2af9455c",
+   "slug": "sample-audio",
+   "name": "샘플 오디오",
+   "tagline": "오디오 콘텐츠 · 가상 샘플",
+   "description": "오디오 콘텐츠를 기획하는 가상의 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "오디오 콘텐츠",
+   "sortOrder": 1,
+   "publishedAt": "2026-11-07T04:35:21.329Z",
+   "updatedAt": "2026-11-07T04:35:21.329Z",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5",
+   "slug": "sample-live",
+   "name": "샘플 라이브",
+   "tagline": "라이브 미디어 · 가상 샘플",
+   "description": "라이브 스트리밍 기반의 가상 미디어 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "라이브 미디어",
+   "sortOrder": 2,
+   "publishedAt": "2026-11-07T04:35:21.359Z",
+   "updatedAt": "2026-11-07T04:35:21.359Z",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "bf4499e9-f335-418c-be35-f955607608ef",
+   "slug": "sample-academy",
+   "name": "샘플 아카데미",
+   "tagline": "교육 · 가상 샘플",
+   "description": "콘텐츠 제작 교육을 운영하는 가상의 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "교육",
+   "sortOrder": 3,
+   "publishedAt": "2026-11-07T04:35:21.388Z",
+   "updatedAt": "2026-11-07T04:35:21.389Z",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "35f6d9ad-6871-41ab-8f64-5b5187ae892c",
+   "slug": "sample-lab",
+   "name": "샘플 랩",
+   "tagline": "테크 · 가상 샘플",
+   "description": "서비스 프로토타입을 만드는 가상의 테크 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "테크",
+   "sortOrder": 4,
+   "publishedAt": "2026-11-07T04:35:21.417Z",
+   "updatedAt": "2026-11-07T04:35:21.418Z",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "3573a451-7c3f-449c-891c-0d62bd2affb1",
+   "slug": "sample-goods",
+   "name": "샘플 굿즈",
+   "tagline": "커머스 · 가상 샘플",
+   "description": "브랜드 굿즈를 기획하는 가상의 커머스 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "커머스",
+   "sortOrder": 5,
+   "publishedAt": "2026-11-07T04:35:21.447Z",
+   "updatedAt": "2026-11-07T04:35:21.447Z",
+   "seoTitle": null,
+   "seoDescription": null
+  }
+ ],
+ "brandDetail": {
+  "sample-studio": {
+   "id": "21e76641-84d3-4683-a5dc-13792ba7793d",
+   "slug": "sample-studio",
+   "name": "샘플 스튜디오",
+   "tagline": "크리에이티브 스튜디오 · 가상 샘플",
+   "description": "브랜드 기획과 영상 제작을 하는 가상의 크리에이티브 스튜디오입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "크리에이티브 스튜디오",
+   "sortOrder": 0,
+   "publishedAt": "2026-11-07T04:35:21.300Z",
+   "updatedAt": "2026-11-07T04:35:21.301Z",
+   "seoTitle": null,
+   "seoDescription": null,
+   "portfolio": [
+    {
+     "id": "4934827d-9490-401e-8dc1-7f4eb4150444",
+     "slug": "sample-rebrand",
+     "title": "[샘플] 브랜드 리뉴얼 캠페인",
+     "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+     "client": "샘플 클라이언트 A",
+     "year": 2026,
+     "imageUrl": null,
+     "tags": [
+      "Branding",
+      "Campaign"
+     ],
+     "featured": true,
+     "sortOrder": 0,
+     "publishedAt": "2026-11-07T04:35:21.488Z",
+     "updatedAt": "2026-11-07T04:35:21.489Z",
+     "brandId": "21e76641-84d3-4683-a5dc-13792ba7793d"
+    }
+   ]
+  },
+  "sample-audio": {
+   "id": "bcb78fb0-c64b-4413-897b-e36a2af9455c",
+   "slug": "sample-audio",
+   "name": "샘플 오디오",
+   "tagline": "오디오 콘텐츠 · 가상 샘플",
+   "description": "오디오 콘텐츠를 기획하는 가상의 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "오디오 콘텐츠",
+   "sortOrder": 1,
+   "publishedAt": "2026-11-07T04:35:21.329Z",
+   "updatedAt": "2026-11-07T04:35:21.329Z",
+   "seoTitle": null,
+   "seoDescription": null,
+   "portfolio": [
+    {
+     "id": "c129388c-3970-457a-be56-7db177a56316",
+     "slug": "sample-docu",
+     "title": "[샘플] 다큐멘터리 시리즈",
+     "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+     "client": "샘플 클라이언트 B",
+     "year": 2025,
+     "imageUrl": null,
+     "tags": [
+      "Media",
+      "Film"
+     ],
+     "featured": true,
+     "sortOrder": 1,
+     "publishedAt": "2026-11-07T04:35:21.522Z",
+     "updatedAt": "2026-11-07T04:35:21.523Z",
+     "brandId": "bcb78fb0-c64b-4413-897b-e36a2af9455c"
+    }
+   ]
+  },
+  "sample-live": {
+   "id": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5",
+   "slug": "sample-live",
+   "name": "샘플 라이브",
+   "tagline": "라이브 미디어 · 가상 샘플",
+   "description": "라이브 스트리밍 기반의 가상 미디어 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "라이브 미디어",
+   "sortOrder": 2,
+   "publishedAt": "2026-11-07T04:35:21.359Z",
+   "updatedAt": "2026-11-07T04:35:21.359Z",
+   "seoTitle": null,
+   "seoDescription": null,
+   "portfolio": [
+    {
+     "id": "0359dff7-f64f-42d9-a0eb-b94ec7b2460f",
+     "slug": "sample-platform",
+     "title": "[샘플] 커머스 플랫폼 구축",
+     "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+     "client": "샘플 클라이언트 C",
+     "year": 2026,
+     "imageUrl": null,
+     "tags": [
+      "Technology"
+     ],
+     "featured": true,
+     "sortOrder": 2,
+     "publishedAt": "2026-11-07T04:35:21.555Z",
+     "updatedAt": "2026-11-07T04:35:21.556Z",
+     "brandId": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5"
+    }
+   ]
+  },
+  "sample-academy": {
+   "id": "bf4499e9-f335-418c-be35-f955607608ef",
+   "slug": "sample-academy",
+   "name": "샘플 아카데미",
+   "tagline": "교육 · 가상 샘플",
+   "description": "콘텐츠 제작 교육을 운영하는 가상의 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "교육",
+   "sortOrder": 3,
+   "publishedAt": "2026-11-07T04:35:21.388Z",
+   "updatedAt": "2026-11-07T04:35:21.389Z",
+   "seoTitle": null,
+   "seoDescription": null,
+   "portfolio": [
+    {
+     "id": "7669f89a-6e1b-4c2a-8f8f-7466cd597755",
+     "slug": "sample-edu",
+     "title": "[샘플] 크리에이터 교육 과정",
+     "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+     "client": "샘플 클라이언트 D",
+     "year": 2025,
+     "imageUrl": null,
+     "tags": [
+      "Education"
+     ],
+     "featured": false,
+     "sortOrder": 3,
+     "publishedAt": "2026-11-07T04:35:21.587Z",
+     "updatedAt": "2026-11-07T04:35:21.588Z",
+     "brandId": "bf4499e9-f335-418c-be35-f955607608ef"
+    }
+   ]
+  },
+  "sample-lab": {
+   "id": "35f6d9ad-6871-41ab-8f64-5b5187ae892c",
+   "slug": "sample-lab",
+   "name": "샘플 랩",
+   "tagline": "테크 · 가상 샘플",
+   "description": "서비스 프로토타입을 만드는 가상의 테크 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "테크",
+   "sortOrder": 4,
+   "publishedAt": "2026-11-07T04:35:21.417Z",
+   "updatedAt": "2026-11-07T04:35:21.418Z",
+   "seoTitle": null,
+   "seoDescription": null,
+   "portfolio": []
+  },
+  "sample-goods": {
+   "id": "3573a451-7c3f-449c-891c-0d62bd2affb1",
+   "slug": "sample-goods",
+   "name": "샘플 굿즈",
+   "tagline": "커머스 · 가상 샘플",
+   "description": "브랜드 굿즈를 기획하는 가상의 커머스 브랜드입니다. (Preview 검수용 샘플)",
+   "logoUrl": null,
+   "imageUrl": null,
+   "websiteUrl": null,
+   "category": "커머스",
+   "sortOrder": 5,
+   "publishedAt": "2026-11-07T04:35:21.447Z",
+   "updatedAt": "2026-11-07T04:35:21.447Z",
+   "seoTitle": null,
+   "seoDescription": null,
+   "portfolio": []
+  }
+ },
+ "portfolio": [
+  {
+   "id": "4934827d-9490-401e-8dc1-7f4eb4150444",
+   "slug": "sample-rebrand",
+   "title": "[샘플] 브랜드 리뉴얼 캠페인",
+   "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+   "body": null,
+   "client": "샘플 클라이언트 A",
+   "year": 2026,
+   "imageUrl": null,
+   "tags": [
+    "Branding",
+    "Campaign"
+   ],
+   "featured": true,
+   "sortOrder": 0,
+   "publishedAt": "2026-11-07T04:35:21.488Z",
+   "updatedAt": "2026-11-07T04:35:21.489Z",
+   "brandId": "21e76641-84d3-4683-a5dc-13792ba7793d",
+   "brand": {
+    "id": "21e76641-84d3-4683-a5dc-13792ba7793d",
+    "slug": "sample-studio",
+    "name": "샘플 스튜디오"
+   }
+  },
+  {
+   "id": "c129388c-3970-457a-be56-7db177a56316",
+   "slug": "sample-docu",
+   "title": "[샘플] 다큐멘터리 시리즈",
+   "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+   "body": null,
+   "client": "샘플 클라이언트 B",
+   "year": 2025,
+   "imageUrl": null,
+   "tags": [
+    "Media",
+    "Film"
+   ],
+   "featured": true,
+   "sortOrder": 1,
+   "publishedAt": "2026-11-07T04:35:21.522Z",
+   "updatedAt": "2026-11-07T04:35:21.523Z",
+   "brandId": "bcb78fb0-c64b-4413-897b-e36a2af9455c",
+   "brand": {
+    "id": "bcb78fb0-c64b-4413-897b-e36a2af9455c",
+    "slug": "sample-audio",
+    "name": "샘플 오디오"
+   }
+  },
+  {
+   "id": "0359dff7-f64f-42d9-a0eb-b94ec7b2460f",
+   "slug": "sample-platform",
+   "title": "[샘플] 커머스 플랫폼 구축",
+   "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+   "body": null,
+   "client": "샘플 클라이언트 C",
+   "year": 2026,
+   "imageUrl": null,
+   "tags": [
+    "Technology"
+   ],
+   "featured": true,
+   "sortOrder": 2,
+   "publishedAt": "2026-11-07T04:35:21.555Z",
+   "updatedAt": "2026-11-07T04:35:21.556Z",
+   "brandId": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5",
+   "brand": {
+    "id": "5dbb4f42-d633-446d-8bba-f0c2433cd1e5",
+    "slug": "sample-live",
+    "name": "샘플 라이브"
+   }
+  },
+  {
+   "id": "7669f89a-6e1b-4c2a-8f8f-7466cd597755",
+   "slug": "sample-edu",
+   "title": "[샘플] 크리에이터 교육 과정",
+   "summary": "Preview 검수를 위한 가상 프로젝트 소개 문구입니다.",
+   "body": null,
+   "client": "샘플 클라이언트 D",
+   "year": 2025,
+   "imageUrl": null,
+   "tags": [
+    "Education"
+   ],
+   "featured": false,
+   "sortOrder": 3,
+   "publishedAt": "2026-11-07T04:35:21.587Z",
+   "updatedAt": "2026-11-07T04:35:21.588Z",
+   "brandId": "bf4499e9-f335-418c-be35-f955607608ef",
+   "brand": {
+    "id": "bf4499e9-f335-418c-be35-f955607608ef",
+    "slug": "sample-academy",
+    "name": "샘플 아카데미"
+   }
+  }
+ ],
+ "posts": [
+  {
+   "id": "7d1e9bad-c9bc-47a8-82e0-03dc0dccd530",
+   "type": "INSIGHT",
+   "slug": "sample-insight-1",
+   "title": "[샘플] 크리에이티브와 기술의 만남",
+   "excerpt": "가상의 인사이트 글입니다.",
+   "coverImageUrl": null,
+   "metadata": {},
+   "publishedAt": "2026-11-07T04:35:23.770Z",
+   "updatedAt": "2026-11-07T04:35:23.771Z",
+   "body": "## [샘플] 크리에이티브와 기술의 만남\n\n가상의 인사이트 글입니다.\n\n- Preview 검수용 샘플 본문입니다.\n- 실제 공지·공고가 아닙니다.",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "1d7c68b0-1c5f-4b1e-9e55-e7ae69a66bcf",
+   "type": "NEWS",
+   "slug": "sample-news-3",
+   "title": "[샘플] 연말 캠페인 공개",
+   "excerpt": "가상의 캠페인 공개 소식입니다.",
+   "coverImageUrl": null,
+   "metadata": {},
+   "publishedAt": "2026-11-07T04:35:23.727Z",
+   "updatedAt": "2026-11-07T04:35:23.728Z",
+   "body": "## [샘플] 연말 캠페인 공개\n\n가상의 캠페인 공개 소식입니다.\n\n- Preview 검수용 샘플 본문입니다.\n- 실제 공지·공고가 아닙니다.",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "909aaba7-5608-479e-8415-d8316a94b577",
+   "type": "NEWS",
+   "slug": "sample-news-2",
+   "title": "[샘플] 파트너십 체결 소식",
+   "excerpt": "가상의 파트너십 소식입니다.",
+   "coverImageUrl": null,
+   "metadata": {},
+   "publishedAt": "2026-11-07T04:35:23.688Z",
+   "updatedAt": "2026-11-07T04:35:23.689Z",
+   "body": "## [샘플] 파트너십 체결 소식\n\n가상의 파트너십 소식입니다.\n\n- Preview 검수용 샘플 본문입니다.\n- 실제 공지·공고가 아닙니다.",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "823af791-be79-4288-b77c-91c9942c4d63",
+   "type": "NEWS",
+   "slug": "sample-news-1",
+   "title": "[샘플] OOGAM 워크스페이스 오픈",
+   "excerpt": "사내 협업 플랫폼을 오픈했다는 가상의 뉴스입니다.",
+   "coverImageUrl": null,
+   "metadata": {},
+   "publishedAt": "2026-11-07T04:35:21.628Z",
+   "updatedAt": "2026-11-07T04:35:21.629Z",
+   "body": "## [샘플] OOGAM 워크스페이스 오픈\n\n사내 협업 플랫폼을 오픈했다는 가상의 뉴스입니다.\n\n- Preview 검수용 샘플 본문입니다.\n- 실제 공지·공고가 아닙니다.",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "ec5c7e41-32bc-4b79-972c-c17a1e95fc40",
+   "type": "CAREER",
+   "slug": "sample-career-2",
+   "title": "[샘플] 영상 PD (계약직)",
+   "excerpt": "가상의 채용 공고입니다.",
+   "coverImageUrl": null,
+   "metadata": {
+    "team": "콘텐츠",
+    "deadline": "2026-12-02",
+    "location": "서울",
+    "employmentType": "CONTRACT"
+   },
+   "publishedAt": "2026-11-07T04:35:23.845Z",
+   "updatedAt": "2026-11-07T04:35:23.846Z",
+   "body": "## [샘플] 영상 PD (계약직)\n\n가상의 채용 공고입니다.\n\n- Preview 검수용 샘플 본문입니다.\n- 실제 공지·공고가 아닙니다.",
+   "seoTitle": null,
+   "seoDescription": null
+  },
+  {
+   "id": "c81d9fda-9124-4216-812d-2eb046bfe7e2",
+   "type": "CAREER",
+   "slug": "sample-career-1",
+   "title": "[샘플] 프로덕트 디자이너",
+   "excerpt": "가상의 채용 공고입니다.",
+   "coverImageUrl": null,
+   "metadata": {
+    "team": "디자인",
+    "deadline": "2026-12-17",
+    "location": "서울",
+    "employmentType": "FULL_TIME"
+   },
+   "publishedAt": "2026-11-07T04:35:23.810Z",
+   "updatedAt": "2026-11-07T04:35:23.810Z",
+   "body": "## [샘플] 프로덕트 디자이너\n\n가상의 채용 공고입니다.\n\n- Preview 검수용 샘플 본문입니다.\n- 실제 공지·공고가 아닙니다.",
+   "seoTitle": null,
+   "seoDescription": null
+  }
+ ],
+ "sitemap": {
+  "pages": [
+   {
+    "key": "about",
+    "updatedAt": "2026-11-07T04:35:21.217Z"
+   },
+   {
+    "key": "business",
+    "updatedAt": "2026-11-07T04:35:21.242Z"
+   },
+   {
+    "key": "careers",
+    "updatedAt": "2026-11-07T04:35:21.260Z"
+   },
+   {
+    "key": "contact",
+    "updatedAt": "2026-11-07T04:34:05.431Z"
+   },
+   {
+    "key": "home",
+    "updatedAt": "2026-11-07T04:35:21.195Z"
+   },
+   {
+    "key": "privacy",
+    "updatedAt": "2026-11-07T04:34:05.432Z"
+   },
+   {
+    "key": "terms",
+    "updatedAt": "2026-11-07T04:34:05.434Z"
+   }
+  ],
+  "brands": [
+   {
+    "slug": "sample-academy",
+    "updatedAt": "2026-11-07T04:35:21.389Z"
+   },
+   {
+    "slug": "sample-audio",
+    "updatedAt": "2026-11-07T04:35:21.329Z"
+   },
+   {
+    "slug": "sample-goods",
+    "updatedAt": "2026-11-07T04:35:21.447Z"
+   },
+   {
+    "slug": "sample-lab",
+    "updatedAt": "2026-11-07T04:35:21.418Z"
+   },
+   {
+    "slug": "sample-live",
+    "updatedAt": "2026-11-07T04:35:21.359Z"
+   },
+   {
+    "slug": "sample-studio",
+    "updatedAt": "2026-11-07T04:35:21.301Z"
+   }
+  ],
+  "posts": [
+   {
+    "type": "NEWS",
+    "slug": "sample-news-3",
+    "updatedAt": "2026-11-07T04:35:23.728Z"
+   },
+   {
+    "type": "INSIGHT",
+    "slug": "sample-insight-1",
+    "updatedAt": "2026-11-07T04:35:23.771Z"
+   },
+   {
+    "type": "NEWS",
+    "slug": "sample-news-1",
+    "updatedAt": "2026-11-07T04:35:21.629Z"
+   },
+   {
+    "type": "NEWS",
+    "slug": "sample-news-2",
+    "updatedAt": "2026-11-07T04:35:23.689Z"
+   },
+   {
+    "type": "CAREER",
+    "slug": "sample-career-1",
+    "updatedAt": "2026-11-07T04:35:23.810Z"
+   },
+   {
+    "type": "CAREER",
+    "slug": "sample-career-2",
+    "updatedAt": "2026-11-07T04:35:23.846Z"
+   }
+  ]
+ }
+}

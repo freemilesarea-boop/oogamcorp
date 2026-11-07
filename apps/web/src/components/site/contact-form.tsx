@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { isStaticSite } from '@/lib/site-mode';
 import { cn } from '@/lib/utils';
 
 const CATEGORIES = [
@@ -56,6 +57,7 @@ export function ContactForm() {
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null);
+    if (isStaticSite) return; // 백엔드 미연결 배포: 전송하지 않음
     try {
       const res = await fetch('/api/v1/public/inquiries', {
         method: 'POST',
@@ -97,6 +99,11 @@ export function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2">
+      {isStaticSite && (
+        <p role="note" className="rounded-md border border-ink/15 bg-gray-50 px-4 py-3 text-sm text-gray-700 md:col-span-2" data-testid="contact-disabled-note">
+          디자인 검수용 화면입니다. 문의 접수는 정식 오픈 후 사용할 수 있으며, 지금은 전송되지 않습니다.
+        </p>
+      )}
       <FieldWrap id={id('name')} label="이름" required error={errors.name?.message}>
         <input id={id('name')} autoComplete="name" className={inputCls} {...aria('name')} {...register('name')} />
       </FieldWrap>
@@ -155,7 +162,7 @@ export function ContactForm() {
       <div className="md:col-span-2">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isStaticSite}
           className="group inline-flex h-14 items-center gap-4 rounded-full bg-ink px-9 text-base font-semibold text-white transition-opacity hover:opacity-85 disabled:opacity-50"
         >
           {isSubmitting ? '전송 중…' : '문의 보내기'}
