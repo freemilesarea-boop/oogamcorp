@@ -16,6 +16,18 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 umask 077
 
+# 0) 사전 점검 (macOS 포함) — 부족한 도구는 설치 방법과 함께 중단
+fail() { echo "[preview] 준비 필요: $*" >&2; exit 1; }
+command -v docker >/dev/null || fail "Docker Desktop 을 설치하세요 (https://www.docker.com/products/docker-desktop/)"
+docker info >/dev/null 2>&1 || fail "Docker Desktop 이 실행 중이 아닙니다. 앱을 실행한 뒤 다시 시도하세요"
+command -v node >/dev/null || fail "Node.js 22 를 설치하세요 (macOS: brew install node@22)"
+[ "$(node -p 'process.versions.node.split(".")[0]')" -ge 20 ] || fail "Node.js 20 이상이 필요합니다 (현재 $(node -v))"
+command -v openssl >/dev/null || fail "openssl 이 없습니다 (macOS: brew install openssl@3)"
+if openssl version | grep -qi libressl; then
+  fail "macOS 기본 LibreSSL 대신 OpenSSL 3 이 필요합니다: brew install openssl@3 후
+       export PATH=\"\$(brew --prefix openssl@3)/bin:\$PATH\" 를 실행하고 다시 시도하세요"
+fi
+
 HOST="${PREVIEW_HOST:-localhost}"
 PORT="${PREVIEW_HTTPS_PORT:-8443}"
 ORIGIN="https://${HOST}$([ "$PORT" = 443 ] || echo ":$PORT")"
