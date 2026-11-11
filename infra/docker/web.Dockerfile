@@ -9,6 +9,8 @@ FROM base AS build
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc tsconfig.base.json ./
 COPY packages/shared/package.json packages/shared/
 COPY apps/web/package.json apps/web/
+# 웹은 CMS 모드(Vercel)에서만 @oogam/api/serverless 를 런타임에 로드한다 — 설치 그래프 해석용 매니페스트만 필요
+COPY apps/api/package.json apps/api/
 # 사내 프록시/사설 CA 환경 빌드 시에만 선택적으로 CA 주입 (이미지에 남지 않음): --secret id=ca,src=<ca.pem>
 RUN --mount=type=secret,id=ca,required=false \
     if [ -f /run/secrets/ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/ca; fi; \

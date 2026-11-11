@@ -84,7 +84,7 @@
   },
   "exports": {
     "./serverless": {
-      "types": "./dist-serverless/serverless/index.d.ts",
+      "types": "./serverless.d.ts",
       "default": "./dist-serverless/serverless/index.js"
     },
     "./package.json": "./package.json"

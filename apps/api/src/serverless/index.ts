@@ -15,7 +15,8 @@ import { Global, Injectable, Logger, Module, ValidationPipe, type INestApplicati
 import { APP_FILTER, APP_GUARD, NestFactory } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import cookieParser from 'cookie-parser';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import helmet from 'helmet';
 
 // Redis 미사용 배포 — 설정 로더의 필수값 검사를 통과시키기 위한 자리표시자 (연결하지 않음)
@@ -115,6 +116,28 @@ export async function handle(req: IncomingMessage, res: ServerResponse): Promise
     res.on('close', resolve);
     express(req, res);
   });
+}
+
+let portPromise: Promise<number> | null = null;
+
+/** 루프백(127.0.0.1) 전용 내부 HTTP 포트 — 같은 함수 안의 Next 라우트 핸들러만 호출한다 */
+export function internalPort(): Promise<number> {
+  portPromise ??= new Promise<number>((resolve, reject) => {
+    const server = createServer((req, res) => {
+      handle(req, res).catch((e: unknown) => {
+        new Logger('SiteCms').error(`요청 처리 실패: ${(e as Error).message}`);
+        if (!res.headersSent) res.writeHead(503, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ statusCode: 503, message: '일시적으로 서비스를 이용할 수 없습니다.' }));
+      });
+    });
+    server.keepAliveTimeout = 5_000;
+    server.on('error', (e) => {
+      portPromise = null;
+      reject(e);
+    });
+    server.listen(0, '127.0.0.1', () => resolve((server.address() as AddressInfo).port));
+  });
+  return portPromise;
 }
 
 /** 공개 홈페이지 데이터 (서버 컴포넌트에서 HTTP 없이 직접 호출) */

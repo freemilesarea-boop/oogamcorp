@@ -70,6 +70,12 @@ function accessDenied(req: NextRequest): NextResponse | null {
   });
 }
 
+const NOT_FOUND_HEADERS = { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' };
+
+/** CMS 모드에서 허용하는 관리자 화면 / API (그 외 사내 업무 시스템은 404) */
+const CMS_ADMIN_PATHS = [/^\/admin\/login(\/|$)/, /^\/admin\/mfa(\/|$)/, /^\/admin\/cms(\/|$)/, /^\/admin\/preview(\/|$)/];
+const CMS_API_PATHS = [/^\/api\/v1\/auth(\/|$)/, /^\/api\/v1\/cms(\/|$)/, /^\/api\/v1\/public(\/|$)/, /^\/api\/v1\/notifications(\/|$)/];
+
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
   const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/');
@@ -80,13 +86,29 @@ export function middleware(req: NextRequest) {
   // 백엔드 미연결 배포: 관리자·내부 API 는 서버에서 차단 (메뉴 숨김이 아닌 요청 자체 거부)
   if (process.env.NEXT_PUBLIC_DATA_SOURCE === 'static') {
     if (isAdmin) {
-      return new NextResponse('Not Found', { status: 404, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' } });
+      return new NextResponse('Not Found', { status: 404, headers: NOT_FOUND_HEADERS });
     }
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { statusCode: 503, message: '이 배포에는 백엔드가 연결되어 있지 않습니다.' },
         { status: 503, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
       );
+    }
+  }
+  // 홈페이지 CMS 배포: 홈페이지 CMS 와 인증만 허용 (사내 업무 시스템 화면·API 는 요청 자체를 거부)
+  if (process.env.NEXT_PUBLIC_DATA_SOURCE === 'cms') {
+    if (pathname.startsWith('/api/')) {
+      if (CMS_API_PATHS.some((r) => r.test(pathname))) return NextResponse.next();
+      return NextResponse.json({ statusCode: 404, message: 'Not Found' }, { status: 404, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } });
+    }
+    if (pathname === '/admin' || pathname === '/admin/') {
+      const url = req.nextUrl.clone();
+      url.pathname = '/admin/cms';
+      url.search = '';
+      return NextResponse.redirect(url);
+    }
+    if (isAdmin && !CMS_ADMIN_PATHS.some((r) => r.test(pathname))) {
+      return new NextResponse('Not Found', { status: 404, headers: NOT_FOUND_HEADERS });
     }
   }
   // 백엔드 연결 배포: API 요청은 그대로 통과 (API 자체 보안 헤더 사용)

@@ -1,5 +1,7 @@
 import 'server-only';
-import { isStaticSite } from './site-mode';
+import { cmsFetch } from './cms-fetch';
+import { previewViewer } from './cms-preview';
+import { isCmsSite, isStaticSite } from './site-mode';
 import { staticFetch } from './static-site/static-fetch';
 
 const API = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
@@ -15,6 +17,8 @@ const API = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 export async function publicFetch<T>(path: string): Promise<T | null> {
   // 백엔드 미연결 배포(Vercel 홈페이지 우선 공개): 번들된 가상 샘플 스냅샷을 읽기 전용으로 사용
   if (isStaticSite) return (staticFetch(path) as T | null) ?? null;
+  // 홈페이지 CMS 배포: 같은 프로세스의 CMS 백엔드를 직접 호출 (검증된 편집자의 미리보기면 초안 포함)
+  if (isCmsSite) return ((await cmsFetch(path, (await previewViewer()) !== null)) as T | null) ?? null;
   try {
     const res = await fetch(`${API}/api/v1/public${path}`, { cache: 'no-store' });
     if (!res.ok) return null;
