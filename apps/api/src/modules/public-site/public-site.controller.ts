@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Header, HttpCode, Param, ParseEnumPipe, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, NotFoundException, Param, ParseEnumPipe, Post, Query, Req, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { PostType } from '@prisma/client';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
+import { MediaService } from '../cms/media.service';
 import { Public, SkipCsrf } from '../../common/auth/decorators';
 import { clientIp } from '../../common/utils/request';
 import { loadConfig } from '../../config/configuration';
@@ -21,7 +22,10 @@ const CACHE = 'public, max-age=60, s-maxage=60, stale-while-revalidate=300';
 @Public()
 @Controller('public')
 export class PublicSiteController {
-  constructor(private readonly site: PublicSiteService) {}
+  constructor(
+    private readonly site: PublicSiteService,
+    private readonly media: MediaService,
+  ) {}
 
   @Get('site')
   @Header('Cache-Control', CACHE)
@@ -39,6 +43,31 @@ export class PublicSiteController {
   @Header('Cache-Control', CACHE)
   page(@Param('key') key: string) {
     return this.site.page(key);
+  }
+
+  @Get('business-areas')
+  @Header('Cache-Control', CACHE)
+  businessAreas() {
+    return this.site.businessAreas();
+  }
+
+  @Get('business-areas/:slug')
+  @Header('Cache-Control', CACHE)
+  businessArea(@Param('slug') slug: string) {
+    return this.site.businessArea(slug);
+  }
+
+  /** 로컬 저장소 이미지 (개발·테스트용 드라이버). 운영(Supabase Storage)은 스토리지 공개 URL 을 직접 사용 */
+  @Get('media/*path')
+  async mediaFile(@Param('path') path: string | string[], @Res() res: Response) {
+    const key = Array.isArray(path) ? path.join('/') : path;
+    const buf = await this.media.readLocal(key);
+    if (!buf) throw new NotFoundException();
+    res.setHeader('Content-Type', 'image/webp');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.setHeader('Content-Disposition', 'inline');
+    res.end(buf);
   }
 
   @Get('brands')

@@ -19,7 +19,8 @@
     "prisma:migrate": "dotenv -e ../../.env -- prisma migrate dev",
     "prisma:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
     "seed": "dotenv -e ../../.env -- tsx prisma/seed.ts",
-    "prisma:studio": "dotenv -e ../../.env -- prisma studio"
+    "prisma:studio": "dotenv -e ../../.env -- prisma studio",
+    "build:serverless": "tsc -p tsconfig.serverless.json"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -54,6 +55,7 @@
     "qrcode": "^1.5.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "sharp": "0.35.5",
     "tsx": "^4.23.15",
     "yjs": "^13.6.33"
   },
@@ -79,5 +81,12 @@
     "ts-node": "^10.9.2",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.72.1"
+  },
+  "exports": {
+    "./serverless": {
+      "types": "./dist-serverless/serverless/index.d.ts",
+      "default": "./dist-serverless/serverless/index.js"
+    },
+    "./package.json": "./package.json"
   }
 }

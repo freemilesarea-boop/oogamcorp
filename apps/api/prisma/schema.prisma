@@ -3,7 +3,9 @@
 //       사용자 생성 콘텐츠는 deletedAt 기반 소프트 삭제, 금액은 DECIMAL(18,2)
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // native: 로컬/도커, rhel-openssl-3.0.x: Vercel 서버리스 런타임
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -1294,6 +1296,75 @@ model WebsitePost {
   @@unique([organizationId, type, slug])
   @@index([organizationId, type, status, publishedAt])
   @@map("website_posts")
+}
+
+/// 사업 영역 (공개 사이트 Business Areas 카드 · /business/[slug] 상세)
+model BusinessArea {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  slug           String
+  title          String
+  /// 보조 제목 (예: "AI 교육")
+  subtitle       String?
+  /// 카드·상단 요약
+  summary        String?
+  /// 상세 본문 (마크다운. HTML 은 렌더링하지 않음)
+  body           String?
+  imageUrl       String?
+  highlights     String[]
+  ctaLabel       String?
+  ctaHref        String?
+  sortOrder      Int           @default(0)
+  status         ContentStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  createdById    String?       @db.Uuid
+  updatedById    String?       @db.Uuid
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  @@unique([organizationId, slug])
+  @@index([organizationId, status, sortOrder])
+  @@map("business_areas")
+}
+
+/// CMS 변경 이력 — 저장·게시·상태 변경 시점의 스냅샷 (이전 버전 복구용)
+model CmsRevision {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  /// page | brand | portfolio | post | business_area
+  entityType     String
+  /// 페이지 키 또는 UUID
+  entityId       String
+  action         String
+  snapshot       Json
+  actorId        String?  @db.Uuid
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId, entityType, entityId, createdAt])
+  @@map("cms_revisions")
+}
+
+/// CMS 업로드 이미지 (공개 홈페이지용). 서버에서 재인코딩된 이미지만 저장한다
+model CmsMedia {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  storageKey     String    @unique
+  url            String
+  mimeType       String
+  width          Int
+  height         Int
+  sizeBytes      Int
+  originalName   String?
+  alt            String?
+  createdById    String?   @db.Uuid
+  createdAt      DateTime  @default(now())
+  deletedAt      DateTime?
+
+  @@index([organizationId, createdAt])
+  @@map("cms_media")
 }
 
 model ContactInquiry {

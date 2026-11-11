@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-serverless",
+    "rootDir": "./src",
+    "incremental": false,
+    "declaration": true,
+    "sourceMap": false,
+    "types": ["node"]
+  },
+  "include": [],
+  "files": ["src/serverless/index.ts"]
+}

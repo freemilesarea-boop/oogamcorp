@@ -145,3 +145,54 @@ export class UpdateInquiryDto {
   @IsOptional() @IsEnum(InquiryStatus) status?: InquiryStatus;
   @IsOptional() @IsString() @MaxLength(5000) internalNote?: string | null;
 }
+
+// ───────────── 사업 영역 ─────────────
+/** 내부 경로(/...) 또는 http(s)/mailto 링크만 허용 */
+const LINK_PATTERN = /^(\/(?!\/)|https?:\/\/|mailto:)/i;
+const LINK_MSG = '링크는 / 로 시작하는 내부 경로 또는 http(s)/mailto 주소여야 합니다.';
+
+export class CreateBusinessAreaDto {
+  @Transform(trim) @IsString() @MinLength(1) @MaxLength(120) title: string;
+  @IsOptional() @IsString() @MaxLength(120) @Matches(SLUG_PATTERN, { message: SLUG_MSG }) slug?: string;
+  @IsOptional() @IsString() @MaxLength(120) subtitle?: string | null;
+  @IsOptional() @IsString() @MaxLength(500) summary?: string | null;
+  @IsOptional() @IsString() @MaxLength(20_000) body?: string | null;
+  @IsOptional() @IsUrl(HTTP_URL) @MaxLength(1000) imageUrl?: string | null;
+  @IsOptional() @IsArray() @ArrayMaxSize(12) @IsString({ each: true }) @MaxLength(60, { each: true }) highlights?: string[];
+  @IsOptional() @IsString() @MaxLength(60) ctaLabel?: string | null;
+  @IsOptional() @IsString() @MaxLength(1000) @Matches(LINK_PATTERN, { message: LINK_MSG }) ctaHref?: string | null;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100_000) sortOrder?: number;
+  @IsOptional() @IsString() @MaxLength(200) seoTitle?: string | null;
+  @IsOptional() @IsString() @MaxLength(500) seoDescription?: string | null;
+}
+
+export class UpdateBusinessAreaDto {
+  @IsOptional() @Transform(trim) @IsString() @MinLength(1) @MaxLength(120) title?: string;
+  @IsOptional() @IsString() @MaxLength(120) @Matches(SLUG_PATTERN, { message: SLUG_MSG }) slug?: string;
+  @IsOptional() @IsString() @MaxLength(120) subtitle?: string | null;
+  @IsOptional() @IsString() @MaxLength(500) summary?: string | null;
+  @IsOptional() @IsString() @MaxLength(20_000) body?: string | null;
+  @IsOptional() @IsUrl(HTTP_URL) @MaxLength(1000) imageUrl?: string | null;
+  @IsOptional() @IsArray() @ArrayMaxSize(12) @IsString({ each: true }) @MaxLength(60, { each: true }) highlights?: string[];
+  @IsOptional() @IsString() @MaxLength(60) ctaLabel?: string | null;
+  @IsOptional() @IsString() @MaxLength(1000) @Matches(LINK_PATTERN, { message: LINK_MSG }) ctaHref?: string | null;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100_000) sortOrder?: number;
+  @IsOptional() @IsString() @MaxLength(200) seoTitle?: string | null;
+  @IsOptional() @IsString() @MaxLength(500) seoDescription?: string | null;
+}
+
+// ───────────── 변경 이력 ─────────────
+export const REVISION_ENTITIES = ['page', 'brand', 'portfolio', 'post', 'business_area'] as const;
+export type RevisionEntity = (typeof REVISION_ENTITIES)[number];
+
+export class RevisionQueryDto {
+  @IsIn(REVISION_ENTITIES as unknown as string[]) entityType: RevisionEntity;
+  @IsString() @MinLength(1) @MaxLength(64) entityId: string;
+}
+
+// ───────────── 이미지 ─────────────
+export class MediaQueryDto extends PaginationQueryDto {}
+
+export class UploadMediaDto {
+  @IsOptional() @IsString() @MaxLength(300) alt?: string;
+}

@@ -14,6 +14,7 @@ import { OverviewService } from './overview.service';
 import { PagesService } from './pages.service';
 import { PortfolioService } from './portfolio.service';
 import { PostsService } from './posts.service';
+import { RevisionsService } from './revisions.service';
 
 /**
  * 홈페이지 CMS (관리자).
@@ -36,7 +37,10 @@ export class CmsOverviewController {
 @RequirePermissions('cms.read')
 @Controller('cms/brands')
 export class CmsBrandsController {
-  constructor(private readonly brands: BrandsService) {}
+  constructor(
+    private readonly brands: BrandsService,
+    private readonly revisions: RevisionsService,
+  ) {}
 
   @Get()
   list(@CurrentUser() u: AuthContext, @Query() q: ContentQueryDto) {
@@ -45,8 +49,10 @@ export class CmsBrandsController {
 
   @RequirePermissions('cms.read', 'cms.write')
   @Post()
-  create(@CurrentUser() u: AuthContext, @Body() dto: CreateBrandDto) {
-    return this.brands.create(u, dto);
+  async create(@CurrentUser() u: AuthContext, @Body() dto: CreateBrandDto) {
+    const r = await this.brands.create(u, dto);
+    await this.revisions.record(u, 'brand', r.id, 'created', r);
+    return r;
   }
 
   /** 정렬 순서 일괄 변경 (ids 순서대로 sortOrder = 0..n) */
@@ -63,15 +69,19 @@ export class CmsBrandsController {
 
   @RequirePermissions('cms.read', 'cms.write')
   @Patch(':id')
-  update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateBrandDto) {
-    return this.brands.update(u, id, dto);
+  async update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateBrandDto) {
+    const r = await this.brands.update(u, id, dto);
+    await this.revisions.record(u, 'brand', id, 'updated', r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.write')
   @Post(':id/status')
   @HttpCode(200)
-  status(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: StatusChangeDto) {
-    return this.brands.changeStatus(u, id, dto);
+  async status(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: StatusChangeDto) {
+    const r = await this.brands.changeStatus(u, id, dto);
+    await this.revisions.record(u, 'brand', id, `status:${dto.status}`, r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.write')
@@ -85,7 +95,10 @@ export class CmsBrandsController {
 @RequirePermissions('cms.read')
 @Controller('cms/portfolio')
 export class CmsPortfolioController {
-  constructor(private readonly portfolio: PortfolioService) {}
+  constructor(
+    private readonly portfolio: PortfolioService,
+    private readonly revisions: RevisionsService,
+  ) {}
 
   @Get()
   list(@CurrentUser() u: AuthContext, @Query() q: PortfolioQueryDto) {
@@ -94,8 +107,10 @@ export class CmsPortfolioController {
 
   @RequirePermissions('cms.read', 'cms.write')
   @Post()
-  create(@CurrentUser() u: AuthContext, @Body() dto: CreatePortfolioDto) {
-    return this.portfolio.create(u, dto);
+  async create(@CurrentUser() u: AuthContext, @Body() dto: CreatePortfolioDto) {
+    const r = await this.portfolio.create(u, dto);
+    await this.revisions.record(u, 'portfolio', r.id, 'created', r);
+    return r;
   }
 
   @Get(':id')
@@ -105,15 +120,19 @@ export class CmsPortfolioController {
 
   @RequirePermissions('cms.read', 'cms.write')
   @Patch(':id')
-  update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdatePortfolioDto) {
-    return this.portfolio.update(u, id, dto);
+  async update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdatePortfolioDto) {
+    const r = await this.portfolio.update(u, id, dto);
+    await this.revisions.record(u, 'portfolio', id, 'updated', r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.write')
   @Post(':id/status')
   @HttpCode(200)
-  status(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: StatusChangeDto) {
-    return this.portfolio.changeStatus(u, id, dto);
+  async status(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: StatusChangeDto) {
+    const r = await this.portfolio.changeStatus(u, id, dto);
+    await this.revisions.record(u, 'portfolio', id, `status:${dto.status}`, r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.write')
@@ -127,7 +146,10 @@ export class CmsPortfolioController {
 @RequirePermissions('cms.read')
 @Controller('cms/posts')
 export class CmsPostsController {
-  constructor(private readonly posts: PostsService) {}
+  constructor(
+    private readonly posts: PostsService,
+    private readonly revisions: RevisionsService,
+  ) {}
 
   @Get()
   list(@CurrentUser() u: AuthContext, @Query() q: PostQueryDto) {
@@ -136,8 +158,10 @@ export class CmsPostsController {
 
   @RequirePermissions('cms.read', 'cms.write')
   @Post()
-  create(@CurrentUser() u: AuthContext, @Body() dto: CreatePostDto) {
-    return this.posts.create(u, dto);
+  async create(@CurrentUser() u: AuthContext, @Body() dto: CreatePostDto) {
+    const r = await this.posts.create(u, dto);
+    await this.revisions.record(u, 'post', r.id, 'created', r);
+    return r;
   }
 
   @Get(':id')
@@ -147,15 +171,19 @@ export class CmsPostsController {
 
   @RequirePermissions('cms.read', 'cms.write')
   @Patch(':id')
-  update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdatePostDto) {
-    return this.posts.update(u, id, dto);
+  async update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdatePostDto) {
+    const r = await this.posts.update(u, id, dto);
+    await this.revisions.record(u, 'post', id, 'updated', r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.write')
   @Post(':id/status')
   @HttpCode(200)
-  status(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: StatusChangeDto) {
-    return this.posts.changeStatus(u, id, dto);
+  async status(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: StatusChangeDto) {
+    const r = await this.posts.changeStatus(u, id, dto);
+    await this.revisions.record(u, 'post', id, `status:${dto.status}`, r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.write')
@@ -169,7 +197,10 @@ export class CmsPostsController {
 @RequirePermissions('cms.read')
 @Controller('cms/pages')
 export class CmsPagesController {
-  constructor(private readonly pages: PagesService) {}
+  constructor(
+    private readonly pages: PagesService,
+    private readonly revisions: RevisionsService,
+  ) {}
 
   @Get()
   list(@CurrentUser() u: AuthContext) {
@@ -190,29 +221,37 @@ export class CmsPagesController {
   /** 초안 저장 (공개본에는 영향 없음) */
   @RequirePermissions('cms.read', 'cms.write')
   @Put(':key')
-  save(@CurrentUser() u: AuthContext, @Param('key') key: string, @Body() dto: SavePageDto) {
-    return this.pages.save(u, key, dto);
+  async save(@CurrentUser() u: AuthContext, @Param('key') key: string, @Body() dto: SavePageDto) {
+    const r = await this.pages.save(u, key, dto);
+    await this.revisions.record(u, 'page', key, 'draft_saved', r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.write')
   @Post(':key/discard')
   @HttpCode(200)
-  discard(@CurrentUser() u: AuthContext, @Param('key') key: string) {
-    return this.pages.discardDraft(u, key);
+  async discard(@CurrentUser() u: AuthContext, @Param('key') key: string) {
+    const r = await this.pages.discardDraft(u, key);
+    await this.revisions.record(u, 'page', key, 'draft_discarded', r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.publish')
   @Post(':key/publish')
   @HttpCode(200)
-  publish(@CurrentUser() u: AuthContext, @Param('key') key: string) {
-    return this.pages.publish(u, key);
+  async publish(@CurrentUser() u: AuthContext, @Param('key') key: string) {
+    const r = await this.pages.publish(u, key);
+    await this.revisions.record(u, 'page', key, 'published', r);
+    return r;
   }
 
   @RequirePermissions('cms.read', 'cms.publish')
   @Post(':key/unpublish')
   @HttpCode(200)
-  unpublish(@CurrentUser() u: AuthContext, @Param('key') key: string) {
-    return this.pages.unpublish(u, key);
+  async unpublish(@CurrentUser() u: AuthContext, @Param('key') key: string) {
+    const r = await this.pages.unpublish(u, key);
+    await this.revisions.record(u, 'page', key, 'unpublished', r);
+    return r;
   }
 }
 
@@ -233,7 +272,7 @@ export class CmsInquiriesController {
   }
 
   @Patch(':id')
-  update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateInquiryDto, @Req() req: Request) {
+  async update(@CurrentUser() u: AuthContext, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateInquiryDto, @Req() req: Request) {
     return this.inquiries.update(u, id, dto, reqMeta(req));
   }
 
