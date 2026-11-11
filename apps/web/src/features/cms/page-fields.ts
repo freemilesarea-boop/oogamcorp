@@ -21,7 +21,7 @@ export const PAGE_FIELDS: Record<string, FieldDef[]> = {
       name: 'hero', label: 'Hero', type: 'group', fields: [
         { name: 'eyebrow', label: '워드마크', type: 'text', hint: '하단 대형 타이포 (예: OOGAM)', max: 80 },
         { name: 'title', label: '헤드라인', type: 'text', max: 200 },
-        { name: 'lines', label: '서브 라인 (한 줄에 하나)', type: 'lines', hint: '예: Creative Business. / Media. / Technology.' },
+        { name: 'lines', label: '서브 라인 (한 줄에 하나)', type: 'lines', hint: '예: AI Education. / AI Music Media. / AI Technology.' },
         { name: 'ctaLabel', label: '버튼 문구', type: 'text', max: 60 },
         { name: 'ctaHref', label: '버튼 링크', type: 'link' },
       ],

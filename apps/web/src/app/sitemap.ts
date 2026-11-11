@@ -27,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     out.push(e);
   };
   for (const p of data.pages) if (PAGE_PATHS[p.key]) push({ url: url(PAGE_PATHS[p.key]), lastModified: p.updatedAt, changeFrequency: 'monthly', priority: 0.6 });
+  for (const a of data.businessAreas ?? []) push({ url: url(`/business/${encodeURIComponent(a.slug)}`), lastModified: a.updatedAt, changeFrequency: 'monthly', priority: 0.7 });
   for (const b of data.brands) push({ url: url(`/brands/${encodeURIComponent(b.slug)}`), lastModified: b.updatedAt, changeFrequency: 'monthly', priority: 0.6 });
   for (const p of data.posts) {
     const path = p.type === 'CAREER' ? `/careers/${encodeURIComponent(p.slug)}` : `/news/${encodeURIComponent(p.slug)}`;

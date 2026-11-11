@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { apiGet, apiPost, apiPut } from '@/lib/api';
 import { ErrorState, LoadingRows, PageHeader } from '@/components/admin/states';
-import { BusinessGrid, CtaSection, Hero, Intro } from '@/components/site/home-sections';
+import { BusinessGrid, CtaSection, Hero, Intro, toAreaCards } from '@/components/site/home-sections';
 import { Markdown } from '@/components/site/markdown';
 import { SiteFooter } from '@/components/site/site-footer';
 import type { GenericContent, HomeContent, SiteSettings } from '@/components/site/types';
@@ -101,7 +101,7 @@ function DraftPreview({ pageKey, content, title }: { pageKey: string; content: O
       <>
         <Hero hero={c.hero} name="OOGAM" />
         <Intro intro={c.intro} />
-        <BusinessGrid areas={c.business} withLink={false} />
+        <BusinessGrid areas={toAreaCards(c.business)} withLink={false} />
         <div className="py-10"><CtaSection cta={c.cta} /></div>
       </>
     );
@@ -113,7 +113,7 @@ function DraftPreview({ pageKey, content, title }: { pageKey: string; content: O
       <>
         <PageIntro label={pageKey} title={c.heading || title} lead={pageKey === 'contact' ? c.body : undefined} />
         {pageKey !== 'contact' && <div className="container-site py-16"><Markdown source={c.body} /></div>}
-        {(c.areas ?? c.values) && <BusinessGrid areas={(c.areas ?? c.values)?.map((v) => ({ ...v }))} withLink={false} />}
+        {(c.areas ?? c.values) && <BusinessGrid areas={toAreaCards(c.areas ?? c.values)} withLink={false} />}
       </>
     );
   }

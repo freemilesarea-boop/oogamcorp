@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getHome, getSite, seoMetadata } from '@/components/site/data';
-import { BrandsSection, BusinessGrid, CtaSection, FeaturedSection, Hero, Intro, NewsSection } from '@/components/site/home-sections';
+import { BrandsSection, BusinessGrid, CtaSection, FeaturedSection, Hero, Intro, NewsSection, toAreaCards } from '@/components/site/home-sections';
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return seoMetadata({
     seo: home?.page?.seo,
     fallbackTitle: 'OOGAM — Ideas Become Impact.',
-    fallbackDescription: home?.page?.content.intro?.body ?? 'OOGAM — Creative Business. Media. Technology.',
+    fallbackDescription: home?.page?.content.intro?.body ?? 'OOGAM — AI Education. AI Music Media. AI Technology.',
     path: '/',
   });
 }
@@ -20,7 +20,7 @@ export default async function HomePage() {
     <>
       <Hero hero={content?.hero} name={site?.name ?? 'OOGAM'} />
       <Intro intro={content?.intro} />
-      <BusinessGrid areas={content?.business} />
+      <BusinessGrid areas={home?.businessAreas?.length ? home.businessAreas : toAreaCards(content?.business)} />
       <BrandsSection brands={home?.brands ?? []} />
       <FeaturedSection items={home?.featured ?? []} />
       <NewsSection posts={home?.news ?? []} />

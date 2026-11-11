@@ -13,7 +13,7 @@ export default async function PortfolioPage() {
   const items = await getPortfolio();
   return (
     <>
-      <PageIntro label="Portfolio" title="Selected Work" lead="크리에이티브 비즈니스, 미디어, 테크놀로지 영역에서 진행한 프로젝트입니다." />
+      <PageIntro label="Portfolio" title="Selected Work" lead="AI 교육, AI 음악 미디어, AI 기술 영역에서 진행한 프로젝트입니다." />
       <section className="py-16 md:py-24">
         <div className="container-site">
           {items === null ? (

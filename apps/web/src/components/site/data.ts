@@ -3,13 +3,15 @@ import type { Metadata } from 'next';
 import { cache } from 'react';
 import { publicFetch } from '@/lib/server-api';
 import type {
-  GenericContent, HomeData, PostType, PublicBrand, PublicPage, PublicPaginated, PublicPortfolioItem, PublicPost, Seo, SiteInfo, SitemapData,
+  GenericContent, HomeData, PublicBusinessArea, PostType, PublicBrand, PublicPage, PublicPaginated, PublicPortfolioItem, PublicPost, Seo, SiteInfo, SitemapData,
 } from './types';
 
 /** 공개 API 조회 (null = API 불가/미게시). 가짜 데이터로 대체하지 않는다. */
 export const getSite = cache(() => publicFetch<SiteInfo>('/site'));
 export const getHome = cache(() => publicFetch<HomeData>('/home'));
 export const getPage = cache(<C = GenericContent>(key: string) => publicFetch<PublicPage<C>>(`/pages/${encodeURIComponent(key)}`));
+export const getBusinessAreas = cache(() => publicFetch<PublicBusinessArea[]>('/business-areas'));
+export const getBusinessArea = cache((slug: string) => publicFetch<PublicBusinessArea>(`/business-areas/${encodeURIComponent(slug)}`));
 export const getBrands = cache(() => publicFetch<PublicBrand[]>('/brands'));
 export const getBrand = cache((slug: string) =>
   publicFetch<PublicBrand & { portfolio: PublicPortfolioItem[] }>(`/brands/${encodeURIComponent(slug)}`),

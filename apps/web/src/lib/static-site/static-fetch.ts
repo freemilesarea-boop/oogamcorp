@@ -19,6 +19,11 @@ export function staticFetch(path: string): unknown {
       return snap.site;
     case 'home':
       return snap.home;
+    case 'business-areas': {
+      const areas = (snap.businessAreas ?? []) as Any[];
+      if (parts[1]) return areas.find((a) => a.slug === parts[1]) ?? null;
+      return areas.map(({ body: _body, ...rest }) => rest);
+    }
     case 'pages':
       return (snap.pages as Record<string, Any>)[parts[1]] ?? null;
     case 'brands':

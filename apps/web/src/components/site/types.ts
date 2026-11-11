@@ -126,8 +126,26 @@ export interface PublicPaginated<T> {
   totalPages: number;
 }
 
+/** 사업 영역 (CMS business_areas). 목록 응답에는 body 가 없다 */
+export interface PublicBusinessArea {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  summary: string | null;
+  body?: string | null;
+  imageUrl: string | null;
+  highlights: string[];
+  ctaLabel: string | null;
+  ctaHref: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  updatedAt: string;
+}
+
 export interface HomeData {
   page: PublicPage<HomeContent> | null;
+  businessAreas?: PublicBusinessArea[];
   brands: PublicBrand[];
   featured: PublicPortfolioItem[];
   news: PublicPost[];
@@ -136,6 +154,7 @@ export interface HomeData {
 export interface SitemapData {
   pages: { key: string; updatedAt: string }[];
   brands: { slug: string; updatedAt: string }[];
+  businessAreas?: { slug: string; updatedAt: string }[];
   posts: { type: PostType; slug: string; updatedAt: string }[];
 }
 

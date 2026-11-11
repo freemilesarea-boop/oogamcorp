@@ -50,9 +50,9 @@
     },
     "hero": {
      "lines": [
-      "Creative Business.",
-      "Media.",
-      "Technology."
+      "AI Education.",
+      "AI Music Media.",
+      "AI Technology."
      ],
      "title": "Ideas Become Impact.",
      "ctaHref": "/contact",
@@ -60,24 +60,24 @@
      "ctaLabel": "함께 일하기"
     },
     "intro": {
-     "body": "[샘플 문구] OOGAM은 크리에이티브 비즈니스, 미디어, 테크놀로지를 하나의 흐름으로 연결해 브랜드의 다음 장면을 만듭니다.",
+     "body": "[샘플 문구] OOGAM은 AI 교육, AI 음악 미디어, AI 기술을 하나의 흐름으로 연결해 아이디어를 실행 가능한 임팩트로 만듭니다.",
      "heading": "아이디어를 실행 가능한 임팩트로."
     },
     "business": [
      {
-      "key": "creative",
-      "body": "브랜드 기획과 크리에이티브 사업 개발",
-      "title": "Creative Business"
+      "key": "ai-education",
+      "title": "AI Education",
+      "body": "AI를 이해하고 실무에 활용하는 역량을 키우는 교육 프로그램"
      },
      {
-      "key": "media",
-      "body": "콘텐츠 기획·제작과 미디어 운영",
-      "title": "Media"
+      "key": "ai-music-media",
+      "title": "AI Music Media",
+      "body": "AI 기술을 활용한 음악·오디오 콘텐츠 기획과 미디어 운영"
      },
      {
-      "key": "technology",
-      "body": "서비스와 플랫폼을 위한 기술 개발",
-      "title": "Technology"
+      "key": "ai-technology",
+      "title": "AI Technology",
+      "body": "AI 서비스와 플랫폼을 위한 기술 연구·개발"
      }
     ]
    },
@@ -291,6 +291,62 @@
     "publishedAt": "2026-11-07T04:35:23.688Z",
     "updatedAt": "2026-11-07T04:35:23.689Z"
    }
+  ],
+  "businessAreas": [
+   {
+    "id": "sample-area-1",
+    "slug": "ai-education",
+    "title": "AI Education",
+    "subtitle": "AI 교육",
+    "summary": "AI를 이해하고 실무에 활용하는 역량을 키우는 교육 프로그램",
+    "highlights": [
+     "AI 활용 교육",
+     "생성형 AI 워크숍",
+     "맞춤형 커리큘럼"
+    ],
+    "imageUrl": null,
+    "ctaLabel": "문의하기",
+    "ctaHref": "/contact",
+    "seoTitle": null,
+    "seoDescription": null,
+    "updatedAt": "2026-11-11T00:00:00.000Z"
+   },
+   {
+    "id": "sample-area-2",
+    "slug": "ai-music-media",
+    "title": "AI Music Media",
+    "subtitle": "AI 음악 미디어",
+    "summary": "AI 기술을 활용한 음악·오디오 콘텐츠 기획과 미디어 운영",
+    "highlights": [
+     "음악·오디오 콘텐츠",
+     "미디어 채널 운영",
+     "협업 콘텐츠"
+    ],
+    "imageUrl": null,
+    "ctaLabel": "문의하기",
+    "ctaHref": "/contact",
+    "seoTitle": null,
+    "seoDescription": null,
+    "updatedAt": "2026-11-11T00:00:00.000Z"
+   },
+   {
+    "id": "sample-area-3",
+    "slug": "ai-technology",
+    "title": "AI Technology",
+    "subtitle": "AI 기술",
+    "summary": "AI 서비스와 플랫폼을 위한 기술 연구·개발",
+    "highlights": [
+     "AI 서비스 개발",
+     "기술 연구",
+     "AI 도구"
+    ],
+    "imageUrl": null,
+    "ctaLabel": "문의하기",
+    "ctaHref": "/contact",
+    "seoTitle": null,
+    "seoDescription": null,
+    "updatedAt": "2026-11-11T00:00:00.000Z"
+   }
   ]
  },
  "pages": {
@@ -305,9 +361,9 @@
     },
     "hero": {
      "lines": [
-      "Creative Business.",
-      "Media.",
-      "Technology."
+      "AI Education.",
+      "AI Music Media.",
+      "AI Technology."
      ],
      "title": "Ideas Become Impact.",
      "ctaHref": "/contact",
@@ -315,24 +371,24 @@
      "ctaLabel": "함께 일하기"
     },
     "intro": {
-     "body": "[샘플 문구] OOGAM은 크리에이티브 비즈니스, 미디어, 테크놀로지를 하나의 흐름으로 연결해 브랜드의 다음 장면을 만듭니다.",
+     "body": "[샘플 문구] OOGAM은 AI 교육, AI 음악 미디어, AI 기술을 하나의 흐름으로 연결해 아이디어를 실행 가능한 임팩트로 만듭니다.",
      "heading": "아이디어를 실행 가능한 임팩트로."
     },
     "business": [
      {
-      "key": "creative",
-      "body": "브랜드 기획과 크리에이티브 사업 개발",
-      "title": "Creative Business"
+      "key": "ai-education",
+      "title": "AI Education",
+      "body": "AI를 이해하고 실무에 활용하는 역량을 키우는 교육 프로그램"
      },
      {
-      "key": "media",
-      "body": "콘텐츠 기획·제작과 미디어 운영",
-      "title": "Media"
+      "key": "ai-music-media",
+      "title": "AI Music Media",
+      "body": "AI 기술을 활용한 음악·오디오 콘텐츠 기획과 미디어 운영"
      },
      {
-      "key": "technology",
-      "body": "서비스와 플랫폼을 위한 기술 개발",
-      "title": "Technology"
+      "key": "ai-technology",
+      "title": "AI Technology",
+      "body": "AI 서비스와 플랫폼을 위한 기술 연구·개발"
      }
     ]
    },
@@ -348,7 +404,7 @@
    "key": "about",
    "title": "회사 소개",
    "content": {
-    "body": "[샘플 문구] OOGAM은 브랜드 기획, 콘텐츠 제작, 기술 개발을 한 팀에서 수행하는 크리에이티브 컴퍼니입니다.\n\n아이디어가 실제 결과로 이어지도록 기획부터 운영까지 함께합니다. 이 문구는 Preview 검수용 샘플입니다.",
+    "body": "[샘플 문구] OOGAM은 AI 교육, AI 음악 미디어, AI 기술을 한 팀에서 수행하는 회사입니다.\n\n아이디어가 실제 결과로 이어지도록 기획부터 운영까지 함께합니다. 이 문구는 Preview 검수용 샘플입니다.",
     "heading": "About OOGAM"
    },
    "seo": {
@@ -363,22 +419,22 @@
    "key": "business",
    "title": "사업 영역",
    "content": {
-    "body": "[샘플 문구] 세 가지 사업 영역이 하나의 프로젝트 안에서 유기적으로 연결됩니다.",
+    "body": "[샘플 문구] AI 교육, AI 음악 미디어, AI 기술 — 세 가지 사업 영역이 하나의 프로젝트 안에서 유기적으로 연결됩니다.",
     "areas": [
      {
-      "key": "creative",
-      "body": "브랜드 기획과 크리에이티브 사업 개발",
-      "title": "Creative Business"
+      "key": "ai-education",
+      "title": "AI Education",
+      "body": "AI를 이해하고 실무에 활용하는 역량을 키우는 교육 프로그램"
      },
      {
-      "key": "media",
-      "body": "콘텐츠 기획·제작과 미디어 운영",
-      "title": "Media"
+      "key": "ai-music-media",
+      "title": "AI Music Media",
+      "body": "AI 기술을 활용한 음악·오디오 콘텐츠 기획과 미디어 운영"
      },
      {
-      "key": "technology",
-      "body": "서비스와 플랫폼을 위한 기술 개발",
-      "title": "Technology"
+      "key": "ai-technology",
+      "title": "AI Technology",
+      "body": "AI 서비스와 플랫폼을 위한 기술 연구·개발"
      }
     ],
     "heading": "Business"
@@ -1008,6 +1064,79 @@
     "slug": "sample-career-2",
     "updatedAt": "2026-11-07T04:35:23.846Z"
    }
+  ],
+  "businessAreas": [
+   {
+    "slug": "ai-education",
+    "updatedAt": "2026-11-11T00:00:00.000Z"
+   },
+   {
+    "slug": "ai-music-media",
+    "updatedAt": "2026-11-11T00:00:00.000Z"
+   },
+   {
+    "slug": "ai-technology",
+    "updatedAt": "2026-11-11T00:00:00.000Z"
+   }
   ]
- }
+ },
+ "businessAreas": [
+  {
+   "id": "sample-area-1",
+   "slug": "ai-education",
+   "title": "AI Education",
+   "subtitle": "AI 교육",
+   "summary": "AI를 이해하고 실무에 활용하는 역량을 키우는 교육 프로그램",
+   "body": "[샘플 문구] 이 영역의 소개 문구는 관리자에서 확정 후 교체됩니다.\n\n## 무엇을 하나요\n\nAI의 원리와 활용 방법을 대상과 목적에 맞춰 교육합니다.\n\n## 프로그램 예시\n\n- 기업·기관 대상 AI 활용 교육\n- 창작자를 위한 생성형 AI 워크숍\n- 목적에 맞춘 맞춤형 커리큘럼 설계",
+   "highlights": [
+    "AI 활용 교육",
+    "생성형 AI 워크숍",
+    "맞춤형 커리큘럼"
+   ],
+   "imageUrl": null,
+   "ctaLabel": "문의하기",
+   "ctaHref": "/contact",
+   "seoTitle": null,
+   "seoDescription": null,
+   "updatedAt": "2026-11-11T00:00:00.000Z"
+  },
+  {
+   "id": "sample-area-2",
+   "slug": "ai-music-media",
+   "title": "AI Music Media",
+   "subtitle": "AI 음악 미디어",
+   "summary": "AI 기술을 활용한 음악·오디오 콘텐츠 기획과 미디어 운영",
+   "body": "[샘플 문구] 이 영역의 소개 문구는 관리자에서 확정 후 교체됩니다.\n\n## 무엇을 하나요\n\nAI 기술을 활용해 음악과 오디오 콘텐츠를 기획·제작하고 미디어 채널을 운영합니다.\n\n## 주요 활동 예시\n\n- AI 기반 음악·사운드 콘텐츠 기획\n- 음악 미디어 채널 운영\n- 아티스트·브랜드 협업 콘텐츠",
+   "highlights": [
+    "음악·오디오 콘텐츠",
+    "미디어 채널 운영",
+    "협업 콘텐츠"
+   ],
+   "imageUrl": null,
+   "ctaLabel": "문의하기",
+   "ctaHref": "/contact",
+   "seoTitle": null,
+   "seoDescription": null,
+   "updatedAt": "2026-11-11T00:00:00.000Z"
+  },
+  {
+   "id": "sample-area-3",
+   "slug": "ai-technology",
+   "title": "AI Technology",
+   "subtitle": "AI 기술",
+   "summary": "AI 서비스와 플랫폼을 위한 기술 연구·개발",
+   "body": "[샘플 문구] 이 영역의 소개 문구는 관리자에서 확정 후 교체됩니다.\n\n## 무엇을 하나요\n\nAI 서비스와 플랫폼을 설계하고 개발합니다.\n\n## 주요 활동 예시\n\n- AI 서비스·플랫폼 개발\n- 데이터·모델 활용 기술 연구\n- 사내외 서비스를 위한 AI 도구 개발",
+   "highlights": [
+    "AI 서비스 개발",
+    "기술 연구",
+    "AI 도구"
+   ],
+   "imageUrl": null,
+   "ctaLabel": "문의하기",
+   "ctaHref": "/contact",
+   "seoTitle": null,
+   "seoDescription": null,
+   "updatedAt": "2026-11-11T00:00:00.000Z"
+  }
+ ]
 }

@@ -13,7 +13,7 @@ export default async function BrandsPage() {
   const brands = await getBrands();
   return (
     <>
-      <PageIntro label="Brands" title="OOGAM과 함께하는 브랜드" lead="크리에이티브, 미디어, 기술의 관점에서 함께 성장하는 브랜드를 소개합니다." />
+      <PageIntro label="Brands" title="OOGAM과 함께하는 브랜드" lead="AI 교육, AI 음악 미디어, AI 기술의 관점에서 함께 성장하는 브랜드를 소개합니다." />
       <section className="py-16 md:py-24">
         <div className="container-site">
           {brands === null ? (

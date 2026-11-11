@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 import { safeHref } from './markdown';
 import type { Area, HomeContent, PublicBrand, PublicPortfolioItem, PublicPost } from './types';
 import { ArrowLink, BrandCard, EmptyBlock, PortfolioCard, PostRow, SectionLabel } from './ui';
@@ -73,7 +74,22 @@ export function Intro({ intro }: { intro: HomeContent['intro'] }) {
   );
 }
 
-export function BusinessGrid({ areas, index = '02', withLink = true }: { areas: Area[] | undefined; index?: string; withLink?: boolean }) {
+/** 사업 영역 카드 데이터 — CMS business_areas 또는 (구) 페이지 content.areas */
+export interface AreaCard {
+  slug?: string | null;
+  key?: string;
+  title?: string;
+  subtitle?: string | null;
+  summary?: string | null;
+  body?: string | null;
+}
+
+/** 구형 content.areas(key/title/body) → 카드 */
+export function toAreaCards(areas: Area[] | undefined): AreaCard[] {
+  return (areas ?? []).map((a) => ({ key: a.key, title: a.title, summary: a.body }));
+}
+
+export function BusinessGrid({ areas, index = '02', withLink = true }: { areas: AreaCard[] | undefined; index?: string; withLink?: boolean }) {
   const list = (areas ?? []).filter((a) => a.title);
   if (!list.length) return null;
   return (
@@ -85,15 +101,33 @@ export function BusinessGrid({ areas, index = '02', withLink = true }: { areas: 
           {withLink && <ArrowLink href="/business" className="hidden md:inline-flex">사업 영역 전체</ArrowLink>}
         </div>
         <ol className="grid grid-cols-1 gap-px bg-gray-200 md:grid-cols-3">
-          {list.map((a, i) => (
-            <li key={a.key ?? i} className="group flex min-h-[18rem] flex-col justify-between bg-paper p-8 transition-colors duration-500 hover:bg-gray-50 md:min-h-[24rem] md:p-10">
-              <span className="text-sm tabular-nums text-gray-500">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                <h3 className="text-3xl font-semibold tracking-[-0.035em] md:text-4xl">{a.title}</h3>
-                {a.body && <p className="mt-4 max-w-xs whitespace-pre-line text-[15px] leading-relaxed text-gray-600">{a.body}</p>}
-              </div>
-            </li>
-          ))}
+          {list.map((a, i) => {
+            const inner = (
+              <>
+                <span className="flex items-center justify-between text-sm tabular-nums text-gray-500">
+                  {String(i + 1).padStart(2, '0')}
+                  {a.slug && <span aria-hidden className="text-lg text-ink transition-transform duration-300 group-hover:translate-x-1">→</span>}
+                </span>
+                <div>
+                  {a.subtitle && <p className="mb-3 text-sm font-medium text-gray-500">{a.subtitle}</p>}
+                  <h3 className="text-3xl font-semibold tracking-[-0.035em] md:text-4xl">{a.title}</h3>
+                  {(a.summary ?? a.body) && <p className="mt-4 max-w-xs whitespace-pre-line text-[15px] leading-relaxed text-gray-600">{a.summary ?? a.body}</p>}
+                </div>
+              </>
+            );
+            const cls = 'group flex min-h-[18rem] flex-col justify-between bg-paper p-8 transition-colors duration-500 hover:bg-gray-50 md:min-h-[24rem] md:p-10';
+            return (
+              <li key={a.slug ?? a.key ?? i} className="flex">
+                {a.slug ? (
+                  <Link href={`/business/${encodeURIComponent(a.slug)}`} className={cn(cls, 'w-full focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ink')} aria-label={`${a.title} 자세히 보기`}>
+                    {inner}
+                  </Link>
+                ) : (
+                  <div className={cn(cls, 'w-full')}>{inner}</div>
+                )}
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>
