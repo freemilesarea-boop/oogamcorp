@@ -107,18 +107,18 @@ export async function seed(client: PrismaClient = prisma, opts: { quiet?: boolea
     hero: {
       eyebrow: 'OOGAM',
       title: 'Ideas Become Impact.',
-      lines: ['Creative Business.', 'Media.', 'Technology.'],
+      lines: ['AI Education.', 'AI Music Media.', 'AI Technology.'],
       ctaLabel: '함께 일하기',
       ctaHref: '/contact',
     },
     intro: {
       heading: '아이디어를 실행 가능한 임팩트로.',
-      body: 'OOGAM은 크리에이티브 비즈니스, 미디어, 테크놀로지를 하나의 흐름으로 연결합니다. (임시 소개 문구 — CMS에서 수정하세요)',
+      body: 'OOGAM은 AI 교육, AI 음악 미디어, AI 기술을 하나의 흐름으로 연결합니다. (임시 소개 문구 — CMS에서 수정하세요)',
     },
     business: [
-      { key: 'creative', title: 'Creative Business', body: '브랜드 기획과 크리에이티브 사업 개발' },
-      { key: 'media', title: 'Media', body: '콘텐츠 기획·제작과 미디어 운영' },
-      { key: 'technology', title: 'Technology', body: '서비스와 플랫폼을 위한 기술 개발' },
+      { key: 'ai-education', title: 'AI Education', body: 'AI를 이해하고 실무에 활용하는 역량을 키우는 교육' },
+      { key: 'ai-music-media', title: 'AI Music Media', body: 'AI 기술을 활용한 음악·오디오 콘텐츠와 미디어 운영' },
+      { key: 'ai-technology', title: 'AI Technology', body: 'AI 서비스와 플랫폼을 위한 기술 연구·개발' },
     ],
     cta: { heading: '새로운 프로젝트를 함께 만들어 갈 파트너를 찾습니다.', label: '파트너십 문의', href: '/contact' },
   };
