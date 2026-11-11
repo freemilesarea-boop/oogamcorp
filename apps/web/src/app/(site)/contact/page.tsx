@@ -20,7 +20,7 @@ export default async function ContactPage() {
   const shown = contacts.filter(([, v]) => v);
   return (
     <>
-      <PageIntro label="Contact" title={c?.heading || 'Contact'} lead={c?.body} />
+      <PageIntro label={c?.label || 'Contact'} title={c?.heading || 'Contact'} lead={c?.lead || c?.body} />
       <section className="py-16 md:py-28">
         <div className="container-site grid grid-cols-12 gap-x-6 gap-y-16">
           <aside className="col-span-12 space-y-10 lg:col-span-4">

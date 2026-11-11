@@ -17,14 +17,35 @@ export interface Area {
   body?: string;
 }
 
+/** 홈 섹션 공통 문구 (CMS) */
+export interface SectionText {
+  label?: string;
+  heading?: string;
+  linkLabel?: string;
+  emptyTitle?: string;
+  emptyBody?: string;
+}
+
+export type HomeSectionKey = 'hero' | 'intro' | 'business' | 'brands' | 'featured' | 'news' | 'cta';
+
 export interface HomeContent {
-  hero?: { eyebrow?: string; title?: string; lines?: string[]; ctaLabel?: string; ctaHref?: string };
-  intro?: { heading?: string; body?: string };
+  hero?: { eyebrow?: string; title?: string; lines?: string[]; ctaLabel?: string; ctaHref?: string; imageUrl?: string };
+  intro?: { label?: string; heading?: string; body?: string; linkLabel?: string; linkHref?: string; imageUrl?: string };
   business?: Area[];
-  cta?: { heading?: string; label?: string; href?: string };
+  businessSection?: SectionText;
+  brandsSection?: SectionText;
+  featuredSection?: SectionText;
+  newsSection?: SectionText;
+  cta?: { label?: string; heading?: string; href?: string };
+  sections?: { key: HomeSectionKey; visible?: boolean }[];
 }
 
 export interface GenericContent {
+  label?: string;
+  lead?: string;
+  imageUrl?: string;
+  emptyTitle?: string;
+  emptyBody?: string;
   heading?: string;
   body?: string;
   values?: { title?: string; body?: string }[];
@@ -36,6 +57,9 @@ export interface GenericContent {
 }
 
 export interface SiteSettings {
+  nav?: { label?: string; href?: string; visible?: boolean }[];
+  headerCtaLabel?: string;
+  headerCtaHref?: string;
   companyName?: string;
   ceo?: string;
   businessNumber?: string;
@@ -59,6 +83,7 @@ export interface PublicPage<C = GenericContent> {
 export interface SiteInfo {
   name: string;
   nav: { href: string; label: string }[];
+  cta?: { label: string; href: string } | null;
   footer: SiteSettings | null;
   seo: Seo;
 }

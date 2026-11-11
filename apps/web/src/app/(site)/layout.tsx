@@ -36,7 +36,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <a href="/admin/preview/exit" className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">미리보기 종료</a>
         </div>
       )}
-      <SiteHeader nav={nav} />
+      <SiteHeader nav={nav} cta={site?.cta} />
       <main id="main" className="flex-1">{children}</main>
       <SiteFooter site={site ? { ...site, nav } : { name: 'OOGAM', nav, footer: null, seo: { title: null, description: null, ogImageUrl: null } }} />
     </div>

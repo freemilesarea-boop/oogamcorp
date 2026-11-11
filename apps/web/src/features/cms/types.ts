@@ -119,3 +119,22 @@ export const EMPLOYMENT_TYPES: { value: string; label: string }[] = [
   { value: 'FULL_TIME', label: '정규직' }, { value: 'CONTRACT', label: '계약직' }, { value: 'PART_TIME', label: '파트타임' },
   { value: 'INTERN', label: '인턴' }, { value: 'FREELANCE', label: '프리랜서' },
 ];
+
+export interface BusinessArea {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  summary: string | null;
+  body: string | null;
+  imageUrl: string | null;
+  highlights: string[];
+  ctaLabel: string | null;
+  ctaHref: string | null;
+  sortOrder: number;
+  status: ContentStatus;
+  publishedAt: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  updatedAt: string;
+}

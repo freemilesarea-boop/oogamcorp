@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getPage, seoMetadata } from '@/components/site/data';
 import { Markdown } from '@/components/site/markdown';
-import { PageIntro, SectionLabel, Unavailable } from '@/components/site/ui';
+import { CmsImage, PageIntro, SectionLabel, Unavailable } from '@/components/site/ui';
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,7 +22,12 @@ export default async function AboutPage() {
   const values = (page.content.values ?? []).filter((v) => v.title);
   return (
     <>
-      <PageIntro label="About" title={page.content.heading || page.title} />
+      <PageIntro label={page.content.label || 'About'} title={page.content.heading || page.title} lead={page.content.lead} />
+      {page.content.imageUrl && (
+        <div className="container-site pt-12">
+          <CmsImage src={page.content.imageUrl} alt="" className="aspect-[16/9] w-full bg-gray-100 object-cover" />
+        </div>
+      )}
       {page.content.body && (
         <section className="py-20 md:py-32">
           <div className="container-site grid grid-cols-12 gap-x-6">

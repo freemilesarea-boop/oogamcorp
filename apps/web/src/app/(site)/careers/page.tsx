@@ -14,7 +14,7 @@ export default async function CareersPage() {
   const [page, jobs] = await Promise.all([getPage('careers'), getPosts('CAREER', 1, 50)]);
   return (
     <>
-      <PageIntro label="Careers" title={page?.content.heading || 'Careers'} />
+      <PageIntro label={page?.content.label || 'Careers'} title={page?.content.heading || 'Careers'} lead={page?.content.lead} />
       {page?.content.body && (
         <section className="py-16 md:py-24">
           <div className="container-site grid grid-cols-12 gap-x-6">
@@ -28,7 +28,7 @@ export default async function CareersPage() {
           {jobs === null ? (
             <Unavailable />
           ) : jobs.items.length === 0 ? (
-            <EmptyBlock title="현재 진행 중인 채용이 없습니다." body="새로운 포지션이 열리면 이곳에 안내합니다. 자유 지원은 문의 페이지를 이용해 주세요." />
+            <EmptyBlock title={page?.content.emptyTitle || '현재 진행 중인 채용이 없습니다.'} body={page?.content.emptyBody || '새로운 포지션이 열리면 이곳에 안내합니다. 자유 지원은 문의 페이지를 이용해 주세요.'} />
           ) : (
             <ul className="border-b border-gray-200">
               {jobs.items.map((job) => {

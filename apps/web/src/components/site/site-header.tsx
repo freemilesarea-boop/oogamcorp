@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
  * - 홈(히어로 위)에서는 투명 + 흰 글자, 스크롤하면 불투명 배경으로 전환
  * - 모바일: 전체 화면 메뉴 (ESC 닫기, 포커스 이동, 배경 스크롤 잠금)
  */
-export function SiteHeader({ nav }: { nav: { href: string; label: string }[] }) {
+export function SiteHeader({ nav, cta }: { nav: { href: string; label: string }[]; cta?: { label: string; href: string } | null }) {
   const pathname = usePathname();
   const overHero = pathname === '/';
   const [scrolled, setScrolled] = useState(false);
@@ -60,10 +60,10 @@ export function SiteHeader({ nav }: { nav: { href: string; label: string }[] }) 
         </Link>
         <nav aria-label="주요 메뉴" className="hidden lg:block">
           <ul className="flex items-center gap-9">
-            {nav.map((item) => {
+            {nav.map((item, i) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
-                <li key={item.href}>
+                <li key={`${item.href}-${i}`}>
                   <Link
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
@@ -79,6 +79,13 @@ export function SiteHeader({ nav }: { nav: { href: string; label: string }[] }) 
                 </li>
               );
             })}
+            {cta && (
+              <li>
+                <Link href={cta.href} className="inline-flex h-9 items-center rounded-full border border-current px-4 text-[13px] font-medium transition-colors hover:bg-ink hover:text-white">
+                  {cta.label}
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
         <button
@@ -103,8 +110,8 @@ export function SiteHeader({ nav }: { nav: { href: string; label: string }[] }) 
       >
         <nav aria-label="모바일 메뉴" className="container-site flex min-h-full flex-col justify-between py-10">
           <ul className="space-y-1">
-            {nav.map((item, i) => (
-              <li key={item.href} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
+            {[...nav, ...(cta ? [cta] : [])].map((item, i) => (
+              <li key={`${item.href}-${i}`} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
                 <Link
                   href={item.href}
                   className="block py-2 text-4xl font-semibold tracking-[-0.03em] text-white/90 transition-colors hover:text-white sm:text-5xl"

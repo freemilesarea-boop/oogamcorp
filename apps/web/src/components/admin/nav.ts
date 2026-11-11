@@ -38,8 +38,9 @@ export const NAV: NavItem[] = [
     href: '/admin/cms', label: '홈페이지 CMS', icon: Globe, perm: 'cms.read',
     children: [
       { href: '/admin/cms', label: 'CMS 개요' },
-      { href: '/admin/cms/pages', label: '페이지' },
-      { href: '/admin/cms/brands', label: '브랜드' },
+      { href: '/admin/cms/pages', label: '페이지·사이트 설정' },
+      { href: '/admin/cms/business-areas', label: '사업 영역' },
+      { href: '/admin/cms/brands', label: '브랜드·포트폴리오' },
       { href: '/admin/cms/posts', label: '뉴스·채용' },
       { href: '/admin/cms/inquiries', label: '문의 접수', perm: 'cms.inquiries' },
     ],
@@ -54,13 +55,25 @@ export const NAV: NavItem[] = [
   },
 ];
 
+/**
+ * 홈페이지 CMS 배포(Vercel)에서 보이는 메뉴. 사내 업무 시스템 메뉴는 표시하지 않으며,
+ * 해당 화면·API 는 미들웨어에서 404 로 차단된다(메뉴 숨김에만 의존하지 않음).
+ */
+const CMS_SITE_NAV_HREFS = new Set(['/admin/cms', '/admin/settings']);
+export function visibleNav(cmsSite: boolean): NavItem[] {
+  if (!cmsSite) return NAV;
+  return NAV.filter((n) => CMS_SITE_NAV_HREFS.has(n.href)).map((n) =>
+    n.href === '/admin/settings' ? { ...n, children: [{ href: '/admin/settings', label: '내 계정' }] } : n,
+  );
+}
+
 export const NotificationsIcon = Bell;
 
 const LABELS: Record<string, string> = {
   admin: '워크스페이스', 'my-tasks': '내 업무', projects: '프로젝트', docs: '문서', databases: '데이터베이스', calendar: '캘린더',
   approvals: '전자결재', finance: '재무', budgets: '예산', transactions: '매출·지출', employees: '직원', teams: '부서',
   announcements: '공지', files: '파일', cms: '홈페이지 CMS', brands: '브랜드', pages: '페이지', posts: '뉴스·채용',
-  inquiries: '문의 접수', settings: '설정', permissions: '역할·권한', 'audit-logs': '감사 로그', notifications: '알림', search: '검색',
+  inquiries: '문의 접수', 'business-areas': '사업 영역', settings: '설정', permissions: '역할·권한', 'audit-logs': '감사 로그', notifications: '알림', search: '검색',
 };
 
 export function breadcrumbFor(pathname: string): { href: string; label: string }[] {

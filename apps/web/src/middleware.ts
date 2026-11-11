@@ -73,7 +73,11 @@ function accessDenied(req: NextRequest): NextResponse | null {
 const NOT_FOUND_HEADERS = { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' };
 
 /** CMS 모드에서 허용하는 관리자 화면 / API (그 외 사내 업무 시스템은 404) */
-const CMS_ADMIN_PATHS = [/^\/admin\/login(\/|$)/, /^\/admin\/mfa(\/|$)/, /^\/admin\/cms(\/|$)/, /^\/admin\/preview(\/|$)/];
+const CMS_ADMIN_PATHS = [
+  /^\/admin\/login(\/|$)/, /^\/admin\/mfa(\/|$)/, /^\/admin\/cms(\/|$)/, /^\/admin\/preview(\/|$)/,
+  // 내 계정(비밀번호·MFA·세션)과 알림만 — 역할·권한·감사 로그 등 나머지 설정은 제외
+  /^\/admin\/settings\/?$/, /^\/admin\/notifications\/?$/,
+];
 const CMS_API_PATHS = [/^\/api\/v1\/auth(\/|$)/, /^\/api\/v1\/cms(\/|$)/, /^\/api\/v1\/public(\/|$)/, /^\/api\/v1\/notifications(\/|$)/];
 
 export function middleware(req: NextRequest) {

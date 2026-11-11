@@ -12,6 +12,7 @@ import { Input, NativeSelect, Textarea } from '@/components/ui/input';
 import { Field } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/misc';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageField, PreviewButton, RevisionHistory } from './cms-widgets';
 import { PortfolioManager } from './portfolio-manager';
 import { PublishedLockNotice, StatusBadge, useCmsMutation, useCmsPerms, WarningBanner, WorkflowActions, nn } from './shared';
 import type { Brand } from './types';
@@ -74,8 +75,8 @@ function BrandDialog({ brand, open, onOpenChange }: { brand: Brand | null; open:
           <div className="sm:col-span-2">
             <Field label="소개 (마크다운)" htmlFor="b-desc"><Textarea id="b-desc" rows={5} maxLength={5000} value={form.description} onChange={set('description')} /></Field>
           </div>
-          <Field label="로고 URL" htmlFor="b-logo" hint="https:// 주소"><Input id="b-logo" type="url" value={form.logoUrl} onChange={set('logoUrl')} /></Field>
-          <Field label="대표 이미지 URL" htmlFor="b-image"><Input id="b-image" type="url" value={form.imageUrl} onChange={set('imageUrl')} /></Field>
+          <ImageField id="b-logo" label="브랜드 로고" value={form.logoUrl} onChange={(v) => setForm((f) => ({ ...f, logoUrl: v }))} />
+          <ImageField id="b-image" label="대표 이미지" value={form.imageUrl} onChange={(v) => setForm((f) => ({ ...f, imageUrl: v }))} />
           <Field label="웹사이트" htmlFor="b-web" hint="http:// 또는 https:// 만 허용"><Input id="b-web" type="url" value={form.websiteUrl} onChange={set('websiteUrl')} /></Field>
           <Field label="SEO 제목" htmlFor="b-seot"><Input id="b-seot" maxLength={200} value={form.seoTitle} onChange={set('seoTitle')} /></Field>
           <div className="sm:col-span-2">
@@ -87,9 +88,15 @@ function BrandDialog({ brand, open, onOpenChange }: { brand: Brand | null; open:
             </Field>
           </div>
         </form>
-        <DialogFooter>
-          <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>취소</Button>
-          <Button type="submit" form="brand-form" loading={save.isPending} disabled={locked || !form.name.trim()}>저장</Button>
+        <DialogFooter className="sm:justify-between">
+          <div className="flex gap-1">
+            {brand && <RevisionHistory entityType="brand" entityId={brand.id} />}
+            {brand && <PreviewButton path={`/brands/${encodeURIComponent(brand.slug)}`} />}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>취소</Button>
+            <Button type="submit" form="brand-form" loading={save.isPending} disabled={locked || !form.name.trim()}>저장</Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

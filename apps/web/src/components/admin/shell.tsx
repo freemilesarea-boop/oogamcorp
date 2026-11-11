@@ -11,7 +11,8 @@ import { cn, timeAgo } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, Spinner, Tooltip } from '@/components/ui/misc';
-import { breadcrumbFor, NAV } from './nav';
+import { isCmsSite } from '@/lib/site-mode';
+import { breadcrumbFor, visibleNav } from './nav';
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const { data: me, error, isLoading } = useMeQuery();
@@ -133,6 +134,7 @@ function Layout({ me, children }: { me: Me; children: React.ReactNode }) {
         <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur md:px-6">
           <button className="rounded p-1.5 hover:bg-muted lg:hidden" onClick={() => setMobileOpen(true)} aria-label="메뉴 열기"><Menu className="size-5" /></button>
           <Breadcrumb pathname={pathname} />
+          {isCmsSite ? <span className="ml-auto" /> : (<>
           <form
             className="relative ml-auto hidden w-full max-w-xs md:block"
             role="search"
@@ -146,6 +148,7 @@ function Layout({ me, children }: { me: Me; children: React.ReactNode }) {
             <input ref={searchRef} name="q" placeholder="검색 (⌘K)" aria-label="워크스페이스 검색" className="h-8 w-full rounded-md border border-border bg-muted/50 pl-8 pr-3 text-sm placeholder:text-muted-foreground focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring/15" />
           </form>
           <Link href="/admin/search" className="ml-auto rounded p-1.5 hover:bg-muted md:hidden" aria-label="검색"><Search className="size-5" /></Link>
+          </>)}
           <NotificationsBell />
           <ThemeToggle />
           <ProfileMenu me={me} />
@@ -162,7 +165,7 @@ function SidebarNav({ me, collapsed, pathname }: { me: Me; collapsed: boolean; p
   return (
     <nav className="flex-1 overflow-y-auto px-2 py-1">
       <ul className="space-y-0.5">
-        {NAV.filter((n) => !n.perm || perms.has(n.perm)).map((item) => {
+        {visibleNav(isCmsSite).filter((n) => !n.perm || perms.has(n.perm)).map((item) => {
           const active = item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href);
           const Icon = item.icon;
           const children = item.children?.filter((c) => !c.perm || perms.has(c.perm));

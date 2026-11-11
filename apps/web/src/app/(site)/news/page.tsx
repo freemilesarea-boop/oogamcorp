@@ -1,14 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getPosts, seoMetadata } from '@/components/site/data';
+import { getPage, getPosts, seoMetadata } from '@/components/site/data';
 import { EmptyBlock, PageIntro, PostRow, Unavailable } from '@/components/site/ui';
 import { cn } from '@/lib/utils';
 
-export const metadata: Metadata = seoMetadata({
-  fallbackTitle: 'News & Insights',
-  fallbackDescription: 'OOGAM의 소식과 인사이트.',
-  path: '/news',
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage('news');
+  return seoMetadata({ seo: page?.seo, fallbackTitle: 'News & Insights', fallbackDescription: page?.content.lead ?? 'OOGAM의 소식과 인사이트.', path: '/news' });
+}
 
 const TABS = [
   { key: undefined, label: 'All' },
@@ -30,11 +29,12 @@ export default async function NewsPage({ searchParams }: Props) {
   const sp = await searchParams;
   const type = sp.type === 'NEWS' || sp.type === 'INSIGHT' ? sp.type : undefined;
   const page = Math.max(1, Math.min(1000, Number.parseInt(sp.page ?? '1', 10) || 1));
-  const data = await getPosts(type, page, 10);
+  const [data, intro] = await Promise.all([getPosts(type, page, 10), getPage('news')]);
+  const c = intro?.content;
 
   return (
     <>
-      <PageIntro label="Newsroom" title="News & Insights" />
+      <PageIntro label={c?.label || 'Newsroom'} title={c?.heading || 'News & Insights'} lead={c?.lead} />
       <section className="py-14 md:py-20">
         <div className="container-site">
           <nav aria-label="게시물 유형" className="mb-10 flex gap-2">
@@ -58,7 +58,7 @@ export default async function NewsPage({ searchParams }: Props) {
           {data === null ? (
             <Unavailable />
           ) : data.items.length === 0 ? (
-            <EmptyBlock title="게시된 글이 아직 없습니다." body="OOGAM의 소식과 인사이트가 이곳에 게시됩니다." />
+            <EmptyBlock title={c?.emptyTitle || '게시된 글이 아직 없습니다.'} body={c?.emptyBody || 'OOGAM의 소식과 인사이트가 이곳에 게시됩니다.'} />
           ) : (
             <>
               <ul className="border-b border-gray-200">{data.items.map((p) => <PostRow key={p.id} post={p} />)}</ul>

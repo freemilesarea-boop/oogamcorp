@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getHome, getSite, seoMetadata } from '@/components/site/data';
-import { BrandsSection, BusinessGrid, CtaSection, FeaturedSection, Hero, Intro, NewsSection, toAreaCards } from '@/components/site/home-sections';
+import { HomeSections, toAreaCards } from '@/components/site/home-sections';
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,13 +18,14 @@ export default async function HomePage() {
   const content = home?.page?.content;
   return (
     <>
-      <Hero hero={content?.hero} name={site?.name ?? 'OOGAM'} />
-      <Intro intro={content?.intro} />
-      <BusinessGrid areas={home?.businessAreas?.length ? home.businessAreas : toAreaCards(content?.business)} />
-      <BrandsSection brands={home?.brands ?? []} />
-      <FeaturedSection items={home?.featured ?? []} />
-      <NewsSection posts={home?.news ?? []} />
-      <CtaSection cta={content?.cta} />
+      <HomeSections
+        content={content}
+        name={site?.name ?? 'OOGAM'}
+        businessAreas={home?.businessAreas?.length ? home.businessAreas : toAreaCards(content?.business)}
+        brands={home?.brands ?? []}
+        featured={home?.featured ?? []}
+        news={home?.news ?? []}
+      />
       <div className="h-16 md:h-24" />
     </>
   );

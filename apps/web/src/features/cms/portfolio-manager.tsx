@@ -12,6 +12,7 @@ import { Input, NativeSelect, Textarea } from '@/components/ui/input';
 import { Field } from '@/components/ui/label';
 import { Switch } from '@/components/ui/misc';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
+import { ImageField, RevisionHistory } from './cms-widgets';
 import { PublishedLockNotice, StatusBadge, useCmsMutation, useCmsPerms, WorkflowActions, nn } from './shared';
 import type { Brand, PortfolioItem } from './types';
 
@@ -76,7 +77,7 @@ function PortfolioDialog({ item, open, onOpenChange }: { item: PortfolioItem | n
           </Field>
           <Field label="클라이언트" htmlFor="p-client"><Input id="p-client" maxLength={200} value={f.client} onChange={set('client')} /></Field>
           <Field label="연도" htmlFor="p-year"><Input id="p-year" type="number" min={1990} max={2100} value={f.year} onChange={set('year')} /></Field>
-          <Field label="이미지 URL" htmlFor="p-image"><Input id="p-image" type="url" value={f.imageUrl} onChange={set('imageUrl')} /></Field>
+          <ImageField id="p-image" label="대표 이미지" value={f.imageUrl} onChange={(v) => setF((x) => ({ ...x, imageUrl: v }))} />
           <div className="sm:col-span-2">
             <Field label="요약" htmlFor="p-summary"><Textarea id="p-summary" rows={2} maxLength={500} value={f.summary} onChange={set('summary')} /></Field>
           </div>
@@ -89,9 +90,12 @@ function PortfolioDialog({ item, open, onOpenChange }: { item: PortfolioItem | n
             <label htmlFor="p-featured" className="text-sm">주요 프로젝트 (홈 노출)</label>
           </div>
         </form>
-        <DialogFooter>
-          <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>취소</Button>
-          <Button type="submit" form="portfolio-form" loading={save.isPending} disabled={!f.title.trim() || (item?.status === 'PUBLISHED' && !canPublish)}>저장</Button>
+        <DialogFooter className="sm:justify-between">
+          <div>{item && <RevisionHistory entityType="portfolio" entityId={item.id} />}</div>
+          <div className="flex gap-2">
+            <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>취소</Button>
+            <Button type="submit" form="portfolio-form" loading={save.isPending} disabled={!f.title.trim() || (item?.status === 'PUBLISHED' && !canPublish)}>저장</Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

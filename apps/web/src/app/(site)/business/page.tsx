@@ -27,7 +27,7 @@ export default async function BusinessPage() {
   }
   return (
     <>
-      <PageIntro label="Business" title={page?.content.heading || page?.title || 'Business'} />
+      <PageIntro label={page?.content.label || 'Business'} title={page?.content.heading || page?.title || 'Business'} lead={page?.content.lead} />
       {page?.content.body && (
         <section className="py-20 md:py-28">
           <div className="container-site grid grid-cols-12 gap-x-6">

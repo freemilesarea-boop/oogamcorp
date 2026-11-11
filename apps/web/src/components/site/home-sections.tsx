@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { safeHref } from './markdown';
-import type { Area, HomeContent, PublicBrand, PublicPortfolioItem, PublicPost } from './types';
-import { ArrowLink, BrandCard, EmptyBlock, PortfolioCard, PostRow, SectionLabel } from './ui';
+import type { Area, HomeContent, HomeSectionKey, PublicBrand, PublicPortfolioItem, PublicPost, SectionText } from './types';
+import { ArrowLink, BrandCard, CmsImage, EmptyBlock, PortfolioCard, PostRow, SectionLabel } from './ui';
 
 function linkOr(href: string | undefined, fallback: string) {
   return (href && safeHref(href)) || fallback;
@@ -13,6 +13,12 @@ export function Hero({ hero, name }: { hero: HomeContent['hero'] | undefined; na
   const lines = hero?.lines?.filter(Boolean) ?? [];
   return (
     <section aria-label="소개" className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-ink text-white">
+      {hero?.imageUrl && safeHref(hero.imageUrl) && (
+        <div aria-hidden className="absolute inset-0 -z-20">
+          <CmsImage src={hero.imageUrl} alt="" className="size-full object-cover opacity-35 grayscale" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/30 to-ink" />
+        </div>
+      )}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 opacity-[0.07] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px)] [background-size:calc(100%/12)_100%]" />
       <div className="container-site flex flex-1 flex-col justify-center pb-10 pt-32 md:pt-40">
         <div className="grid grid-cols-12 gap-x-6">
@@ -58,16 +64,19 @@ export function Hero({ hero, name }: { hero: HomeContent['hero'] | undefined; na
   );
 }
 
-export function Intro({ intro }: { intro: HomeContent['intro'] }) {
+export function Intro({ intro, index = '01' }: { intro: HomeContent['intro']; index?: string }) {
   if (!intro?.heading && !intro?.body) return null;
   return (
     <section className="py-24 md:py-40">
       <div className="container-site grid grid-cols-12 gap-x-6 gap-y-10">
-        <div className="col-span-12 md:col-span-3"><SectionLabel index="01">Company</SectionLabel></div>
+        <div className="col-span-12 md:col-span-3"><SectionLabel index={index}>{intro.label || 'Company'}</SectionLabel></div>
         <div className="col-span-12 md:col-span-9">
           {intro.heading && <h2 className="text-[clamp(2rem,4.6vw,4.25rem)] font-semibold leading-[1.08] tracking-[-0.04em]">{intro.heading}</h2>}
           {intro.body && <p className="mt-10 max-w-2xl whitespace-pre-line text-lg leading-relaxed text-gray-600 md:text-xl">{intro.body}</p>}
-          <ArrowLink href="/about" className="mt-12">회사 소개</ArrowLink>
+          <ArrowLink href={linkOr(intro.linkHref, '/about')} className="mt-12">{intro.linkLabel || '회사 소개'}</ArrowLink>
+          {intro.imageUrl && safeHref(intro.imageUrl) && (
+            <CmsImage src={intro.imageUrl} alt="" className="mt-16 aspect-[16/9] w-full bg-gray-100 object-cover" />
+          )}
         </div>
       </div>
     </section>
@@ -89,16 +98,16 @@ export function toAreaCards(areas: Area[] | undefined): AreaCard[] {
   return (areas ?? []).map((a) => ({ key: a.key, title: a.title, summary: a.body }));
 }
 
-export function BusinessGrid({ areas, index = '02', withLink = true }: { areas: AreaCard[] | undefined; index?: string; withLink?: boolean }) {
+export function BusinessGrid({ areas, index = '02', withLink = true, text }: { areas: AreaCard[] | undefined; index?: string; withLink?: boolean; text?: SectionText }) {
   const list = (areas ?? []).filter((a) => a.title);
   if (!list.length) return null;
   return (
     <section className="border-t border-gray-150 py-24 md:py-36">
       <div className="container-site">
         <div className="mb-14 flex items-end justify-between gap-6 md:mb-20">
-          <SectionLabel index={index}>Business Areas</SectionLabel>
-          <h2 className="sr-only">사업 영역</h2>
-          {withLink && <ArrowLink href="/business" className="hidden md:inline-flex">사업 영역 전체</ArrowLink>}
+          <SectionLabel index={index}>{text?.label || 'Business Areas'}</SectionLabel>
+          <h2 className="sr-only">{text?.heading || '사업 영역'}</h2>
+          {withLink && <ArrowLink href="/business" className="hidden md:inline-flex">{text?.linkLabel || '사업 영역 전체'}</ArrowLink>}
         </div>
         <ol className="grid grid-cols-1 gap-px bg-gray-200 md:grid-cols-3">
           {list.map((a, i) => {
@@ -134,37 +143,37 @@ export function BusinessGrid({ areas, index = '02', withLink = true }: { areas: 
   );
 }
 
-export function BrandsSection({ brands }: { brands: PublicBrand[] }) {
+export function BrandsSection({ brands, index = '03', text }: { brands: PublicBrand[]; index?: string; text?: SectionText }) {
   return (
     <section className="border-t border-gray-150 py-24 md:py-36">
       <div className="container-site">
         <div className="mb-14 grid grid-cols-12 items-end gap-x-6 gap-y-6 md:mb-20">
-          <div className="col-span-12 md:col-span-3"><SectionLabel index="03">Brands</SectionLabel></div>
-          <h2 className="col-span-12 text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.04em] md:col-span-6">OOGAM과 함께하는 브랜드</h2>
-          {brands.length > 0 && <div className="col-span-12 md:col-span-3 md:text-right"><ArrowLink href="/brands">브랜드 전체</ArrowLink></div>}
+          <div className="col-span-12 md:col-span-3"><SectionLabel index={index}>{text?.label || 'Brands'}</SectionLabel></div>
+          <h2 className="col-span-12 text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.04em] md:col-span-6">{text?.heading || 'OOGAM과 함께하는 브랜드'}</h2>
+          {brands.length > 0 && <div className="col-span-12 md:col-span-3 md:text-right"><ArrowLink href="/brands">{text?.linkLabel || '브랜드 전체'}</ArrowLink></div>}
         </div>
         {brands.length > 0 ? (
           <div className="grid grid-cols-1 border-l border-t border-gray-200 sm:grid-cols-2 lg:grid-cols-3">
             {brands.slice(0, 6).map((b, i) => <BrandCard key={b.id} brand={b} index={i} />)}
           </div>
         ) : (
-          <EmptyBlock title="소개할 브랜드를 준비하고 있습니다." body="공개 준비가 완료된 브랜드부터 이곳에 소개됩니다." />
+          <EmptyBlock title={text?.emptyTitle || '소개할 브랜드를 준비하고 있습니다.'} body={text?.emptyBody || '공개 준비가 완료된 브랜드부터 이곳에 소개됩니다.'} />
         )}
       </div>
     </section>
   );
 }
 
-export function FeaturedSection({ items }: { items: PublicPortfolioItem[] }) {
+export function FeaturedSection({ items, index = '04', text }: { items: PublicPortfolioItem[]; index?: string; text?: SectionText }) {
   return (
     <section className="border-t border-gray-150 py-24 md:py-36">
       <div className="container-site">
         <div className="mb-14 flex items-end justify-between gap-6 md:mb-20">
           <div className="space-y-6">
-            <SectionLabel index="04">Featured Projects</SectionLabel>
-            <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.04em]">Selected Work</h2>
+            <SectionLabel index={index}>{text?.label || 'Featured Projects'}</SectionLabel>
+            <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.04em]">{text?.heading || 'Selected Work'}</h2>
           </div>
-          {items.length > 0 && <ArrowLink href="/portfolio" className="hidden md:inline-flex">포트폴리오 전체</ArrowLink>}
+          {items.length > 0 && <ArrowLink href="/portfolio" className="hidden md:inline-flex">{text?.linkLabel || '포트폴리오 전체'}</ArrowLink>}
         </div>
         {items.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 gap-y-16 md:grid-cols-2">
@@ -173,27 +182,27 @@ export function FeaturedSection({ items }: { items: PublicPortfolioItem[] }) {
             ))}
           </div>
         ) : (
-          <EmptyBlock title="공개된 프로젝트가 아직 없습니다." body="진행한 프로젝트를 정리해 곧 소개하겠습니다." />
+          <EmptyBlock title={text?.emptyTitle || '공개된 프로젝트가 아직 없습니다.'} body={text?.emptyBody || '진행한 프로젝트를 정리해 곧 소개하겠습니다.'} />
         )}
       </div>
     </section>
   );
 }
 
-export function NewsSection({ posts }: { posts: PublicPost[] }) {
+export function NewsSection({ posts, index = '05', text }: { posts: PublicPost[]; index?: string; text?: SectionText }) {
   return (
     <section className="border-t border-gray-150 py-24 md:py-36">
       <div className="container-site grid grid-cols-12 gap-x-6 gap-y-10">
         <div className="col-span-12 space-y-6 md:col-span-4">
-          <SectionLabel index="05">News &amp; Insights</SectionLabel>
-          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.04em]">Latest</h2>
-          {posts.length > 0 && <ArrowLink href="/news">전체 보기</ArrowLink>}
+          <SectionLabel index={index}>{text?.label || 'News & Insights'}</SectionLabel>
+          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.04em]">{text?.heading || 'Latest'}</h2>
+          {posts.length > 0 && <ArrowLink href="/news">{text?.linkLabel || '전체 보기'}</ArrowLink>}
         </div>
         <div className="col-span-12 md:col-span-8">
           {posts.length > 0 ? (
             <ul className="border-b border-gray-200">{posts.map((p) => <PostRow key={p.id} post={p} />)}</ul>
           ) : (
-            <EmptyBlock title="새 소식을 준비하고 있습니다." body="OOGAM의 소식과 인사이트가 이곳에 게시됩니다." />
+            <EmptyBlock title={text?.emptyTitle || '새 소식을 준비하고 있습니다.'} body={text?.emptyBody || 'OOGAM의 소식과 인사이트가 이곳에 게시됩니다.'} />
           )}
         </div>
       </div>
@@ -201,12 +210,12 @@ export function NewsSection({ posts }: { posts: PublicPost[] }) {
   );
 }
 
-export function CtaSection({ cta }: { cta: HomeContent['cta'] }) {
+export function CtaSection({ cta, index = '06' }: { cta: HomeContent['cta']; index?: string }) {
   return (
     <section className="px-3 pb-3 md:px-5 md:pb-5">
       <div className="rounded-[1.25rem] bg-ink text-white md:rounded-[2rem]">
         <div className="container-site grid grid-cols-12 gap-x-6 gap-y-12 py-24 md:py-36">
-          <div className="col-span-12"><SectionLabel index="06" invert>Partnership</SectionLabel></div>
+          <div className="col-span-12"><SectionLabel index={index} invert>{cta?.label || 'Partnership'}</SectionLabel></div>
           <h2 className="col-span-12 text-[clamp(2.25rem,6vw,6rem)] font-semibold leading-[1.02] tracking-[-0.045em] lg:col-span-10">
             {cta?.heading || '함께 만들 프로젝트를 이야기해 주세요.'}
           </h2>
@@ -222,5 +231,46 @@ export function CtaSection({ cta }: { cta: HomeContent['cta'] }) {
         </div>
       </div>
     </section>
+  );
+}
+
+export const DEFAULT_HOME_ORDER: HomeSectionKey[] = ['hero', 'intro', 'business', 'brands', 'featured', 'news', 'cta'];
+
+/** CMS 섹션 설정(순서·표시) 적용. 설정이 없거나 누락된 섹션은 기본 순서로 표시 */
+export function orderedSections(sections: HomeContent['sections']): HomeSectionKey[] {
+  const saved = (sections ?? []).filter((x) => DEFAULT_HOME_ORDER.includes(x.key));
+  const order: { key: HomeSectionKey; visible: boolean }[] = saved.map((x) => ({ key: x.key, visible: x.visible !== false }));
+  for (const k of DEFAULT_HOME_ORDER) if (!order.some((o) => o.key === k)) order.push({ key: k, visible: true });
+  return order.filter((o, i) => o.visible && order.findIndex((x) => x.key === o.key) === i).map((o) => o.key);
+}
+
+/** 홈 전체 — 섹션 순서·표시와 섹션 번호(01, 02…)를 CMS 설정대로 렌더링 */
+export function HomeSections({
+  content, name, businessAreas, brands, featured, news,
+}: {
+  content: HomeContent | undefined;
+  name: string;
+  businessAreas: AreaCard[];
+  brands: PublicBrand[];
+  featured: PublicPortfolioItem[];
+  news: PublicPost[];
+}) {
+  let n = 0;
+  const idx = () => String(++n).padStart(2, '0');
+  return (
+    <>
+      {orderedSections(content?.sections).map((key) => {
+        switch (key) {
+          case 'hero': return <Hero key={key} hero={content?.hero} name={name} />;
+          case 'intro': return content?.intro?.heading || content?.intro?.body ? <Intro key={key} intro={content.intro} index={idx()} /> : null;
+          case 'business': return businessAreas.length ? <BusinessGrid key={key} areas={businessAreas} index={idx()} text={content?.businessSection} /> : null;
+          case 'brands': return <BrandsSection key={key} brands={brands} index={idx()} text={content?.brandsSection} />;
+          case 'featured': return <FeaturedSection key={key} items={featured} index={idx()} text={content?.featuredSection} />;
+          case 'news': return <NewsSection key={key} posts={news} index={idx()} text={content?.newsSection} />;
+          case 'cta': return <CtaSection key={key} cta={content?.cta} index={idx()} />;
+          default: return null;
+        }
+      })}
+    </>
   );
 }

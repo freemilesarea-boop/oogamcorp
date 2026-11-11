@@ -13,6 +13,7 @@ import { Input, NativeSelect, Textarea } from '@/components/ui/input';
 import { Field } from '@/components/ui/label';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageField, PreviewButton, RevisionHistory } from './cms-widgets';
 import { fmtDateTime, nn, PublishedLockNotice, StatusBadge, useCmsMutation, useCmsPerms, WorkflowActions } from './shared';
 import { EMPLOYMENT_TYPES, POST_TYPE_LABELS, type Post, type PostType } from './types';
 
@@ -124,7 +125,7 @@ function PostEditor({ type, postId, open, onOpenChange }: { type: PostType; post
             <Field label="본문 (마크다운)" htmlFor="po-body">
               <Textarea id="po-body" rows={16} maxLength={50000} className="font-mono text-[13px] leading-relaxed" value={f.body} onChange={set('body')} />
             </Field>
-            <Field label="커버 이미지 URL" htmlFor="po-cover"><Input id="po-cover" type="url" value={f.coverImageUrl} onChange={set('coverImageUrl')} /></Field>
+            <ImageField id="po-cover" label="커버 이미지" value={f.coverImageUrl} onChange={(v) => setF((x) => ({ ...x, coverImageUrl: v }))} />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="SEO 제목" htmlFor="po-seot"><Input id="po-seot" maxLength={200} value={f.seoTitle} onChange={set('seoTitle')} /></Field>
               <Field label="SEO 설명" htmlFor="po-seod"><Input id="po-seod" maxLength={500} value={f.seoDescription} onChange={set('seoDescription')} /></Field>
@@ -141,7 +142,11 @@ function PostEditor({ type, postId, open, onOpenChange }: { type: PostType; post
           </div>
         </form>
         <div className="flex flex-col-reverse gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>{id && <WorkflowActions status={status} pending={changeStatus.isPending} onChange={(to) => changeStatus.mutate(to)} />}</div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {id && <WorkflowActions status={status} pending={changeStatus.isPending} onChange={(to) => changeStatus.mutate(to)} />}
+            {id && <RevisionHistory entityType="post" entityId={id} />}
+            {id && f.slug && <PreviewButton path={type === 'CAREER' ? `/careers/${encodeURIComponent(f.slug)}` : `/news/${encodeURIComponent(f.slug)}`} />}
+          </div>
           <div className="flex gap-2">
             <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>닫기</Button>
             <Button type="submit" form="post-form" loading={save.isPending} disabled={locked || !f.title.trim()}>저장</Button>
