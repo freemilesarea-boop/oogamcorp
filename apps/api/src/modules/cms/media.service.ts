@@ -132,7 +132,12 @@ export class MediaService {
       if (!c.supabaseUrl || !c.supabaseKey) throw new ServiceUnavailableException('이미지 저장소가 설정되지 않았습니다.');
       const res = await fetch(`${c.supabaseUrl}/storage/v1/object/${encodeURIComponent(c.bucket)}/${key}`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${c.supabaseKey}`, apikey: c.supabaseKey, 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=31536000, immutable', 'x-upsert': 'false' },
+        headers: {
+          apikey: c.supabaseKey,
+          // 새 형식 secret key(sb_secret_…)는 JWT 가 아니므로 apikey 헤더로만 전달, 레거시 service_role(JWT)은 Bearer 도 함께
+          ...(c.supabaseKey.startsWith('sb_secret_') ? {} : { Authorization: `Bearer ${c.supabaseKey}` }),
+          'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=31536000, immutable', 'x-upsert': 'false',
+        },
         body: new Uint8Array(data),
       });
       if (!res.ok) {

@@ -102,22 +102,7 @@ CMS_E2E_EDITOR_EMAIL=… CMS_E2E_EDITOR_PASSWORD=… pnpm exec playwright test -
 
 E2E 범위: 비인증 차단(관리자·사내 시스템·쓰기 API), 사업 영역 생성·이미지 업로드·게시·공개 반영, 홈 초안·미리보기·게시·섹션 숨김·이전 버전 복구, 편집자 게시 불가(서버 403).
 
-## 7. 운영 전환 체크리스트 (oogam.co.kr)
+## 7. 운영 전환
 
-Supabase 프로젝트 `oogam-cms` (ref `vhxhjgartetiizfzhqxu`, 서울)는 준비 완료:
-`oogam` 스키마 58개 테이블·마이그레이션 기록, 조직·역할·권한, 대표 계정(`ceo@oogam.co.kr`, MFA 등록 필수),
-현재 공개 중인 페이지 7개·사업 영역 3개(게시), 샘플 브랜드·포트폴리오·뉴스(초안, 비공개), 앱 역할 `oogam_app`(비밀번호 미설정),
-공개 버킷 `oogam-public`. 보안 점검(Security Advisor) 경고 0건.
-
-대표자가 직접 할 일 (비밀값은 대표자만 보관):
-1. Supabase › SQL Editor: `alter role oogam_app with password '직접 정한 32자 이상 비밀번호';`
-2. Supabase › Connect › **Transaction pooler** 연결 문자열을 복사해 사용자명을 `oogam_app.vhxhjgartetiizfzhqxu`, 비밀번호를 1번 값으로 바꾸고
-   끝에 `?pgbouncer=true&connection_limit=1&schema=oogam` 를 붙인다 → `DATABASE_URL`
-3. Supabase › Project Settings › API Keys › **secret key** → `SUPABASE_SERVICE_ROLE_KEY`
-4. Mac 터미널에서 `openssl rand -base64 32` → `APP_ENCRYPTION_KEY`, `openssl rand -hex 24` → `IP_HASH_SALT`
-5. Vercel › oogamcorp-web › Settings › Environment Variables (Production) 에 5-2 표의 값 입력
-   (`NEXT_PUBLIC_DATA_SOURCE=cms`, `SUPABASE_URL=https://vhxhjgartetiizfzhqxu.supabase.co`, `MEDIA_STORAGE=supabase`,
-   `SUPABASE_MEDIA_BUCKET=oogam-public`, `PUBLIC_SITE_URL=https://oogam.co.kr`, `WEB_ORIGINS=https://oogam.co.kr,https://www.oogam.co.kr`)
-6. Deployments › 최신 배포 › Redeploy → https://oogam.co.kr/admin/login 에서 로그인 → MFA 등록 → 비밀번호 변경
-
-되돌리기: `NEXT_PUBLIC_DATA_SOURCE=static` 으로 바꾸고 Redeploy (정적 홈페이지로 즉시 복귀).
+운영 전환 절차·점검 결과·복구 방안은 [CMS_GO_LIVE.md](./CMS_GO_LIVE.md) 를 따른다.
+(DB 최소 권한: `infra/supabase/oogam_app_least_privilege.sql`, 관리자 설정 링크: `infra/supabase/admin_setup_link.sql`)

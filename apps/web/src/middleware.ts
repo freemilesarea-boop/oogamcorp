@@ -75,6 +75,8 @@ const NOT_FOUND_HEADERS = { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control'
 /** CMS 모드에서 허용하는 관리자 화면 / API (그 외 사내 업무 시스템은 404) */
 const CMS_ADMIN_PATHS = [
   /^\/admin\/login(\/|$)/, /^\/admin\/mfa(\/|$)/, /^\/admin\/cms(\/|$)/, /^\/admin\/preview(\/|$)/,
+  // 1회용 초대 링크로 관리자 비밀번호 최초 설정 (토큰은 DB 에 해시만 저장, 2시간 만료·1회 사용)
+  /^\/admin\/accept-invite\/?$/,
   // 내 계정(비밀번호·MFA·세션)과 알림만 — 역할·권한·감사 로그 등 나머지 설정은 제외
   /^\/admin\/settings\/?$/, /^\/admin\/notifications\/?$/,
 ];
