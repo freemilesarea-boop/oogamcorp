@@ -38,3 +38,5 @@ export function internalPort(): Promise<number>;
 export function publicSite(): Promise<ServerlessPublicSite>;
 export function resolveSession(token: string | undefined): Promise<ServerlessAuthContext | null>;
 export function sessionCookieName(): string;
+export function classifyBootError(e: unknown): string;
+export function redactSecrets(text: string): string;

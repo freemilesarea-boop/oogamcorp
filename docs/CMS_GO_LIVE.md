@@ -161,3 +161,17 @@ CSRF 쿠키 Secure·SameSite=Strict, MFA 미등록 시 CMS·게시 차단(403), 
 1. GitHub `cms-staging` 브랜치 삭제 (Branches › 휴지통 아이콘)
 2. Supabase SQL Editor 에 저장된 쿼리가 있으면 삭제 (특히 설정 링크·비밀번호 쿼리)
 3. 문제 발생 시: Vercel › Deployments › 직전 Production 배포 › ⋯ › **Instant Rollback**
+
+## 6. 로그인 시 "일시적으로 서비스를 이용할 수 없습니다 (오류 코드: …)" 가 나올 때
+
+CMS 백엔드가 기동하지 못한 경우이며, 비밀값 없이 원인 코드만 표시된다. (비밀번호가 틀린 경우는 이 문구가 아니라 "이메일 또는 비밀번호가 올바르지 않습니다")
+
+| 오류 코드 | 원인 | 조치 |
+|---|---|---|
+| `CMS_ENV_MISSING_<이름>` | 해당 환경변수가 이 배포에 없음 | Vercel › Settings › Environment Variables 에서 `<이름>` 이 **Preview**(또는 Production)에 체크돼 있는지 확인 → 해당 배포 **Redeploy** (변수는 배포 생성 시점 값이 적용됨) |
+| `CMS_DB_AUTH` | DB 사용자명·비밀번호 불일치 | `DATABASE_URL` 사용자명이 `oogam_app.vhxhjgartetiizfzhqxu` 인지, 비밀번호가 1단계 `alter role` 값과 같은지 확인. 모르면 1단계로 새 비밀번호 설정 후 `DATABASE_URL` 수정 → Redeploy |
+| `CMS_DB_POOLER_USER` | 풀러가 사용자/프로젝트를 찾지 못함 | 사용자명 뒤 `.vhxhjgartetiizfzhqxu` 누락 여부, 호스트가 Supabase Connect 화면의 Transaction pooler 주소인지 확인 |
+| `CMS_DB_UNREACHABLE` | DB 주소·포트에 연결 불가 | 호스트(…pooler.supabase.com)·포트 **6543** 확인, Supabase 프로젝트가 일시중지(Paused) 상태가 아닌지 확인 |
+| `CMS_DB_URL_INVALID` | 연결 문자열 형식 오류 | 비밀번호에 `@ # / ? :` 등 특수문자가 있으면 영문·숫자 비밀번호로 재설정 권장, `?pgbouncer=true&connection_limit=1&schema=oogam` 가 한 번만 붙었는지 확인 |
+| `CMS_DB_PERMISSION` · `CMS_DB_NOT_FOUND` | DB 권한·대상 없음 | Claude 에게 코드 전달 (권한 SQL 재적용) |
+| `CMS_PRISMA_ENGINE` · `CMS_MODULE_LOAD` · `CMS_BOOT_FAILED` | 배포 패키지·런타임 문제 | Claude 에게 코드와 배포 주소 전달 (Vercel › 해당 배포 › Logs 의 `[SiteCms]` 줄 — 연결 문자열은 자동으로 가려짐) |

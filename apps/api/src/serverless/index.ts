@@ -91,6 +91,30 @@ function configure(app: INestApplication): void {
 
 let appPromise: Promise<INestApplication> | null = null;
 
+/** 연결 문자열이 로그에 남지 않도록 자격 증명 부분을 가린다 */
+export function redactSecrets(text: string): string {
+  return text.replace(/(postgres(?:ql)?:\/\/)[^@\s]*@/gi, '$1***@').replace(/sb_secret_[A-Za-z0-9_-]+/g, 'sb_secret_***');
+}
+
+/**
+ * 기동 실패 원인 분류 — 응답에는 이 코드만 노출한다(비밀값·연결 문자열·내부 메시지는 노출하지 않음).
+ * 운영자는 로그인 화면 오류 문구의 코드로 원인을 바로 알 수 있다 (docs/CMS_GO_LIVE.md 6장).
+ */
+export function classifyBootError(e: unknown): string {
+  const msg = String((e as Error)?.message ?? e);
+  const code = (e as { errorCode?: string; code?: string })?.errorCode ?? (e as { code?: string })?.code;
+  const missing = /필수 환경변수 누락: ([A-Z0-9_]+)/.exec(msg);
+  if (missing) return `CMS_ENV_MISSING_${missing[1]}`;
+  if (/Tenant or user not found/i.test(msg)) return 'CMS_DB_POOLER_USER';
+  if (code === 'P1000' || /Authentication failed|password authentication failed/i.test(msg)) return 'CMS_DB_AUTH';
+  if (code === 'P1001' || code === 'P1002' || /Can't reach database server|timed out/i.test(msg)) return 'CMS_DB_UNREACHABLE';
+  if (code === 'P1013' || /database string is invalid|invalid port|invalid connection string/i.test(msg)) return 'CMS_DB_URL_INVALID';
+  if (code === 'P1003' || /does not exist/i.test(msg)) return 'CMS_DB_NOT_FOUND';
+  if (code === 'P1010' || /permission denied/i.test(msg)) return 'CMS_DB_PERMISSION';
+  if (/query engine|libquery_engine|could not locate the Query Engine/i.test(msg)) return 'CMS_PRISMA_ENGINE';
+  return 'CMS_BOOT_FAILED';
+}
+
 /** 콜드 스타트 시 1회 생성 후 재사용 */
 export function getApp(): Promise<INestApplication> {
   appPromise ??= (async () => {
@@ -125,9 +149,10 @@ export function internalPort(): Promise<number> {
   portPromise ??= new Promise<number>((resolve, reject) => {
     const server = createServer((req, res) => {
       handle(req, res).catch((e: unknown) => {
-        new Logger('SiteCms').error(`요청 처리 실패: ${(e as Error).message}`);
-        if (!res.headersSent) res.writeHead(503, { 'content-type': 'application/json' });
-        res.end(JSON.stringify({ statusCode: 503, message: '일시적으로 서비스를 이용할 수 없습니다.' }));
+        const code = classifyBootError(e);
+        new Logger('SiteCms').error(`요청 처리 실패 [${code}]: ${redactSecrets(String((e as Error)?.message ?? e))}`);
+        if (!res.headersSent) res.writeHead(503, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+        res.end(JSON.stringify({ statusCode: 503, code, message: `일시적으로 서비스를 이용할 수 없습니다. (오류 코드: ${code})` }));
       });
     });
     server.keepAliveTimeout = 5_000;

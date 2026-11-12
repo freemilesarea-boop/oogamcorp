@@ -42,8 +42,13 @@ async function proxy(req: NextRequest): Promise<Response> {
     for (const c of upstream.headers.getSetCookie()) out.append('set-cookie', c);
     return new Response(upstream.body, { status: upstream.status, headers: out });
   } catch (e) {
-    console.error('[cms-backend] 요청 처리 실패', (e as Error).message);
-    return Response.json({ statusCode: 503, message: '일시적으로 서비스를 이용할 수 없습니다.' }, { status: 503 });
+    // 백엔드 모듈 자체를 불러오지 못한 경우(배포 패키지 문제) — 연결 문자열 등 비밀값은 출력하지 않는다
+    const message = String((e as Error)?.message ?? e).replace(/(postgres(?:ql)?:\/\/)[^@\s]*@/gi, '$1***@');
+    console.error('[cms-backend] 백엔드 로드 실패 [CMS_MODULE_LOAD]', message);
+    return Response.json(
+      { statusCode: 503, code: 'CMS_MODULE_LOAD', message: '일시적으로 서비스를 이용할 수 없습니다. (오류 코드: CMS_MODULE_LOAD)' },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } },
+    );
   }
 }
 
