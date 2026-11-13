@@ -134,6 +134,7 @@ CSRF 쿠키 Secure·SameSite=Strict, MFA 미등록 시 CMS·게시 차단(403), 
 4. 저장 후 "Redeploy" 안내가 떠도 **누르지 않음** (지금은 운영 재배포 불필요)
 
 ### 6단계 — GitHub: 검증용 Preview 배포 만들기
+> 2026-11-13: `cms-staging` 브랜치는 Claude 가 생성함(최신 코드 기준). Preview 는 이 브랜치에 새 커밋이 올라올 때 자동 빌드된다 — 같은 커밋으로 브랜치만 만들면 Vercel 이 빌드하지 않는다.
 1. https://github.com/freemilesarea-boop/oogamcorp → 브랜치 선택 메뉴 → **View all branches** → **New branch**
 2. 이름 `cms-staging`, Source `claude/modest-thompson-bgzlmf` → **Create branch**
 3. Vercel › **Deployments** 에 Environment **Preview** 배포가 생기고 **Ready** 가 되면 해당 배포를 열어 주소(…vercel.app) 확인
