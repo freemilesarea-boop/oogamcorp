@@ -1,5 +1,6 @@
 import 'server-only';
 import { loadBackend } from './cms-backend';
+import { staticFetch } from './static-site/static-fetch';
 
 const POST_TYPES = new Set(['NEWS', 'INSIGHT', 'CAREER']);
 const int = (v: string | null, d: number, min: number, max: number) => {
@@ -51,7 +52,8 @@ export async function cmsFetch(path: string, preview: boolean): Promise<unknown>
   } catch (e) {
     const status = (e as { status?: number; getStatus?: () => number }).getStatus?.() ?? (e as { status?: number }).status;
     if (status === 404) return null;
-    console.error('[cms-fetch] 조회 실패', path, (e as Error).message);
-    return null;
+    // DB·백엔드 장애 시 공개 홈페이지가 비지 않도록 번들된 정적 콘텐츠로 대체 (관리자 기능에는 영향 없음)
+    console.error('[cms-fetch] 조회 실패 → 정적 콘텐츠로 대체', path, String((e as Error)?.message ?? e).replace(/(postgres(?:ql)?:\/\/)[^@\s]*@/gi, '$1***@'));
+    return preview ? null : staticFetch(path);
   }
 }

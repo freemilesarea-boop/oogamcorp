@@ -1,10 +1,11 @@
 import type { NextConfig } from 'next';
 import { join } from 'node:path';
 
-// Vercel 에는 아직 백엔드가 없다 → 환경변수가 빠져도 정적(읽기 전용) 미리보기 모드로 안전하게 빌드한다.
-// (fail-closed: /admin 404, /api 503, 검색 차단. 값을 명시하면 그 값이 우선. Docker 배포는 VERCEL 이 없어 영향 없음)
+// Vercel 배포 기본값: 홈페이지 CMS 모드(공개 사이트 + /admin CMS, 사내 업무 시스템은 404) · 검색 차단 미리보기 표시.
+// DB 장애 시 공개 페이지는 정적 콘텐츠로 자동 대체된다. 정적 전용으로 되돌리려면 NEXT_PUBLIC_DATA_SOURCE=static 설정 후 재배포.
+// (값을 명시하면 그 값이 우선. Docker 배포는 VERCEL 이 없어 영향 없음)
 if (process.env.VERCEL) {
-  process.env.NEXT_PUBLIC_DATA_SOURCE ||= 'static';
+  process.env.NEXT_PUBLIC_DATA_SOURCE ||= 'cms';
   process.env.NEXT_PUBLIC_SITE_MODE ||= 'preview';
 }
 
